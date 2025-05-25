@@ -1,103 +1,117 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Wallet, Mail, Lock, User, ArrowRight } from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
+import { Wallet, Mail, Lock, User, ArrowRight, Phone } from "lucide-react";
+
+import { registerUser } from "../services/auth";
+import toast from "react-hot-toast";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [values, setValues] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    gender: "",
+  });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setValues((prevValues) => ({ ...prevValues, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (
+      !values.fullName ||
+      !values.email ||
+      !values.phoneNumber ||
+      !values.password
+    ) {
       setError("Please fill in all fields");
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
-
     try {
-      // For demo purposes, we'll simulate an API call
-      // In a real app, you would call your registration API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setIsLoading(true);
+      setError("");
+      const res = await registerUser(values);
+      if (!res) return;
 
-      // Demo registration (in a real app, this would be handled by your backend)
-      login(
-        {
-          id: Date.now().toString(),
-          email,
-          name,
-          balance: 0,
-        },
-        "fake-jwt-token"
-      );
+      if (res.ok) {
+        toast.success("Registeration complete. Login to continue");
+        navigate("/login");
+      }
 
-      navigate("/dashboard");
-    } catch (err) {
-      setError("Registration failed. Please try again.");
+      if (!res.ok) {
+        setError(res.originalError.message);
+
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      }
+    } catch (err: any) {
+      console.log("Error", err);
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex flex-col justify-center py-10 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="h-14 w-14 rounded-full bg-primary-600 flex items-center justify-center">
             <Wallet className="h-8 w-8 text-white" />
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+
+        <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
           Create your account
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Join GoFlexi Wallet and manage your finances
+        <p className="mt-1 text-center text-sm text-gray-600">
+          Join Pulsar Wallet and manage your finances
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+      <div className="mt-4 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-card sm:rounded-lg sm:px-10">
-          <form className="space-y-3" onSubmit={handleSubmit}>
+          <form className="space-y-2" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">
                 {error}
               </div>
             )}
 
             <div>
               <label
-                htmlFor="name"
+                htmlFor="fullName"
                 className="block text-sm font-medium text-gray-700"
               >
                 Full Name
               </label>
+
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <User className="h-3 w-2 text-gray-400" />
                 </div>
+
                 <input
-                  id="name"
-                  name="name"
+                  id="fullName"
+                  name="fullName"
                   type="text"
-                  autoComplete="name"
+                  autoComplete="fullName"
                   required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={values.fullName}
+                  onChange={handleChange}
                   className="input pl-10"
                   placeholder="John Doe"
                 />
@@ -111,6 +125,7 @@ const Register: React.FC = () => {
               >
                 Email address
               </label>
+
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Mail className="h-3 w-2 text-gray-400" />
@@ -121,11 +136,67 @@ const Register: React.FC = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={values.email}
+                  onChange={handleChange}
                   className="input pl-10"
-                  placeholder="you@example.com"
+                  placeholder="user@example.com"
                 />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="dob"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Phone Number
+              </label>
+
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                  <Phone className="h-3 w-2 text-gray-400" />
+                </div>
+
+                <input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="text"
+                  autoComplete="phoneNumber"
+                  required
+                  value={values.phoneNumber}
+                  onChange={handleChange}
+                  className="input pl-10"
+                  placeholder="+234 000 000 000"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="gender"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Gender
+              </label>
+
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                  <Phone className="h-3 w-2 text-gray-400" />
+                </div>
+
+                <select
+                  id="gender"
+                  name="gender"
+                  autoComplete="gender"
+                  required
+                  value={values.gender}
+                  onChange={handleChange}
+                  className="input pl-10"
+                >
+                  <option value="">Select Option</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
               </div>
             </div>
 
@@ -136,6 +207,7 @@ const Register: React.FC = () => {
               >
                 Password
               </label>
+
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Lock className="h-3 w-2 text-gray-400" />
@@ -146,34 +218,8 @@ const Register: React.FC = () => {
                   type="password"
                   autoComplete="new-password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input pl-10"
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Confirm Password
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Lock className="h-3 w-2 text-gray-400" />
-                </div>
-
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  value={values.password}
+                  onChange={handleChange}
                   className="input pl-10"
                   placeholder="••••••••"
                 />

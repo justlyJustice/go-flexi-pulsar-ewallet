@@ -1,54 +1,82 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Wallet, Mail, Lock, ArrowRight } from "lucide-react";
+
 import { useAuthStore } from "../stores/authStore";
+import { loginUser } from "../services/auth";
+import useSubmit from "../hooks/useSubmit";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
+  const { submit, isError, isSubmitting, message } = useSubmit(loginUser, {
+    resetDelay: 10000,
+  });
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+  });
+  // const [error, setError] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setValues((prevValues) => ({ ...prevValues, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const { email, password } = values;
+
     if (!email || !password) {
-      setError("Please fill in all fields");
+      // setError("Please fill in all fields");
       return;
     }
 
-    setIsLoading(true);
-    setError("");
+    const res = await submit(values);
+    if (!res) return;
 
-    try {
-      // For demo purposes, we'll simulate an API call
-      // In a real app, you would call your authentication API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+    if (res.ok) {
+      const data = res.data;
+      const user = data?.user;
 
-      // Demo login (in a real app, this would be handled by your backend)
-      if (email === "demo@example.com" && password === "password") {
-        login(
-          {
-            id: "1",
-            email: "demo@example.com",
-            name: "Demo User",
-            balance: 1250.75,
+      login(
+        {
+          balance: user.accountBalance,
+          bankInformation: {
+            accountName: user.accountName,
+            accountNumber: user.accountNumber,
+            bankName: user.bankName,
           },
-          "fake-jwt-token"
-        );
-        navigate("/dashboard");
-      } else {
-        // Demo credentials message for easy testing
-        setError("Invalid credentials. Try demo@example.com / password");
-      }
-    } catch (err) {
-      setError("Login failed. Please try again.");
-    } finally {
-      setIsLoading(false);
+          currency: user.currency,
+          email: user.email,
+          fullName: user.fullName,
+          id: user._id,
+          joinDate: user.createdAt,
+          phoneNumber: user.phoneNumber,
+        },
+        res.data?.token!
+      );
     }
+
+    navigate("/dashboard");
+
+    // if (!res.ok) {
+    //   // setError(res.data.message);
+    // }
+
+    // try {
+
+    // } catch (err: any) {
+    //   setError(err.message || "Login failed. Please try again.");
+    // } finally {
+    //   // setIsLoading(false);
+    // }
   };
 
   return (
@@ -60,7 +88,7 @@ const Login: React.FC = () => {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Welcome to Flexi Wallet
+          Welcome to Pulsar
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Sign in to your account
@@ -70,9 +98,9 @@ const Login: React.FC = () => {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow-card sm:rounded-lg sm:px-10">
           <form className="space-y-3" onSubmit={handleSubmit}>
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
+            {isError && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">
+                {message}
               </div>
             )}
 
@@ -88,14 +116,15 @@ const Login: React.FC = () => {
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Mail className="h-3 w-2 text-gray-400" />
                 </div>
+
                 <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={values.email}
+                  onChange={handleChange}
                   className="input pl-10"
                   placeholder="you@example.com"
                 />
@@ -109,6 +138,7 @@ const Login: React.FC = () => {
               >
                 Password
               </label>
+
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Lock className="h-3 w-2 text-gray-400" />
@@ -120,8 +150,8 @@ const Login: React.FC = () => {
                   type="password"
                   autoComplete="current-password"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={values.password}
+                  onChange={handleChange}
                   className="input pl-10"
                   placeholder="••••••••"
                 />
@@ -131,10 +161,10 @@ const Login: React.FC = () => {
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isSubmitting}
                 className="w-full btn btn-primary flex justify-center items-center text-base py-2.5"
               >
-                {isLoading ? (
+                {isSubmitting ? (
                   <span className="flex items-center">
                     <svg
                       className="animate-spin -ml-1 mr-2 h-3 w-2 text-white"

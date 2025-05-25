@@ -10,15 +10,16 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
+import { formatDate } from "../utils/formatters";
 
 const Profile: React.FC = () => {
   const { user, updateUser, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState("personal");
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    fullName: user?.fullName || "",
     email: user?.email || "",
-    phone: "555-123-4567", // Demo data
+    phone: user?.phoneNumber || "", // Demo data
   });
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -35,7 +36,7 @@ const Profile: React.FC = () => {
 
     // Update user information
     updateUser({
-      name: formData.name,
+      fullName: formData.fullName,
       email: formData.email,
     });
 
@@ -94,7 +95,7 @@ const Profile: React.FC = () => {
                 <User size={40} />
               </div>
               <h3 className="text-lg font-medium text-gray-900">
-                {user?.name}
+                {user?.fullName}
               </h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
@@ -205,7 +206,7 @@ const Profile: React.FC = () => {
                             id="name"
                             name="name"
                             className="input pl-10"
-                            value={formData.name}
+                            value={formData.fullName}
                             onChange={handleInputChange}
                             required
                           />
@@ -278,7 +279,7 @@ const Profile: React.FC = () => {
                         onClick={() => {
                           setIsEditing(false);
                           setFormData({
-                            name: user?.name || "",
+                            fullName: user?.fullName || "",
                             email: user?.email || "",
                             phone: "555-123-4567",
                           });
@@ -300,7 +301,7 @@ const Profile: React.FC = () => {
                         Full Name
                       </span>
                       <span className="text-sm text-gray-900">
-                        {user?.name}
+                        {user?.fullName}
                       </span>
                     </div>
 
@@ -318,7 +319,7 @@ const Profile: React.FC = () => {
                         Phone Number
                       </span>
                       <span className="text-sm text-gray-900">
-                        555-123-4567
+                        {user?.phoneNumber}
                       </span>
                     </div>
 
@@ -327,7 +328,7 @@ const Profile: React.FC = () => {
                         Member Since
                       </span>
                       <span className="text-sm text-gray-900">
-                        January 2023
+                        {formatDate(user?.joinDate!)}
                       </span>
                     </div>
                   </div>

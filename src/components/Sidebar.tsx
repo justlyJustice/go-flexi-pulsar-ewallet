@@ -6,7 +6,7 @@ import {
   SendHorizonal,
   User,
   LogOut,
-  BarChart,
+  // BarChart,
   Menu,
   X,
 } from "lucide-react";
@@ -59,13 +59,14 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  GoFlexi Wallet
+                  Pulsar
                 </span>
               </div>
               <button onClick={closeMobileMenu} className="lg:hidden">
                 <X size={24} className="text-gray-500" />
               </button>
             </div>
+
             <nav className="space-y-2">
               {navItems.map((item) => (
                 <NavLink
@@ -84,6 +85,7 @@ const Sidebar: React.FC = () => {
                   <span className="ml-3">{item.label}</span>
                 </NavLink>
               ))}
+
               <button
                 onClick={() => {
                   logout();
@@ -107,16 +109,17 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center flex-shrink-0 px-4 mb-5">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  GoFlexi Wallet
+                  Pulsar
                 </span>
               </div>
+
               <nav className="mt-5 flex-1 px-4 space-y-1">
                 {navItems.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     className={({ isActive }) =>
-                      `flex items-center px-3 py-3 rounded-lg transition-colors ${
+                      `flex items-center px-3 py-2 rounded-lg transition-colors ${
                         isActive
                           ? "bg-primary-50 text-primary-700"
                           : "text-gray-700 hover:bg-gray-100"

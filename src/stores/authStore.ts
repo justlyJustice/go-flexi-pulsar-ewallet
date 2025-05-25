@@ -1,10 +1,18 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface User {
   id: string;
   email: string;
-  name: string;
+  currency: string;
+  bankInformation: {
+    accountNumber: string;
+    accountName: string;
+    bankName: string;
+  };
+  fullName: string;
+  phoneNumber: string;
+  joinDate: string;
   balance: number;
 }
 
@@ -28,19 +36,22 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       login: (user, token) => set({ user, token, isAuthenticated: true }),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
-      updateUser: (userData) => 
-        set((state) => ({ 
-          user: state.user ? { ...state.user, ...userData } : null 
+      updateUser: (userData) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...userData } : null,
         })),
       updateBalance: (amount) =>
         set((state) => ({
-          user: state.user 
-            ? { ...state.user, balance: state.user.balance + amount } 
-            : null
+          user: state.user
+            ? { ...state.user, balance: state.user.balance + amount }
+            : null,
         })),
     }),
     {
-      name: 'auth-storage',
+      name: "auth-storage",
     }
   )
 );
+
+// Export a direct way to access the token without hooks
+export const getToken = () => useAuthStore.getState().token;

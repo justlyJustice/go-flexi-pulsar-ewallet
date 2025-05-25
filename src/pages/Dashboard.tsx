@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
   BarChart3,
@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
         <motion.div variants={itemVariants}>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Welcome back, {user?.name}
+            Welcome back, {user?.fullName}
           </p>
         </motion.div>
       </div>
@@ -70,15 +70,17 @@ const Dashboard: React.FC = () => {
               <h3 className="font-semibold text-gray-900 mb-4">
                 Quick Actions
               </h3>
+
               <div className="space-y-3">
                 <Link
                   to="/add-funds"
-                  className="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
-                    <Wallet className="h-5 w-5" />
+                  <div className="w-20 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                    <Wallet className="h-3 w-2" />
                   </div>
-                  <div className="ml-3">
+
+                  <div className="ml-2">
                     <p className="text-sm font-medium text-gray-900">
                       Add Funds
                     </p>
@@ -86,17 +88,19 @@ const Dashboard: React.FC = () => {
                       Add money to your wallet
                     </p>
                   </div>
+
                   <ArrowRightCircle className="ml-auto h-5 w-5 text-gray-400" />
                 </Link>
 
                 <Link
                   to="/transfer"
-                  className="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-accent-100 flex items-center justify-center text-accent-600">
-                    <Send className="h-5 w-5" />
+                  <div className="w-20 h-10 rounded-full bg-accent-100 flex items-center justify-center text-accent-600">
+                    <Send className="h-3 w-2" />
                   </div>
-                  <div className="ml-3">
+
+                  <div className="ml-2">
                     <p className="text-sm font-medium text-gray-900">
                       Transfer Funds
                     </p>
@@ -115,6 +119,7 @@ const Dashboard: React.FC = () => {
                   <p className="text-sm font-medium text-gray-500">
                     Available Balance
                   </p>
+
                   <p className="text-2xl font-bold text-gray-900">
                     {formatCurrency(user?.balance || 0)}
                   </p>
@@ -138,7 +143,7 @@ const Dashboard: React.FC = () => {
               Recent Transactions
             </h3>
             <Link
-              to="/transactions"
+              to="#"
               className="text-sm text-primary-600 hover:text-primary-700 flex items-center"
             >
               View all
@@ -164,6 +169,7 @@ const Dashboard: React.FC = () => {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-gray-500">Monthly Income</span>
+
                   <span className="text-sm font-medium text-secondary-600">
                     {formatCurrency(
                       transactions
@@ -181,7 +187,7 @@ const Dashboard: React.FC = () => {
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-secondary-500 h-2 rounded-full"
-                    style={{ width: "65%" }}
+                    style={{ width: "0%" }}
                   ></div>
                 </div>
               </div>
@@ -191,6 +197,7 @@ const Dashboard: React.FC = () => {
                   <span className="text-sm text-gray-500">
                     Monthly Expenses
                   </span>
+
                   <span className="text-sm font-medium text-accent-600">
                     {formatCurrency(
                       transactions
@@ -207,7 +214,7 @@ const Dashboard: React.FC = () => {
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-accent-500 h-2 rounded-full"
-                    style={{ width: "40%" }}
+                    style={{ width: "0%" }}
                   ></div>
                 </div>
               </div>
