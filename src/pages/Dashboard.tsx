@@ -130,8 +130,9 @@ const Dashboard: React.FC = () => {
                     {formatCurrency(user?.balance || 0)}
                   </p>
                 </div>
+
                 <div className="p-2 bg-gray-100 rounded-full">
-                  <CreditCard className="h-6 w-6 text-gray-500" />
+                  <CreditCard className="h-3 w-3 text-gray-500" />
                 </div>
               </div>
             </div>
@@ -166,8 +167,9 @@ const Dashboard: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Activity Summary
               </h3>
+
               <div className="p-2 bg-gray-100 rounded-full">
-                <BarChart3 className="h-5 w-5 text-gray-500" />
+                <BarChart3 className="h-4 w-4 text-gray-500" />
               </div>
             </div>
 
