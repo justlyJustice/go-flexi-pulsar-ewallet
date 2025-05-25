@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   CheckCircle,
@@ -36,9 +36,24 @@ const AddFunds: React.FC = () => {
   //   cvc: "",
   // });
 
-  // useEffect(() => {
+  const calcNetAmount = (amount: number) => {
+    const PERCENTAGE_FEE = 0.025; // 2.5%
+    const FIXED_FEE = 100; // ₦100 fixed fee
 
-  // }, [countdownTime]);
+    const percentageFee = amount * PERCENTAGE_FEE;
+    const totalFee = percentageFee + FIXED_FEE;
+    const netAmount = amount - totalFee;
+
+    return {
+      netAmount: Math.max(0, netAmount), // Ensure no negative values
+      // totalFee: totalFee,
+    };
+  };
+
+  const { netAmount } = useMemo(() => {
+    const amountValue = parseFloat(amount) || 0;
+    return calcNetAmount(amountValue);
+  }, [amount]);
 
   const formatTime = (secs: number) => {
     const minutes = Math.floor(secs / 60);
@@ -396,6 +411,41 @@ const AddFunds: React.FC = () => {
                   {formatCurrency(user?.balance || 0)}
                 </p>
               </div>
+
+              {/* {amount && parseFloat(amount) > 0 && ( */}
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                <h3 className="text-sm font-medium text-blue-800 mb-1">
+                  Transaction Details
+                </h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-gray-600">Amount to deposit:</div>
+                  <div className="text-right font-medium">
+                    {formatCurrency(parseFloat(amount) || 0)}
+                  </div>
+
+                  <div className="text-gray-600">Percentage fee (2.5%):</div>
+                  <div className="text-right font-medium">
+                    -{formatCurrency(parseFloat(amount) * 0.025 || 0)}
+                  </div>
+
+                  <div className="text-gray-600">Fixed fee:</div>
+                  <div className="text-right font-medium">
+                    -{formatCurrency(100) || 0}
+                  </div>
+
+                  <div className="text-gray-600 font-semibold">
+                    Net deposit:
+                  </div>
+                  <div className="text-right font-semibold text-blue-600">
+                    {formatCurrency(netAmount || 0)}
+                  </div>
+                </div>
+
+                <p className="text-xs text-blue-600 mt-2">
+                  This is the amount that will be credited to your wallet.
+                </p>
+              </div>
+              {/* )} */}
             </div>
 
             {/* <div className="mb-4">
@@ -469,9 +519,12 @@ const AddFunds: React.FC = () => {
 
             <div className="flex justify-end">
               <button
+                disabled={netAmount === 0}
                 type="button"
                 onClick={handleContinue}
-                className="btn btn-primary px-6"
+                className={`btn btn-primary px-6 ${
+                  netAmount === 0 ? "disabled bg-primary-500" : ""
+                }`}
               >
                 Continue
               </button>
@@ -504,15 +557,15 @@ const AddFunds: React.FC = () => {
               </div>
 
               <div className="flex items-center justify-between mt-2">
-                <p className="text-sm text-gray-500">
-                  See details below.
-                  {/* {paymentMethod === "card"
-                    ? "Enter your card information below"
-                    : "Enter your bank account details"} */}
-                </p>
-                <span className="text-sm font-medium text-primary-600">
-                  Amount: {formatCurrency(parseFloat(amount) || 0)}
-                </span>
+                <p className="text-sm text-gray-500">See details below.</p>
+                <div className="text-right">
+                  <span className="text-sm font-medium text-primary-600">
+                    Amount: {formatCurrency(parseFloat(amount) || 0)}
+                  </span>
+                  <span className="block text-xs text-gray-500">
+                    Net deposit: {formatCurrency(netAmount)}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -793,8 +846,12 @@ const AddFunds: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Funds Added Successfully!
             </h2>
+
             <p className="text-gray-600 mb-4">
-              {formatCurrency(parseFloat(amount))} has been added to your wallet
+              {formatCurrency(netAmount)} has been credited to your wallet
+              <span className="block text-sm text-gray-500 mt-1">
+                (from {formatCurrency(parseFloat(amount))} after fees)
+              </span>
             </p>
 
             <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mb-4 inline-block">

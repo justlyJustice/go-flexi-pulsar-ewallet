@@ -15,11 +15,17 @@ import BalanceCard from "../components/BalanceCard";
 import TransactionList from "../components/TransactionList";
 import { formatCurrency } from "../utils/formatters";
 
+import { useBalancePolling } from "../hooks/useBalancePolling";
+import MonthlyIncome from "../components/MonthlyIncome";
+
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
   const getTransactions = useTransactionStore((state) => state.getTransactions);
 
   const transactions = getTransactions();
+
+  // Start balance polling when user is logged in
+  useBalancePolling(user?.id);
 
   // Animation variants
   const containerVariants = {
@@ -166,7 +172,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              <div>
+              {/* <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm text-gray-500">Monthly Income</span>
 
@@ -184,13 +190,16 @@ const Dashboard: React.FC = () => {
                     )}
                   </span>
                 </div>
+
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-secondary-500 h-2 rounded-full"
                     style={{ width: "0%" }}
                   ></div>
                 </div>
-              </div>
+              </div> */}
+
+              <MonthlyIncome transactions={transactions} />
 
               <div>
                 <div className="flex items-center justify-between mb-1">

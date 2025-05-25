@@ -47,7 +47,7 @@ const Register: React.FC = () => {
 
       if (res.ok) {
         toast.success("Registeration complete. Login to continue");
-        navigate("/login");
+        navigate("/");
       }
 
       if (!res.ok) {
@@ -280,7 +280,7 @@ const Register: React.FC = () => {
 
             <div className="mt-4">
               <Link
-                to="/login"
+                to="/"
                 className="w-full flex justify-center py-2.5 px-4 border border-primary-300 rounded-md shadow-sm text-sm font-medium text-primary-700 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
                 Sign in instead

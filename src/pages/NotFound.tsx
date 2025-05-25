@@ -14,6 +14,7 @@ const NotFound: React.FC = () => {
           We couldn't find the page you're looking for. Please check the URL or
           go back to the homepage.
         </p>
+
         <Link
           to="/"
           className="inline-flex items-center px-4 py-1 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"

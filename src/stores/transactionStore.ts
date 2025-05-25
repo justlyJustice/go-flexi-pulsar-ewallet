@@ -14,6 +14,8 @@ interface Transaction {
   status: "completed" | "pending" | "failed";
 }
 
+export type Transactions = Transaction[];
+
 interface TransactionState {
   transactions: Transaction[];
   addTransaction: (transaction: Omit<Transaction, "id" | "date">) => void;
