@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Wallet, Mail, Lock, User, ArrowRight, Phone } from "lucide-react";
+import {
+  Flag,
+  Wallet,
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Phone,
+  VenusAndMars,
+} from "lucide-react";
 
 import { registerUser } from "../services/auth";
 import toast from "react-hot-toast";
@@ -14,6 +23,7 @@ const Register: React.FC = () => {
     password: "",
     phoneNumber: "",
     gender: "",
+    country: "",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -173,6 +183,34 @@ const Register: React.FC = () => {
 
             <div>
               <label
+                htmlFor="country"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Country
+              </label>
+
+              <div className="mt-1 relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                  <Flag className="h-3 w-2 text-gray-400" />
+                </div>
+
+                <select
+                  disabled
+                  id="country"
+                  name="country"
+                  autoComplete="country"
+                  required
+                  value={values.country}
+                  onChange={handleChange}
+                  className="input pl-10"
+                >
+                  <option value="nigeria">Nigeria</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label
                 htmlFor="gender"
                 className="block text-sm font-medium text-gray-700"
               >
@@ -181,7 +219,7 @@ const Register: React.FC = () => {
 
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                  <Phone className="h-3 w-2 text-gray-400" />
+                  <VenusAndMars className="h-3 w-2 text-gray-400" />
                 </div>
 
                 <select
