@@ -61,7 +61,7 @@ const Register: React.FC = () => {
       }
 
       if (!res.ok) {
-        setError(res.originalError.message);
+        setError(res.data!.error || res.originalError.message);
 
         setTimeout(() => {
           setError("");

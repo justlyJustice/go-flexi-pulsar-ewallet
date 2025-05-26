@@ -2,7 +2,7 @@ import { create } from "apisauce";
 
 import { getToken } from "../stores/authStore";
 
-const apiClient = create({ baseURL: "https://go-flexi-be.onrender.com" });
+const apiClient = create({ baseURL: "https://go-flexi-be-zmy7.onrender.com" });
 
 // const authStore = useAuthStore();
 

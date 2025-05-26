@@ -16,7 +16,8 @@ export const loginUser = (data: { email: string; password: string }) =>
   }>("/auth/login", data);
 
 export const registerUser = (data: Data) =>
-  client.post<{ success: boolean; data: Record<string, string> }>(
-    "/auth/signup",
-    data
-  );
+  client.post<{
+    success: boolean;
+    error?: string;
+    data: Record<string, string>;
+  }>("/auth/signup", data);

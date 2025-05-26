@@ -29,6 +29,8 @@ const AddFunds: React.FC = () => {
     "pending" | "completed" | "failed"
   >("pending");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [showExtendedWait, setShowExtendedWait] = useState(false);
+  const extendedWaitRef = useRef<NodeJS.Timeout | null>(null);
   // const [cardDetails, setCardDetails] = useState({
   //   number: "",
   //   fullName: "",
@@ -66,7 +68,7 @@ const AddFunds: React.FC = () => {
 
   // Add this useEffect to handle countdown timeout
   useEffect(() => {
-    if (countdownTime === 0 && isLoading) {
+    if (countdownTime === 0 && isLoading && !showExtendedWait) {
       // Time is up and still loading
       handleTimeout();
     }
@@ -74,10 +76,12 @@ const AddFunds: React.FC = () => {
 
   const handleTimeout = () => {
     // Clear any existing timer
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (extendedWaitRef.current) clearTimeout(extendedWaitRef.current);
+
+    // First show the "waiting" message
+    setShowExtendedWait(true);
+    setError("Still verifying your payment. Please wait a moment longer...");
 
     // Set error state
     setTransactionStatus("failed");
@@ -86,18 +90,28 @@ const AddFunds: React.FC = () => {
     );
     setIsLoading(false);
 
-    // Reload the page after 5 seconds
-    setTimeout(() => {
-      window.location.reload();
-    }, 5000);
+    // Set timeout for the final error message
+    extendedWaitRef.current = setTimeout(() => {
+      setShowExtendedWait(false);
+      setTransactionStatus("failed");
+      setError(
+        "We couldn't verify your payment. Please check your bank account. " +
+          "If the payment was made, it may still process shortly."
+      );
+      setIsLoading(false);
+
+      // Reload after showing final message
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
+    }, 40000); // 40 seconds additional wait
   };
 
   // Clean up timer on unmount
   useEffect(() => {
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      if (timerRef.current) clearInterval(timerRef.current);
+      if (extendedWaitRef.current) clearTimeout(extendedWaitRef.current);
     };
   }, []);
 
@@ -171,73 +185,64 @@ const AddFunds: React.FC = () => {
     if (!user?.id) return;
 
     const amountValue = parseFloat(amount);
-    if (isNaN(amountValue)) return;
+    if (isNaN(amountValue) || amountValue <= 0) return;
 
-    // Reset countdown for new verification attempt
-    // setCountdownTime(90);
     setIsLoading(true);
     setError("");
     setTransactionStatus("pending");
-
-    // Start countdown timer
-    timerRef.current = setInterval(() => {
-      setCountdownTime((prev) => {
-        if (prev <= 1) {
-          return 0; // Will trigger the timeout useEffect
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    setCountdownTime(60); // Reset countdown
 
     try {
+      // Start countdown timer
+      const timer = setInterval(() => {
+        setCountdownTime((prev) => (prev > 0 ? prev - 1 : 0));
+      }, 1000);
+
+      // Check balance immediately
       let verificationResult = await checkBalanceUpdate(user.id, amountValue);
 
-      // Poll every 10 seconds until success or timeout
+      // Continue checking until success or timeout
       while (!verificationResult.success && countdownTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Check every 5 seconds
         verificationResult = await checkBalanceUpdate(user.id, amountValue);
       }
 
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      clearInterval(timer);
 
       if (verificationResult.success) {
-        // Success case remains the same
+        // Update frontend state
         updateBalance(verificationResult.newBalance);
+
+        // Add transaction record
         addTransaction({
           amount: amountValue,
           type: "deposit",
           description: `Added funds via bank transfer`,
           status: "completed",
         });
+
+        // Show success page
         setTransactionStatus("completed");
-        setStep(3);
+        setStep(3); // This is the critical line that shows success page
+        console.log("Transaction status:", transactionStatus); // Should be "completed"
       } else {
-        // This will be handled by the timeout useEffect
+        setTransactionStatus("failed");
+        setError("Transfer not verified. Please check your bank account.");
       }
     } catch (error) {
-      console.log(error);
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
       setTransactionStatus("failed");
-      setError(
-        "An error occurred while verifying your transfer. The page will refresh..."
-      );
+      setError("Transaction verification failed. Please try again.");
+      console.error("Verification error:", error);
+    } finally {
       setIsLoading(false);
-
-      // Reload after error display
-      setTimeout(() => {
-        window.location.reload();
-      }, 5000);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    console.log("Starting verification...");
     await startBalanceVerification();
+    console.log("Verification complete, current step:", step);
 
     // setTimeout(() => {
     //   countdownRef.current - 1;
@@ -685,6 +690,42 @@ const AddFunds: React.FC = () => {
                     </div>
                   </div>
                 )}
+
+                {showExtendedWait && (
+                  <div className="mb-4 p-3 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg text-sm">
+                    <div className="flex items-center">
+                      <svg
+                        className="animate-spin -ml-1 mr-2 h-4 w-4 text-blue-500"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      {error}
+                    </div>
+                  </div>
+                )}
+
+                {transactionStatus === "failed" &&
+                  !showExtendedWait &&
+                  error && (
+                    <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+                      {error}
+                    </div>
+                  )}
 
                 {/* <div className="p-4 bg-accent-50 border border-accent-100 rounded-lg">
                   <p className="text-sm text-accent-700">
