@@ -11,7 +11,7 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <h1 className="text-xl font-semibold text-gray-900 lg:hidden">
-              Pulsar
+              Rulsar
             </h1>
           </div>
           <div className="flex items-center space-x-4">

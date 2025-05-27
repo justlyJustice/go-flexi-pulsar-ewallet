@@ -69,7 +69,7 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  Pulsar
+                  Rulsar
                 </span>
               </div>
               <button onClick={closeMobileMenu} className="lg:hidden">
@@ -122,7 +122,7 @@ const Sidebar: React.FC = () => {
               <div className="flex items-center flex-shrink-0 px-4 mb-5">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  Pulsar
+                  Rulsar
                 </span>
               </div>
 

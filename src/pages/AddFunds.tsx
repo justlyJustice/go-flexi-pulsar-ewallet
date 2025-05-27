@@ -352,7 +352,7 @@ const AddFunds: React.FC = () => {
     >
       <motion.div variants={itemVariants}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Add Funds</h1>
-        <p className="text-gray-600 mb-4">Add money to your Pulsar account</p>
+        <p className="text-gray-600 mb-4">Add money to your Rulsar account</p>
       </motion.div>
 
       <div className="bg-white rounded-card shadow-card p-6">

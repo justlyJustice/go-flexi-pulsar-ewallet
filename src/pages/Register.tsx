@@ -63,6 +63,7 @@ const Register: React.FC = () => {
 
       if (!res.ok) {
         setError(res.data!.error || res.originalError.message);
+        toast.error(res.data!.error || res.originalError.message);
 
         setTimeout(() => {
           setError("");
@@ -89,7 +90,7 @@ const Register: React.FC = () => {
           Create your account
         </h2>
         <p className="mt-1 text-center text-sm text-gray-600">
-          Join Pulsar Wallet and manage your finances
+          Join Rulsar Wallet and manage your finances
         </p>
       </div>
 
