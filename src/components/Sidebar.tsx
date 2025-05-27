@@ -11,10 +11,12 @@ import {
   X,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
+import { KycModal } from "./KycModal";
 
 const Sidebar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { logout } = useAuthStore();
+  const [isOpen, setIsOpen] = useState(false);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -25,12 +27,19 @@ const Sidebar: React.FC = () => {
       label: "Dashboard",
     },
     { path: "/add-funds", icon: <Wallet size={20} />, label: "Add Funds" },
-    { path: "/transfer", icon: <SendHorizonal size={20} />, label: "Transfer" },
+    {
+      path: "#",
+      icon: <SendHorizonal size={20} />,
+      label: "Transfer",
+      onClick: () => setIsOpen(true),
+    },
     { path: "/profile", icon: <User size={20} />, label: "Profile" },
   ];
 
   return (
     <>
+      <KycModal isOpen={isOpen} setIsOpen={setIsOpen} />
+
       {/* Mobile Menu Button */}
       <div className="lg:hidden fixed top-4 left-4 z-20">
         <button
@@ -53,6 +62,7 @@ const Sidebar: React.FC = () => {
           className="absolute inset-0 bg-gray-900 opacity-50"
           onClick={closeMobileMenu}
         ></div>
+
         <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
@@ -72,7 +82,10 @@ const Sidebar: React.FC = () => {
                 <NavLink
                   key={item.path}
                   to={item.path}
-                  onClick={closeMobileMenu}
+                  onClick={() => {
+                    closeMobileMenu();
+                    item.onClick && item.onClick();
+                  }}
                   className={({ isActive }) =>
                     `flex items-center p-3 rounded-lg transition-colors ${
                       isActive
@@ -118,6 +131,7 @@ const Sidebar: React.FC = () => {
                   <NavLink
                     key={item.path}
                     to={item.path}
+                    onClick={() => item.onClick && item.onClick()}
                     className={({ isActive }) =>
                       `flex items-center px-3 py-2 rounded-lg transition-colors ${
                         isActive

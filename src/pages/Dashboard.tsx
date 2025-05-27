@@ -17,6 +17,7 @@ import { formatCurrency } from "../utils/formatters";
 
 import { useBalancePolling } from "../hooks/useBalancePolling";
 import MonthlyIncome from "../components/MonthlyIncome";
+import { WelcomeModal } from "../components/WelcomeModal";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
@@ -56,6 +57,8 @@ const Dashboard: React.FC = () => {
       variants={containerVariants}
       className="space-y-6"
     >
+      <WelcomeModal />
+
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <motion.div variants={itemVariants}>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>

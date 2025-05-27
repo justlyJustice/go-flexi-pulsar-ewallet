@@ -57,6 +57,7 @@ const Register: React.FC = () => {
 
       if (res.ok) {
         toast.success("Registeration complete. Login to continue");
+        localStorage.setItem("isNewUser", "true");
         navigate("/");
       }
 
