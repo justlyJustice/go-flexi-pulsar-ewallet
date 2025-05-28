@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
+  Eye,
+  EyeOff,
   Flag,
   Wallet,
   Mail,
@@ -27,6 +29,7 @@ const Register: React.FC = () => {
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -75,6 +78,10 @@ const Register: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -247,7 +254,6 @@ const Register: React.FC = () => {
               >
                 Password
               </label>
-
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Lock className="h-3 w-2 text-gray-400" />
@@ -255,14 +261,27 @@ const Register: React.FC = () => {
                 <input
                   id="password"
                   name="password"
-                  type="password"
-                  autoComplete="new-password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   required
                   value={values.password}
                   onChange={handleChange}
-                  className="input pl-10"
+                  className="input pl-10 pr-10"
                   placeholder="••••••••"
                 />
+
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-2 flex items-center"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-2 w-2 text-gray-400 hover:text-gray-500" />
+                  ) : (
+                    <Eye className="h-2 w-2 text-gray-400 hover:text-gray-500" />
+                  )}
+                </button>
               </div>
             </div>
 

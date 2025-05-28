@@ -77,34 +77,71 @@ const AddFunds: React.FC = () => {
   const handleTimeout = () => {
     // Clear any existing timer
     if (timerRef.current) clearInterval(timerRef.current);
-    if (extendedWaitRef.current) clearTimeout(extendedWaitRef.current);
 
     // First show the "waiting" message
     setShowExtendedWait(true);
     setError("Still verifying your payment. Please wait a moment longer...");
 
-    // Set error state
-    setTransactionStatus("failed");
-    setError(
-      "We couldn't verify your transfer in time. The page will refresh shortly..."
-    );
-    setIsLoading(false);
+    // Start extended verification
+    const verifyExtended = async () => {
+      try {
+        const amountValue = parseFloat(amount);
+        let verified = false;
+        const startTime = Date.now();
+        const extendedTimeout = 40000; // 40 seconds
 
-    // Set timeout for the final error message
-    extendedWaitRef.current = setTimeout(() => {
-      setShowExtendedWait(false);
-      setTransactionStatus("failed");
-      setError(
-        "We couldn't verify your payment. Please check your bank account. " +
-          "If the payment was made, it may still process shortly."
-      );
-      setIsLoading(false);
+        while (Date.now() - startTime < extendedTimeout && !verified) {
+          const verificationResult = await checkBalanceUpdate(
+            user?.id!,
+            amountValue
+          );
 
-      // Reload after showing final message
-      setTimeout(() => {
-        window.location.reload();
-      }, 5000);
-    }, 40000); // 40 seconds additional wait
+          if (verificationResult.success) {
+            verified = true;
+            // Update frontend state
+            updateBalance(verificationResult.newBalance);
+
+            // Add transaction record
+            addTransaction({
+              amount: amountValue,
+              type: "deposit",
+              description: `Added funds via bank transfer`,
+              status: "completed",
+            });
+
+            // Show success page
+            setTransactionStatus("completed");
+            setStep(3);
+            return;
+          }
+
+          // Wait 5 seconds between checks
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+        }
+
+        // If we get here, verification failed
+        setShowExtendedWait(false);
+        setTransactionStatus("failed");
+        setError(
+          "We couldn't verify your payment. Please check your bank account. " +
+            "If the payment was made, it may still process shortly."
+        );
+      } catch (error) {
+        setShowExtendedWait(false);
+        setTransactionStatus("failed");
+        setError("An error occurred while verifying your payment.");
+      } finally {
+        setIsLoading(false);
+
+        // Reload after showing final message
+        setTimeout(() => {
+          window.location.reload();
+        }, 5000);
+      }
+    };
+
+    // Start the extended verification process
+    verifyExtended();
   };
 
   // Clean up timer on unmount

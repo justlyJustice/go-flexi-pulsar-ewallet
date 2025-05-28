@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Wallet,
@@ -18,6 +18,8 @@ const Sidebar: React.FC = () => {
   const { logout } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
 
+  const location = useLocation();
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   const navItems = [
@@ -25,15 +27,27 @@ const Sidebar: React.FC = () => {
       path: "/dashboard",
       icon: <LayoutDashboard size={20} />,
       label: "Dashboard",
+      isActive: location.pathname === "/dashboard",
     },
-    { path: "/add-funds", icon: <Wallet size={20} />, label: "Add Funds" },
+    {
+      path: "/add-funds",
+      icon: <Wallet size={20} />,
+      label: "Add Funds",
+      isActive: location.pathname === "/add-funds",
+    },
     {
       path: "#",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
       onClick: () => setIsOpen(true),
+      isActive: false,
     },
-    { path: "/profile", icon: <User size={20} />, label: "Profile" },
+    {
+      path: "/profile",
+      icon: <User size={20} />,
+      label: "Profile",
+      isActive: location.pathname === "/profile",
+    },
   ];
 
   return (
@@ -86,9 +100,9 @@ const Sidebar: React.FC = () => {
                     closeMobileMenu();
                     item.onClick && item.onClick();
                   }}
-                  className={({ isActive }) =>
+                  className={() =>
                     `flex items-center p-3 rounded-lg transition-colors ${
-                      isActive
+                      item.isActive
                         ? "bg-primary-50 text-primary-700"
                         : "text-gray-700 hover:bg-gray-100"
                     }`
@@ -132,9 +146,9 @@ const Sidebar: React.FC = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => item.onClick && item.onClick()}
-                    className={({ isActive }) =>
+                    className={() =>
                       `flex items-center px-3 py-2 rounded-lg transition-colors ${
-                        isActive
+                        item.isActive
                           ? "bg-primary-50 text-primary-700"
                           : "text-gray-700 hover:bg-gray-100"
                       }`

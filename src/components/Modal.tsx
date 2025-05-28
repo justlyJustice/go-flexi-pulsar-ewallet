@@ -1,5 +1,5 @@
 // components/Modal.tsx
-import { Dialog } from "@headlessui/react";
+import { Dialog, Description, DialogTitle } from "@headlessui/react";
 
 type ModalProps = {
   isOpen: boolean;
@@ -24,15 +24,15 @@ export const Modal = ({
       onClose={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/90" aria-hidden="true" />
 
       <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg z-50">
-        <Dialog.Title className="text-xl font-bold text-gray-900 mb-3">
+        <DialogTitle className="text-xl font-bold text-gray-900 mb-3">
           {title}
-        </Dialog.Title>
-        <Dialog.Description className="mb-5 text-gray-700">
-          {description}
-        </Dialog.Description>
+        </DialogTitle>
+
+        <Description className="mb-5 text-gray-700">{description}</Description>
+
         <div className="flex justify-end space-x-3">
           <button
             onClick={onClose}
@@ -40,6 +40,7 @@ export const Modal = ({
           >
             Close
           </button>
+
           {actionText && onAction && (
             <button
               onClick={onAction}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Dialog } from "@headlessui/react";
+import { Dialog, Description, DialogTitle } from "@headlessui/react";
 
 import { useAuthStore } from "../stores/authStore";
 
@@ -22,13 +22,13 @@ export const WelcomeModal = () => {
       onClose={() => setIsOpen(false)}
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
-      <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/90" aria-hidden="true" />
       <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
-        <Dialog.Title className="text-2xl font-bold text-green-600 mb-3">
+        <DialogTitle className="text-2xl font-bold text-green-600 mb-3">
           Welcome, {user?.fullName}! 👋
-        </Dialog.Title>
+        </DialogTitle>
 
-        <Dialog.Description className="mb-5">
+        <Description className="mb-5">
           <p className="text-gray-700">
             Thank you for joining us! Get started by exploring your dashboard.
           </p>
@@ -37,13 +37,14 @@ export const WelcomeModal = () => {
             <li>• Verify your email for account security</li>
             <li>• Check out our getting started guide</li>
           </ul>
-        </Dialog.Description>
+        </Description>
+
         <div className="flex justify-end">
           <button
             onClick={() => setIsOpen(false)}
             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
           >
-            Let's Go!
+            Close and Continue!
           </button>
         </div>
       </div>

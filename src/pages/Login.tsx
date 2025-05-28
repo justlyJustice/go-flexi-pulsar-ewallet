@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Wallet, Mail, Lock, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Wallet, Mail, Lock, ArrowRight } from "lucide-react";
 
 import { useAuthStore } from "../stores/authStore";
 import { loginUser } from "../services/auth";
@@ -12,6 +12,7 @@ const Login: React.FC = () => {
   const { submit, isError, isSubmitting, message } = useSubmit(loginUser, {
     resetDelay: 10000,
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const [values, setValues] = useState({
     email: "",
@@ -79,6 +80,10 @@ const Login: React.FC = () => {
     // }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -138,23 +143,34 @@ const Login: React.FC = () => {
               >
                 Password
               </label>
-
               <div className="mt-1 relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Lock className="h-3 w-2 text-gray-400" />
                 </div>
-
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={values.password}
                   onChange={handleChange}
-                  className="input pl-10"
+                  className="input pl-10 pr-10" // Added pr-10 for toggle button
                   placeholder="••••••••"
                 />
+
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-2 flex items-center"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-2 w-2 text-gray-400 hover:text-gray-500" />
+                  ) : (
+                    <Eye className="h-2 w-2 text-gray-400 hover:text-gray-500" />
+                  )}
+                </button>
               </div>
             </div>
 
