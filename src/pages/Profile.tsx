@@ -19,7 +19,7 @@ const Profile: React.FC = () => {
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
     email: user?.email || "",
-    phone: user?.phoneNumber || "", // Demo data
+    phone: user?.phoneNumber || "",
   });
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -91,7 +91,7 @@ const Profile: React.FC = () => {
           {/* Sidebar */}
           <div className="md:w-64 bg-gray-50 p-4 border-r border-gray-200">
             <div className="flex flex-col items-center py-5">
-              <div className="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mb-3">
+              <div className="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mb-1">
                 <User size={40} />
               </div>
               <h3 className="text-lg font-medium text-gray-900">

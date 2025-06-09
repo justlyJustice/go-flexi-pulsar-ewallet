@@ -212,6 +212,15 @@ const Login: React.FC = () => {
                 )}
               </button>
             </div>
+
+            <div className="flex justify-end text-sm mt-1">
+              <Link
+                to="/recovery/forgot-password"
+                className="font-medium text-primary-600 hover:text-primary-500"
+              >
+                Forgot password?
+              </Link>
+            </div>
           </form>
 
           <div className="mt-4">

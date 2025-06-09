@@ -170,28 +170,6 @@ const AddFunds: React.FC = () => {
     setStep(2);
   };
 
-  // const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value.replace(/\D/g, "").substring(0, 16);
-  //   // Format with spaces every 4 digits
-  //   const formatted = value.replace(/(\d{4})(?=\d)/g, "$1 ").trim();
-  //   setCardDetails({ ...cardDetails, number: formatted });
-  // };
-
-  // const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value.replace(/\D/g, "");
-  //   if (value.length <= 4) {
-  //     // Format as MM/YY
-  //     const formatted =
-  //       value.length > 2 ? `${value.slice(0, 2)}/${value.slice(2)}` : value;
-  //     setCardDetails({ ...cardDetails, expiry: formatted });
-  //   }
-  // };
-
-  // const handleCVCChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value.replace(/\D/g, "").substring(0, 3);
-  //   setCardDetails({ ...cardDetails, cvc: value });
-  // };
-
   const checkBalanceUpdate = async (
     userId: string,
     expectedIncrease: number
@@ -280,79 +258,6 @@ const AddFunds: React.FC = () => {
     console.log("Starting verification...");
     await startBalanceVerification();
     console.log("Verification complete, current step:", step);
-
-    // setTimeout(() => {
-    //   countdownRef.current - 1;
-    // }, 1000);
-
-    // if (paymentMethod === "card") {
-    //   // Validate card details
-    //   if (cardDetails.number.replace(/\s/g, "").length !== 16) {
-    //     setError("Please enter a valid card number");
-    //     return;
-    //   }
-
-    //   if (!cardDetails.name) {
-    //     setError("Please enter the cardholder name");
-    //     return;
-    //   }
-
-    //   if (!/^\d{2}\/\d{2}$/.test(cardDetails.expiry)) {
-    //     setError("Please enter a valid expiry date (MM/YY)");
-    //     return;
-    //   }
-
-    //   if (cardDetails.cvc.length !== 3) {
-    //     setError("Please enter a valid CVC");
-    //     return;
-    //   }
-    // }
-
-    // setIsLoading(true);
-    // setError("");
-
-    // try {
-    //   const interval = setTimeout(() => {
-    //     setCountdownTime((prev) => prev - 1);
-    //   }, 1000);
-
-    //   const res = await getUpdatedUserBalance(user?.id!);
-
-    //   if (res.ok) {
-    //     console.log(res.data);
-    //     clearInterval(interval);
-    //     // setStep()
-    //   }
-
-    //   if (!res.ok) {
-    //     console.log(res);
-    //     return toast.error("Something went wrong");
-    //     clearInterval(interval);
-    //   }
-
-    //   // Simulate API call
-    //   // await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    //   // const amountValue = parseFloat(amount);
-
-    //   // // Update user balance
-    //   // updateBalance(amountValue);
-
-    //   // // Add transaction
-    //   // addTransaction({
-    //   //   amount: amountValue,
-    //   //   type: "deposit",
-    //   //   description: `Added funds`,
-    //   //   status: "completed",
-    //   // });
-
-    //   // // Go to success step
-    //   // setStep(3);
-    // } catch (err) {
-    //   setError("Transaction failed. Please try again.");
-    // } finally {
-    //   setIsLoading(false);
-    // }
   };
 
   const handleGoToDashboard = () => {

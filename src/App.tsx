@@ -12,6 +12,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
 import { useAuthStore } from "./stores/authStore";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyCode from "./pages/VerifyCode";
+import NewPassword from "./pages/NewPassword";
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -30,6 +33,27 @@ function App() {
           path="/register"
           element={
             !isAuthenticated ? <Register /> : <Navigate to="/dashboard" />
+          }
+        />
+
+        <Route
+          path="/recovery/forgot-password"
+          element={
+            !isAuthenticated ? <ForgotPassword /> : <Navigate to="/dashboard" />
+          }
+        />
+
+        <Route
+          path="/recovery/verify-email"
+          element={
+            !isAuthenticated ? <VerifyCode /> : <Navigate to="/dashboard" />
+          }
+        />
+
+        <Route
+          path="/recovery/set-new-password"
+          element={
+            !isAuthenticated ? <NewPassword /> : <Navigate to="/dashboard" />
           }
         />
 
