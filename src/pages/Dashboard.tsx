@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
                 </Link>
 
                 <Link
-                  to="/transfer"
+                  to="#"
                   className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
                   <div className="w-20 h-10 rounded-full bg-accent-100 flex items-center justify-center text-accent-600">

@@ -24,7 +24,7 @@ const AddFunds: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
-  const [countdownTime, setCountdownTime] = useState(60);
+  const [countdownTime, setCountdownTime] = useState(300);
   const [transactionStatus, setTransactionStatus] = useState<
     "pending" | "completed" | "failed"
   >("pending");
@@ -60,10 +60,8 @@ const AddFunds: React.FC = () => {
   const formatTime = (secs: number) => {
     const minutes = Math.floor(secs / 60);
     const seconds = secs % 60;
-    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-      2,
-      "0"
-    )}`;
+
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
   };
 
   // Add this useEffect to handle countdown timeout
@@ -205,7 +203,7 @@ const AddFunds: React.FC = () => {
     setIsLoading(true);
     setError("");
     setTransactionStatus("pending");
-    setCountdownTime(60); // Reset countdown
+    setCountdownTime(300); // Reset countdown
 
     try {
       // Start countdown timer
@@ -769,7 +767,9 @@ const AddFunds: React.FC = () => {
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={() => {
+                    setStep(1);
+                  }}
                   className="btn btn-outline"
                 >
                   Back

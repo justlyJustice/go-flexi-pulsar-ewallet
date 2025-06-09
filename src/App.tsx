@@ -5,16 +5,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import AddFunds from "./pages/AddFunds";
-import Transfer from "./pages/Transfer";
-import Profile from "./pages/Profile";
+// import Transfer from "./pages/Transfer";
+// import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
-import { useAuthStore } from "./stores/authStore";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyCode from "./pages/VerifyCode";
 import NewPassword from "./pages/NewPassword";
+
+import { useAuthStore } from "./stores/authStore";
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -61,8 +62,8 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/add-funds" element={<AddFunds />} />
-            <Route path="/transfer" element={<Transfer />} />
-            <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/transfer" element={<Transfer />} />
+            <Route path="/profile" element={<Profile />} /> */}
           </Route>
         </Route>
 
