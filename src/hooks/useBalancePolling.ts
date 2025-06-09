@@ -26,21 +26,23 @@ export const useBalancePolling = (userId: string | undefined) => {
           const oldBalance = user?.balance || 0;
 
           // Update balance if it changed
-          if (newBalance !== oldBalance) {
-            updateBalance(newBalance);
+          // if (newBalance !== oldBalance) {
+          //   updateBalance(newBalance);
 
-            // Add transaction if balance increased
-            if (newBalance > oldBalance) {
-              const amount = newBalance - oldBalance;
-              addTransaction({
-                amount,
-                type: "deposit",
-                description: "Received - Balance Topup",
-                status: "completed",
-              });
-              toast.success("Top up received");
-            }
+          // Add transaction if balance increased
+          if (newBalance > oldBalance) {
+            updateBalance(newBalance);
+            const amount = newBalance - oldBalance;
+
+            addTransaction({
+              amount,
+              type: "deposit",
+              description: "Received - Balance Topup",
+              status: "completed",
+            });
+            toast.success("Top up received");
           }
+          // }
         }
       } catch (error) {
         console.error("Balance polling error:", error);

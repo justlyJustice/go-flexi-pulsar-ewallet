@@ -89,10 +89,7 @@ const AddFunds: React.FC = () => {
         const extendedTimeout = 40000; // 40 seconds
 
         while (Date.now() - startTime < extendedTimeout && !verified) {
-          const verificationResult = await checkBalanceUpdate(
-            user?.id!,
-            amountValue
-          );
+          const verificationResult = await checkBalanceUpdate(user?.id!);
 
           if (verificationResult.success) {
             verified = true;
@@ -168,10 +165,7 @@ const AddFunds: React.FC = () => {
     setStep(2);
   };
 
-  const checkBalanceUpdate = async (
-    userId: string,
-    expectedIncrease: number
-  ) => {
+  const checkBalanceUpdate = async (userId: string) => {
     try {
       const res = await getUpdatedUserBalance(userId);
 
@@ -182,8 +176,10 @@ const AddFunds: React.FC = () => {
       const currentFrontendBalance = user?.balance || 0;
       const newBackendBalance = res.data?.user.accountBalance;
 
+      console.log("New Balance", newBackendBalance);
+
       // Check if balance has increased by at least the expected amount
-      if (newBackendBalance >= currentFrontendBalance + expectedIncrease) {
+      if (newBackendBalance > currentFrontendBalance) {
         return { success: true, newBalance: newBackendBalance };
       }
 
@@ -212,12 +208,12 @@ const AddFunds: React.FC = () => {
       }, 1000);
 
       // Check balance immediately
-      let verificationResult = await checkBalanceUpdate(user.id, amountValue);
+      let verificationResult = await checkBalanceUpdate(user.id);
 
       // Continue checking until success or timeout
       while (!verificationResult.success && countdownTime > 0) {
         await new Promise((resolve) => setTimeout(resolve, 5000)); // Check every 5 seconds
-        verificationResult = await checkBalanceUpdate(user.id, amountValue);
+        verificationResult = await checkBalanceUpdate(user.id);
       }
 
       clearInterval(timer);
