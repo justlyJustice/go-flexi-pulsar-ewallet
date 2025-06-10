@@ -92,9 +92,9 @@ const Sidebar: React.FC = () => {
             </div>
 
             <nav className="space-y-2">
-              {navItems.map((item) => (
+              {navItems.map((item, i) => (
                 <NavLink
-                  key={item.path}
+                  key={i}
                   to={item.path}
                   onClick={() => {
                     closeMobileMenu();
@@ -141,9 +141,9 @@ const Sidebar: React.FC = () => {
               </div>
 
               <nav className="mt-5 flex-1 px-4 space-y-1">
-                {navItems.map((item) => (
+                {navItems.map((item, i) => (
                   <NavLink
-                    key={item.path}
+                    key={i}
                     to={item.path}
                     onClick={() => item.onClick && item.onClick()}
                     className={() =>

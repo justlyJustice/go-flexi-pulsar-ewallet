@@ -5,7 +5,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { getUpdatedUserBalance } from "../services/add-funds";
 
-const POLLING_INTERVAL = 120000; // 60 seconds
+const POLLING_INTERVAL = 12000; // 60 seconds
 
 export const useBalancePolling = (userId: string | undefined) => {
   const { user, updateBalance } = useAuthStore();
@@ -32,6 +32,7 @@ export const useBalancePolling = (userId: string | undefined) => {
           // Add transaction if balance increased
           if (newBalance > oldBalance) {
             updateBalance(newBalance);
+
             const amount = newBalance - oldBalance;
 
             addTransaction({

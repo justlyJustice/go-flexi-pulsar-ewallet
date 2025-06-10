@@ -212,7 +212,7 @@ const AddFunds: React.FC = () => {
 
       // Continue checking until success or timeout
       while (!verificationResult.success && countdownTime > 0) {
-        await new Promise((resolve) => setTimeout(resolve, 5000)); // Check every 5 seconds
+        await new Promise((resolve) => setTimeout(resolve, 20000)); // Check every 20 seconds
         verificationResult = await checkBalanceUpdate(user.id);
       }
 

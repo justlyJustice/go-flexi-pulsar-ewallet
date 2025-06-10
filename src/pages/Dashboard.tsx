@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  BarChart3,
-  TrendingUp,
+  // BarChart3,
+  // TrendingUp,
   CreditCard,
   ArrowRightCircle,
   Wallet,
@@ -10,23 +10,21 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
-import { useTransactionStore } from "../stores/transactionStore";
+// import { useTransactionStore } from "../stores/transactionStore";
 import BalanceCard from "../components/BalanceCard";
 import TransactionList from "../components/TransactionList";
 import { formatCurrency } from "../utils/formatters";
 
-import { useBalancePolling } from "../hooks/useBalancePolling";
-import MonthlyIncome from "../components/MonthlyIncome";
+// import { useBalancePolling } from "../hooks/useBalancePolling";
+// import MonthlyIncome from "../components/MonthlyIncome";
 import { WelcomeModal } from "../components/WelcomeModal";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
-  const getTransactions = useTransactionStore((state) => state.getTransactions);
+  const [showBalance, setShowBalance] = useState(false);
+  // const getTransactions = useTransactionStore((state) => state.getTransactions);
 
-  const transactions = getTransactions();
-
-  // Start balance polling when user is logged in
-  useBalancePolling(user?.id);
+  // const transactions = getTransactions();
 
   // Animation variants
   const containerVariants = {
@@ -50,6 +48,15 @@ const Dashboard: React.FC = () => {
     },
   };
 
+  const toggleBalanceVisibility = () => {
+    setShowBalance(!showBalance);
+  };
+
+  // Format balance with asterisks if hidden
+  const displayBalance = showBalance
+    ? formatCurrency(user?.balance || 0)
+    : "******"; // Or use •••••• for dots
+
   return (
     <motion.div
       initial="hidden"
@@ -70,7 +77,11 @@ const Dashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div variants={itemVariants} className="md:col-span-2">
-          <BalanceCard />
+          <BalanceCard
+            displayBalance={displayBalance}
+            showBalance={showBalance}
+            toggleBalanceVisibility={toggleBalanceVisibility}
+          />
         </motion.div>
 
         <motion.div variants={itemVariants} className="md:col-span-1">
@@ -130,7 +141,7 @@ const Dashboard: React.FC = () => {
                   </p>
 
                   <p className="text-2xl font-bold text-gray-900">
-                    {formatCurrency(user?.balance || 0)}
+                    {displayBalance}
                   </p>
                 </div>
 
@@ -147,7 +158,7 @@ const Dashboard: React.FC = () => {
         variants={itemVariants}
         className="grid grid-cols-1 md:grid-cols-3 gap-6"
       >
-        <div className="md:col-span-2">
+        <div className="md:col-span-12">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
               Recent Transactions
@@ -164,7 +175,7 @@ const Dashboard: React.FC = () => {
           <TransactionList limit={5} />
         </div>
 
-        <div className="md:col-span-1">
+        {/* <div className="md:col-span-1">
           <div className="bg-white rounded-card shadow-card p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -177,8 +188,8 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-              {/* <div>
-                <div className="flex items-center justify-between mb-1">
+              <div>
+                <div className="flex items-center justify-   mb-1">
                   <span className="text-sm text-gray-500">Monthly Income</span>
 
                   <span className="text-sm font-medium text-secondary-600">
@@ -202,7 +213,7 @@ const Dashboard: React.FC = () => {
                     style={{ width: "0%" }}
                   ></div>
                 </div>
-              </div> */}
+              </div>
 
               <MonthlyIncome transactions={transactions} />
 
@@ -250,7 +261,7 @@ const Dashboard: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </motion.div>
     </motion.div>
   );

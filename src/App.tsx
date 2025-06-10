@@ -15,10 +15,13 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyCode from "./pages/VerifyCode";
 import NewPassword from "./pages/NewPassword";
 
+import { useBalancePolling } from "./hooks/useBalancePolling";
 import { useAuthStore } from "./stores/authStore";
 
 function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+
+  useBalancePolling(user?.id);
 
   return (
     <>
