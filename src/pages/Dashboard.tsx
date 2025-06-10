@@ -21,7 +21,7 @@ import { WelcomeModal } from "../components/WelcomeModal";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
-  const [showBalance, setShowBalance] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
   // const getTransactions = useTransactionStore((state) => state.getTransactions);
 
   // const transactions = getTransactions();
