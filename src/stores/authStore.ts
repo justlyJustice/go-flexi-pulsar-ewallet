@@ -14,6 +14,7 @@ interface User {
   phoneNumber: string;
   joinDate: string;
   balance: number;
+  transactions: [];
 }
 
 interface AuthState {
@@ -34,7 +35,8 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       token: null,
       isAuthenticated: false,
-      login: (user, token) => set({ user, token, isAuthenticated: true }),
+      login: (user, token) =>
+        set({ user, token, isAuthenticated: !!user && !!token }),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
       updateUser: (userData) =>
         set((state) => ({

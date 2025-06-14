@@ -114,7 +114,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("security")}
+                // onClick={() => setActiveTab("security")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "security"
                     ? "bg-primary-50 text-primary-700"
@@ -126,7 +126,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("notifications")}
+                // onClick={() => setActiveTab("notifications")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "notifications"
                     ? "bg-primary-50 text-primary-700"
@@ -138,7 +138,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("payment")}
+                // onClick={() => setActiveTab("payment")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "payment"
                     ? "bg-primary-50 text-primary-700"
@@ -175,14 +175,14 @@ const Profile: React.FC = () => {
                   <h2 className="text-lg font-semibold text-gray-900">
                     Personal Information
                   </h2>
-                  {!isEditing && (
+                  {/* {!isEditing && (
                     <button
                       onClick={() => setIsEditing(true)}
                       className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                     >
                       Edit Information
                     </button>
-                  )}
+                  )} */}
                 </div>
 
                 {isEditing ? (
@@ -452,6 +452,7 @@ const Profile: React.FC = () => {
                               className="h-4 w-4 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
+
                           <div className="ml-3 text-sm">
                             <label
                               htmlFor="transaction"

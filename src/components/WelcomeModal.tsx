@@ -23,7 +23,8 @@ export const WelcomeModal = () => {
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
     >
       <div className="fixed inset-0 bg-black/90" aria-hidden="true" />
-      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg">
+
+      <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg z-50">
         <DialogTitle className="text-2xl font-bold text-green-600 mb-3">
           Welcome, {user?.fullName}! 👋
         </DialogTitle>

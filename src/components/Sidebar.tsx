@@ -43,7 +43,7 @@ const Sidebar: React.FC = () => {
       isActive: false,
     },
     {
-      path: "#",
+      path: "/profile",
       icon: <User size={20} />,
       label: "Profile",
       isActive: location.pathname === "/profile",

@@ -12,8 +12,15 @@ export const loginUser = (data: { email: string; password: string }) =>
   client.post<{
     success: boolean;
     data: { [key: string]: any };
-    user: { [key: string]: any };
+    message: string;
   }>("/auth/login", data);
+
+export const verifyOTP = (data: { email: string; emailOTP: string }) =>
+  client.post<{
+    success: boolean;
+    data: { [key: string]: any };
+    user: { [key: string]: any };
+  }>("/auth/verify-login-otp", data);
 
 export const registerUser = (data: Data) =>
   client.post<{

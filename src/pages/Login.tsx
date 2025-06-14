@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Wallet, Mail, Lock, ArrowRight } from "lucide-react";
+import { toast } from "react-hot-toast";
 
-import { useAuthStore } from "../stores/authStore";
 import { loginUser } from "../services/auth";
 import useSubmit from "../hooks/useSubmit";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+
   const { submit, isError, isSubmitting, message } = useSubmit(loginUser, {
     resetDelay: 10000,
   });
@@ -18,8 +18,6 @@ const Login: React.FC = () => {
     email: "",
     password: "",
   });
-  // const [error, setError] = useState("");
-  // const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -43,41 +41,9 @@ const Login: React.FC = () => {
     if (!res) return;
 
     if (res.ok) {
-      const data = res.data;
-      const user = data?.user;
-
-      login(
-        {
-          balance: user.accountBalance,
-          bankInformation: {
-            accountName: user.accountName,
-            accountNumber: user.accountNumber,
-            bankName: user.bankName,
-          },
-          currency: user.currency,
-          email: user.email,
-          fullName: user.fullName,
-          id: user._id,
-          joinDate: user.createdAt,
-          phoneNumber: user.phoneNumber,
-        },
-        res.data?.token!
-      );
+      toast.success(res.data?.data.message);
+      navigate("/auth/verify", { state: { email } });
     }
-
-    navigate("/dashboard");
-
-    // if (!res.ok) {
-    //   // setError(res.data.message);
-    // }
-
-    // try {
-
-    // } catch (err: any) {
-    //   setError(err.message || "Login failed. Please try again.");
-    // } finally {
-    //   // setIsLoading(false);
-    // }
   };
 
   const togglePasswordVisibility = () => {

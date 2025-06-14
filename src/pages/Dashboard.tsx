@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
               className="text-sm text-primary-600 hover:text-primary-700 flex items-center"
             >
               View all
-              <ArrowRightCircle className="ml-1 h-4 w-4" />
+              <ArrowRightCircle className="ml-1 h-3 w-3" />
             </Link>
           </div>
 
