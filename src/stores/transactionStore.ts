@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { getTransactions } from "./authStore";
 
 type TransactionType = "deposit" | "transfer-in" | "transfer-out";
 
@@ -27,34 +28,7 @@ interface TransactionState {
 export const useTransactionStore = create<TransactionState>()(
   persist(
     (set, get) => ({
-      transactions: [
-        // {
-        //   id: "1",
-        //   amount: 500,
-        //   type: "deposit",
-        //   description: "Initial deposit",
-        //   date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-        //   status: "completed",
-        // },
-        // {
-        //   id: "2",
-        //   amount: 50,
-        //   type: "transfer-out",
-        //   description: "Payment to John Doe",
-        //   recipient: "john@example.com",
-        //   date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-        //   status: "completed",
-        // },
-        // {
-        //   id: "3",
-        //   amount: 75,
-        //   type: "transfer-in",
-        //   description: "Payment from Jane Smith",
-        //   sender: "jane@example.com",
-        //   date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-        //   status: "completed",
-        // },
-      ],
+      transactions: getTransactions(),
       addTransaction: (transaction) => {
         const newTransaction = {
           ...transaction,
