@@ -9,8 +9,6 @@ const apiClient = create({
       : import.meta.env.VITE_PROD_API_URL,
 });
 
-// const authStore = useAuthStore();
-
 apiClient.addAsyncRequestTransform(async (req) => {
   const token = getToken();
 
