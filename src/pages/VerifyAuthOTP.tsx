@@ -89,7 +89,9 @@ const VerifyAuthOTP: React.FC = () => {
           Welcome to Rulsar
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Verify your account to continue to dashboard
+          A verification code has been sent to{" "}
+          <span className="font-bold">{email}. </span>Enter the code to continue
+          to dashboard
         </p>
       </div>
 
