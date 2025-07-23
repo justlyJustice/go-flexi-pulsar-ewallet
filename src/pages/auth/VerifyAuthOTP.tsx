@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Wallet, Lock, ArrowRight } from "lucide-react";
 
-import { useAuthStore } from "../stores/authStore";
-import { verifyOTP } from "../services/auth";
-import useSubmit from "../hooks/useSubmit";
+import { useAuthStore } from "../../stores/authStore";
+import { verifyOTP } from "../../services/auth";
+import useSubmit from "../../hooks/useSubmit";
 import toast from "react-hot-toast";
 
 const VerifyAuthOTP: React.FC = () => {

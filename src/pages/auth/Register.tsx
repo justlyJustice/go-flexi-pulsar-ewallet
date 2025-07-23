@@ -13,7 +13,7 @@ import {
   VenusAndMars,
 } from "lucide-react";
 
-import { registerUser } from "../services/auth";
+import { registerUser } from "../../services/auth";
 import toast from "react-hot-toast";
 
 const Register: React.FC = () => {

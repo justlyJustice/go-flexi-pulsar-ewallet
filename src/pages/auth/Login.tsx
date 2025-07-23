@@ -3,8 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff, Wallet, Mail, Lock, ArrowRight } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-import { loginUser } from "../services/auth";
-import useSubmit from "../hooks/useSubmit";
+import { loginUser } from "../../services/auth";
+import useSubmit from "../../hooks/useSubmit";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

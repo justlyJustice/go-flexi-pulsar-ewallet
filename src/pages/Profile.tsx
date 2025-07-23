@@ -114,7 +114,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                // onClick={() => setActiveTab("security")}
+                onClick={() => setActiveTab("security")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "security"
                     ? "bg-primary-50 text-primary-700"
@@ -344,33 +344,36 @@ const Profile: React.FC = () => {
                   </h2>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                <div className="space-y-4">
+                  <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="p-2 bg-primary-100 rounded-full">
-                          <Lock className="h-5 w-5 text-primary-600" />
+                          <Lock className="h-3 w-3 text-primary-600" />
                         </div>
+
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
                             Password
                           </p>
                           <p className="text-xs text-gray-500">
-                            Last changed 3 months ago
+                            Change your password
+                            {/* Last changed 3 months ago */}
                           </p>
                         </div>
                       </div>
+
                       <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
                         Change
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="p-1 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="p-2 bg-primary-100 rounded-full">
-                          <Shield className="h-5 w-5 text-primary-600" />
+                          <Shield className="h-3 w-3 text-primary-600" />
                         </div>
                         <div className="ml-3">
                           <p className="text-sm font-medium text-gray-900">
@@ -381,22 +384,23 @@ const Profile: React.FC = () => {
                           </p>
                         </div>
                       </div>
-                      <button className="relative inline-flex items-center h-6 rounded-full w-11 transition-colors ease-in-out duration-200 bg-gray-200">
+
+                      <button className="relative inline-flex items-center h-3 rounded-full w-3 transition-colors ease-in-out duration-200 bg-gray-200">
                         <span className="sr-only">
                           Enable two-factor authentication
                         </span>
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1"></span>
+                        <span className="inline-block h-1 w-1 transform rounded-full bg-white translate-x-1"></span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                  {/* <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <div className="p-2 bg-primary-100 rounded-full">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5 text-primary-600"
+                            className="h-3 w-3 text-primary-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -422,7 +426,7 @@ const Profile: React.FC = () => {
                         View
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             )}
@@ -435,7 +439,7 @@ const Profile: React.FC = () => {
                   </h2>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-900 mb-3">
                       Email Notifications
@@ -449,7 +453,7 @@ const Profile: React.FC = () => {
                               name="transaction"
                               type="checkbox"
                               defaultChecked
-                              className="h-4 w-4 text-primary-600 border-gray-300 rounded"
+                              className="h-2 w-2 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
 
@@ -475,7 +479,7 @@ const Profile: React.FC = () => {
                               name="security"
                               type="checkbox"
                               defaultChecked
-                              className="h-4 w-4 text-primary-600 border-gray-300 rounded"
+                              className="h-2 w-2 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
                           <div className="ml-3 text-sm">
@@ -485,6 +489,7 @@ const Profile: React.FC = () => {
                             >
                               Security Alerts
                             </label>
+
                             <p className="text-gray-500">
                               Receive security alert emails
                             </p>
@@ -499,7 +504,7 @@ const Profile: React.FC = () => {
                               id="marketing"
                               name="marketing"
                               type="checkbox"
-                              className="h-4 w-4 text-primary-600 border-gray-300 rounded"
+                              className="h-2 w-2 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
                           <div className="ml-3 text-sm">
@@ -531,7 +536,7 @@ const Profile: React.FC = () => {
                               name="push-transactions"
                               type="checkbox"
                               defaultChecked
-                              className="h-4 w-4 text-primary-600 border-gray-300 rounded"
+                              className="h-2 w-2 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
                           <div className="ml-3 text-sm">
@@ -556,7 +561,7 @@ const Profile: React.FC = () => {
                               name="push-security"
                               type="checkbox"
                               defaultChecked
-                              className="h-4 w-4 text-primary-600 border-gray-300 rounded"
+                              className="h-2 w-2 text-primary-600 border-gray-300 rounded"
                             />
                           </div>
                           <div className="ml-3 text-sm">
@@ -689,7 +694,7 @@ const Profile: React.FC = () => {
                       <button className="flex items-center text-primary-600 hover:text-primary-700">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 mr-2"
+                          className="h-3 w-3 mr-2"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >

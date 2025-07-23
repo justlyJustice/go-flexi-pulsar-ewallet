@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Lock, Eye, EyeOff } from "lucide-react";
-import useSubmit from "../hooks/useSubmit";
-import { resetPassword } from "../services/auth";
+import useSubmit from "../../hooks/useSubmit";
+import { resetPassword } from "../../services/auth";
 
 const NewPassword: React.FC = () => {
   const location = useLocation();

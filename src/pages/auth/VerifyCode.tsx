@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import useSubmit from "../hooks/useSubmit";
-import { verifyResetCode } from "../services/auth";
+import useSubmit from "../../hooks/useSubmit";
+import { verifyResetCode } from "../../services/auth";
 import toast from "react-hot-toast";
 
 const VerifyCode: React.FC = () => {
