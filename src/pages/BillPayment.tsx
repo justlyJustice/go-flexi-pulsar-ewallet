@@ -232,13 +232,8 @@ const BillPayment: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const {
-      amount,
-      phone,
-      service_id: _,
-      service_name,
-      variation_code,
-    } = billPaymentData;
+    const { amount, phone, service_id, service_name, variation_code } =
+      billPaymentData;
 
     if (user && user.balance < Number(amount))
       return toast.error("Insufficient balance");
@@ -270,18 +265,22 @@ const BillPayment: React.FC = () => {
           !variation_code
         ) {
           try {
-            // const res = await purchaseData({
-            //   amount,
-            //   phone,
-            //   service_id,
-            //   variation_code,
-            //   service_name,
-            // });
+            await purchaseData({
+              amount,
+              phone,
+              service_id,
+              variation_code,
+              service_name,
+            });
           } catch (error) {
             console.log(error);
             setLoading(false);
           }
         }
+        break;
+      case "cable-tv":
+        break;
+      case "electricity":
         break;
       default:
         break;
