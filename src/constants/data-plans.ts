@@ -1,9 +1,63 @@
-export const MTN = {
+interface DataPlan {
+  planTypes: { value: string; label: string }[];
+}
+
+interface MtnDataPlan extends DataPlan {
+  dataPlans: {
+    variation_code: string;
+    name: string;
+    variation_amount: string;
+    fixedPrice: string;
+    planType: "daily" | "weekly" | "monthly" | "xtra-data";
+  }[];
+}
+
+interface AirtelDataPlan extends DataPlan {
+  dataPlans: {
+    variation_code: string;
+    name: string;
+    variation_amount: string;
+    fixedPrice: string;
+    planType: "daily" | "weekly" | "monthly" | "mifi-plan" | "yearly";
+  }[];
+}
+
+interface GloDataPlan extends DataPlan {
+  dataPlans: {
+    variation_code: string;
+    name: string;
+    variation_amount: string;
+    fixedPrice: string;
+    planType:
+      | "daily"
+      | "weekly"
+      | "monthly"
+      | "weekend"
+      | "special"
+      | "sunday"
+      | "mega"
+      | "tv"
+      | "social"
+      | "campus-booster"
+      | "sme";
+  }[];
+}
+interface NineMobileDataPlan extends DataPlan {
+  dataPlans: {
+    variation_code: string;
+    name: string;
+    variation_amount: string;
+    fixedPrice: string;
+    planType: "daily" | "monthly" | "social";
+  }[];
+}
+
+export const MTN: MtnDataPlan = {
   planTypes: [
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
-    { value: "xtra-data", label: "Xtradata" },
+    { value: "daily", label: "Daily Plans" },
+    { value: "weekly", label: "Weekly Plans" },
+    { value: "monthly", label: "Monthly Plans" },
+    { value: "xtra-data", label: "Xtradata Plans" },
   ],
   dataPlans: [
     {
@@ -43,35 +97,35 @@ export const MTN = {
     },
     {
       variation_code: "mtn-data-6500",
-      name: "16.5GB Monthly Plan",
+      name: "16.5GB Monthly Plans",
       variation_amount: "6500.00",
       fixedPrice: "Yes",
       planType: "monthly",
     },
     {
       variation_code: "mtn-20gb-7500",
-      name: "20GB Monthly Plan",
+      name: "20GB Monthly Plans",
       variation_amount: "7500.00",
       fixedPrice: "Yes",
       planType: "monthly",
     },
     {
       variation_code: "mtn-25gb-9000",
-      name: "25GB Monthly Plan",
+      name: "25GB Monthly Plans",
       variation_amount: "9000.00",
       fixedPrice: "Yes",
       planType: "monthly",
     },
     {
       variation_code: "mtn-32gb-11000",
-      name: "36GB Monthly Plan",
+      name: "36GB Monthly Plans",
       variation_amount: "11000.00",
       fixedPrice: "Yes",
       planType: "monthly",
     },
     {
       variation_code: "mtn-75gb-20000",
-      name: "75GB Monthly Plan",
+      name: "75GB Monthly Plans",
       variation_amount: "18000.00",
       fixedPrice: "Yes",
       planType: "monthly",
@@ -113,7 +167,7 @@ export const MTN = {
     },
     {
       variation_code: "mtn-1gb-600",
-      name: "1GB+5mins Weekly Plan",
+      name: "1GB+5mins Weekly Plans",
       variation_amount: "800.00",
       fixedPrice: "Yes",
       planType: "weekly",
@@ -144,7 +198,7 @@ export const MTN = {
       name: "12.5GB Monthly Plan - N5,500",
       variation_amount: "5500.00",
       fixedPrice: "Yes",
-      planType: "monthl",
+      planType: "monthly",
     },
     {
       variation_code: "mtn-12.5gb-5500",
@@ -162,14 +216,14 @@ export const MTN = {
     },
     {
       variation_code: "mtn-150gb-40000",
-      name: "150GB 2-Month Plan",
+      name: "150GB 2-Month Plans",
       variation_amount: "40000.00",
       fixedPrice: "Yes",
       planType: "monthly",
     },
     {
       variation_code: "mtn-200gb-50000",
-      name: "200GB 2-Month Plan",
+      name: "200GB 2-Month Plans",
       variation_amount: "50000.00",
       fixedPrice: "Yes",
       planType: "monthly",
@@ -204,7 +258,7 @@ export const MTN = {
     },
     {
       variation_code: "mtn-1500mb-ex-1200",
-      name: "2.7GB Xtra Bundle Monthly Plan",
+      name: "2.7GB Xtra Bundle Monthly Plans",
       variation_amount: "3000.00",
       fixedPrice: "Yes",
       planType: "monthly",
@@ -246,7 +300,7 @@ export const MTN = {
     },
     {
       variation_code: "mtn-3.5gb-2500",
-      name: "MTN N2500 3.5GB +5mins Monthly Plan",
+      name: "MTN N2500 3.5GB +5mins Monthly Plans",
       variation_amount: "2500.00",
       fixedPrice: "Yes",
       planType: "weekly",
@@ -296,29 +350,741 @@ export const MTN = {
   ],
 };
 
-export const AIRTEL = {
+export const AIRTEL: AirtelDataPlan = {
   planTypes: [
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
-    { value: "xtra-data", label: "Xtradata" },
+    { value: "daily", label: "Daily Plans" },
+    { value: "weekly", label: "Weekly Plans" },
+    { value: "monthly", label: "Monthly Plans" },
+    { value: "mifi-plan", label: "Mifi Plans" },
+  ],
+  dataPlans: [
+    {
+      variation_code: "airt-50",
+      name: "250MB Night Plan (12 - 5 AM) - 50 Naira  - 1Day",
+      variation_amount: "50.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-100",
+      name: "200MB Social Plan (2 Days) - 100 Naira - 1Day",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-200",
+      name: "200MB Daily Plan (2 Days) - 200 Naira - 200MB - 1Day",
+      variation_amount: "200.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-daily-100",
+      name: "Airtel Data - 100 Naira - 100MB - 1 Day",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-500",
+      name: "500MB Weekly Plan (7 Days) - 500 Naira",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-1000-7",
+      name: "1.5GB Weekly Plan + Youtube & Social Plans (7 Days) - 1,000 Naira",
+      variation_amount: "1000.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-1500-7",
+      name: "3GB Weekly Plan + Youtube & Social Platform (7 Days) - 1,500 Naira",
+      variation_amount: "1500.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-2000",
+      name: "3GB Monthly Plan + Youtube & Social Plan (30 Days)- 2,000 Naira",
+      variation_amount: "2000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-3000",
+      name: "6GB Monthly Plan + Youtube & Social Plan (30 Days) - 3,000 Naira",
+      variation_amount: "3000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-4000",
+      name: "10GB Monthly Plan + Youtube & Social Plan (30 Days) - 4,000 Naira",
+      variation_amount: "4000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-5000",
+      name: "13GB Monthly Plan + Youtube & Social Plan (30 Days) - 5,000 Naira",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-1500-2",
+      name: "5GB Binge Plan + Youtube & Social Platforms Data (2 Day) - 1,500 Naira",
+      variation_amount: "1500.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-10000",
+      name: "35GB Monthly Plan + Youtube & Social Plan (30 Days) - 10,000 Naira",
+      variation_amount: "10000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-15000",
+      name: "60GB Monthly Plan + Youtube & Social Plan (30 Days) - 15,000 Naira",
+      variation_amount: "15000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-40000",
+      name: "200GB Data (30 Days) - 40,000 Naira",
+      variation_amount: "40000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-60000",
+      name: "350GB Monthly Plan + Youtube & Social Plan (120 Days) - 60,000 Naira",
+      variation_amount: "60000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-100000",
+      name: "400GB Data (365 Days) - 100,000 Naira",
+      variation_amount: "100000.00",
+      fixedPrice: "Yes",
+      planType: "yearly",
+    },
+    {
+      variation_code: "airt-20000",
+      name: "100GB Monthly Plan + Youtube & Social Plan (30 Days) - 20,000 Naira",
+      variation_amount: "20000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-2500",
+      name: "4GB Monthly Plan + Youtube & Social Plan (30 Days) - 2,500 Naira",
+      variation_amount: "2500.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-8000",
+      name: "25GB Monthly Plan + Youtube & Social Plan (30 Days) - 8,000 Naira",
+      variation_amount: "8000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-30000",
+      name: "150GB Monthly Plan (30 Days) - 30,000 Naira",
+      variation_amount: "30000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-50000",
+      name: "200GB Monthly Plan (90 Days) - 50,000 Naira",
+      variation_amount: "50000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-600",
+      name: "1.5GB Binge Plan + Youtube & Social Plan Data (2 Days) - 600 Naira",
+      variation_amount: "600.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-1000-2",
+      name: "3GB Binge Plan + Youtube & Social Plans Data (2 Days)  - 1000 Naira",
+      variation_amount: "1000.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-3000-7",
+      name: "8.5GB Weekly Plan + Youtube & Social Platform (7 Days) - 3000 Naira",
+      variation_amount: "3000.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-5000-7",
+      name: "18GB Weekly Plan + Youtube & Social Platform (7 Days) - 5000 Naira",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-binge-500-1",
+      name: "500 Naira Binge Plan (1 Day) - 500 Naira",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-800-7",
+      name: "1GB Weekly Plan (7 Days) - 800 Naira",
+      variation_amount: "800.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-6000-30",
+      name: "18GB Monthly Plan + Youtube & Social Plan (30 Days) - 6000 Naira",
+      variation_amount: "6000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-75-1",
+      name: "75MB Daily Plan (1 Day) - 75 Naira",
+      variation_amount: "75.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-300-1",
+      name: "300MB Daily Plan (1 Day) - 300 Naira",
+      variation_amount: "300.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-social-300-3",
+      name: "1GB Social Plan Plan (3 Days) - 300 Naira",
+      variation_amount: "300.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-750-2",
+      name: "2GB Binge Plan + Youtube & Social Plan Data (2 Days) - 750 Naira",
+      variation_amount: "750.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "airt-1500-30",
+      name: "2GB Monthly Plan + Youtube & Social Plan (30 Days) - 1,500 Naira",
+      variation_amount: "1500.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "airt-2500-7",
+      name: "6GB Weekly Plan + Youtube & Social Platform (7 Days) - 2,500 Naira",
+      variation_amount: "2500.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "airt-mifi-5000-30",
+      name: "13GB MIFI 5 Data - MiFi Only (30 Days) - 5,000 Naira",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-10000-30",
+      name: "35GB MIFI 10 Data - MiFi Only (30 Days) - 10,000 Naira",
+      variation_amount: "10000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-15000-30",
+      name: "60GB MIFI 15 Data - MiFi Only (30 Days) - 15,000 Naira",
+      variation_amount: "15000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-20000-30",
+      name: "100GB Unlimited Uiltra 20 - Router Only (30 Days) - 20,000 Naira",
+      variation_amount: "20000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-30000-30",
+      name: "Unlimited 20MBPS Data - Router Only (30 Days) - 30,000 Naira",
+      variation_amount: "30000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-50000-30",
+      name: "Unlimited 60MBPS Data - Router Only (30 Days) - 50,000 Naira",
+      variation_amount: "50000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-80000-90",
+      name: "Unlimited 60MBPS Data - Router Only (90 Days) - 80,000 Naira",
+      variation_amount: "80000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-135000-90",
+      name: "Unlimited 60MBPS Data - Router Only (90 Days) - 135,000 Naira",
+      variation_amount: "135000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-mifi-150000-120",
+      name: "Unlimited 20MBPS Data - Router Only (120 Days) - 150,000 Naira",
+      variation_amount: "150000.00",
+      fixedPrice: "Yes",
+      planType: "mifi-plan",
+    },
+    {
+      variation_code: "airt-social-500-7",
+      name: "1.5GB Social Plan - 500 Naira",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
   ],
 };
 
-export const GLO = {
+export const GLO: GloDataPlan = {
   planTypes: [
-    { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
-    { value: "monthly", label: "Monthly" },
-    { value: "xtra-data", label: "Xtradata" },
+    { value: "sme", label: "SME Plans" },
+    { value: "daily", label: "Daily Plans" },
+    { value: "weekly", label: "Weekly Plans" },
+    { value: "weekend", label: "Weekend Plans" },
+    { value: "monthly", label: "Monthly Plans" },
+    { value: "special", label: "Special Plans" },
+    { value: "sunday", label: "Sunday Plans" },
+    { value: "mega", label: "Mega Plans" },
+    { value: "tv", label: "TV Plans" },
+    { value: "social", label: "Social Plans" },
+    { value: "campus-booster", label: "Social Plans" },
+  ],
+  dataPlans: [
+    {
+      variation_code: "glo-dg-70",
+      name: "Glo Data (SME) N90 -  200MB - 14 days",
+      variation_amount: "90.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-320",
+      name: "Glo Data (SME) N450 - 1GB 30 days",
+      variation_amount: "450.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-960",
+      name: "Glo Data (SME) N1,350 - 3GB 30 days",
+      variation_amount: "1350.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-3100",
+      name: "Glo Data (SME) N4500 - 10GB - 30 Days",
+      variation_amount: "4500.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-640",
+      name: "Glo Data (SME) N900 - 2GB 30 days",
+      variation_amount: "900.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-160-14",
+      name: "Glo Data (SME) N225 - 500MB 14 days",
+      variation_amount: "225.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-dg-1600",
+      name: "Glo Data (SME) N2250 - 5GB 30 days",
+      variation_amount: "2250.00",
+      fixedPrice: "Yes",
+      planType: "sme",
+    },
+    {
+      variation_code: "glo-daily-50",
+      name: "40MB - N50 Oneoff",
+      variation_amount: "50.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "glo-daily-100",
+      name: "83MB - N100 Oneoff",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "glo-2days-200",
+      name: "260MB - N200 Oneoff",
+      variation_amount: "200.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "glo-2weeks-500",
+      name: "1.5GB - N500 Oneoff",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "weekly",
+    },
+    {
+      variation_code: "glo-monthly-1000",
+      name: "2.6GB - N1000 Oneoff",
+      variation_amount: "1000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-1500",
+      name: "5GB - N1500 Oneoff",
+      variation_amount: "1500.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-2000",
+      name: "6.25GB - N2000 Oneoff",
+      variation_amount: "2000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-2500",
+      name: "7.5GB - N2500 Oneoff",
+      variation_amount: "2500.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-3000",
+      name: "11GB - N3000 Oneoff",
+      variation_amount: "3000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-4000",
+      name: "14GB - N4000 Oneoff",
+      variation_amount: "4000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-5000",
+      name: "18GB - N5000 Oneoff",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-8000",
+      name: "29GB - N8000 Oneoff",
+      variation_amount: "8000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-monthly-10000",
+      name: "40GB - N10000 Oneoff",
+      variation_amount: "10000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "glo-sunday-200",
+      name: "1.75GB - Sunday N200",
+      variation_amount: "200.00",
+      fixedPrice: "Yes",
+      planType: "sunday",
+    },
+    {
+      variation_code: "glo-special-500",
+      name: "2GB - Special N500",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "special",
+    },
+    {
+      variation_code: "glo-special-1500",
+      name: "6GB - Special N1500",
+      variation_amount: "1500.00",
+      fixedPrice: "Yes",
+      planType: "special",
+    },
+    {
+      variation_code: "glo-weekend-500",
+      name: "2.2GB - Weekend N500",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "weekend",
+    },
+    {
+      variation_code: "glo-mega-30000",
+      name: "165GB - Mega N30000 Oneoff",
+      variation_amount: "30000.00",
+      fixedPrice: "Yes",
+      planType: "mega",
+    },
+    {
+      variation_code: "glo-mega-36000",
+      name: "220GB - Mega N36000 Oneoff",
+      variation_amount: "36000.00",
+      fixedPrice: "Yes",
+      planType: "mega",
+    },
+    {
+      variation_code: "glo-mega-50000",
+      name: "320GB - Mega N50000 Oneoff",
+      variation_amount: "50000.00",
+      fixedPrice: "Yes",
+      planType: "mega",
+    },
+    {
+      variation_code: "glo-mega-60000",
+      name: "380GB - Mega N60000 Oneoff",
+      variation_amount: "60000.00",
+      fixedPrice: "Yes",
+      planType: "mega",
+    },
+    {
+      variation_code: "glo-mega-75000",
+      name: "475GB - Mega N75000 Oneoff",
+      variation_amount: "75000.00",
+      fixedPrice: "Yes",
+      planType: "mega",
+    },
+    {
+      variation_code: "glo-tv-150",
+      name: "Glo TV VOD 500 MB 3days Oneoff",
+      variation_amount: "150.00",
+      fixedPrice: "Yes",
+      planType: "tv",
+    },
+    {
+      variation_code: "glo-tv-450",
+      name: "Glo TV VOD 2GB 7days Oneoff",
+      variation_amount: "450.00",
+      fixedPrice: "Yes",
+      planType: "tv",
+    },
+    {
+      variation_code: "glo-tv-1400",
+      name: "Glo TV VOD 6GB 30days Oneoff",
+      variation_amount: "1400.00",
+      fixedPrice: "Yes",
+      planType: "tv",
+    },
+    {
+      variation_code: "glo-tv-900",
+      name: "Glo TV Lite 2GB Oneoff",
+      variation_amount: "900.00",
+      fixedPrice: "Yes",
+      planType: "tv",
+    },
+    {
+      variation_code: "glo-tv-3200",
+      name: "Glo TV Max 6 GB Oneoff",
+      variation_amount: "3200.00",
+      fixedPrice: "Yes",
+      planType: "tv",
+    },
+    {
+      variation_code: "glo-social-oneoff-100",
+      name: "300MB - GloMyG N100 OneOff",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "social",
+    },
+    {
+      variation_code: "glo-social-oneoff-300",
+      name: "Glo MyG N300 1 GB OneOff (Whatsapp, Instagram, Snapchat, Boomplay, Audiomac, GloTV, Tiktok)",
+      variation_amount: "300.00",
+      fixedPrice: "Yes",
+      planType: "social",
+    },
+    {
+      variation_code: "glo-social-oneoff-500",
+      name: "Glo MyG N500 1.5 GB OneOff (Whatsapp, Instagram, Snapchat, Boomplay, Audiomac, GloTV, Tiktok)",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "social",
+    },
+    {
+      variation_code: "glo-social-oneoff-1000",
+      name: "Glo MyG N1000 3.5 GB OneOff (Whatsapp, Instagram, Snapchat, Boomplay, Audiomac, GloTV, Tiktok)",
+      variation_amount: "1000.00",
+      fixedPrice: "Yes",
+      planType: "social",
+    },
+    {
+      variation_code: "glo-campus-booster-100",
+      name: "235MB - Camp-Boost N100 Oneoff",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
+    {
+      variation_code: "glo-campus-booster-200",
+      name: "480MB - Camp-Boost N200 Oneoff",
+      variation_amount: "200.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
+    {
+      variation_code: "glo-campus-booster-500",
+      name: "2GB - Camp-Boost N500 Oneoff",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
+    {
+      variation_code: "glo-campus-booster-1000",
+      name: "4.2GB - Camp-Boost N1000 Oneoff",
+      variation_amount: "1000.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
+    {
+      variation_code: "glo-campus-booster-2000",
+      name: "10.6GB - Camp-Boost 2000 Oneoff",
+      variation_amount: "2000.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
+    {
+      variation_code: "glo-campus-booster-5000",
+      name: "32GB - Camp-Boost N5000 Oneoff",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "campus-booster",
+    },
   ],
 };
 
-export const NINE_MOBILE = {
+export const NINE_MOBILE: NineMobileDataPlan = {
   planTypes: [
     { value: "daily", label: "Daily" },
-    { value: "weekly", label: "Weekly" },
     { value: "monthly", label: "Monthly" },
-    { value: "xtra-data", label: "Xtradata" },
+    { value: "social", label: "Social" },
+  ],
+  dataPlans: [
+    {
+      variation_code: "eti-100",
+      name: "9mobile 83MB - 100 Naira - 1 day",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-150",
+      name: "9mobile 150MB  + 100MB Night Data - 150 Naira - 1 day",
+      variation_amount: "150.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-500",
+      name: "9mobile 650MB - 500 Naira - 3 days",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-4000",
+      name: "9mobile 18.5GB (15GB+3.5GB Night) - 4,000 Naira - 30 days",
+      variation_amount: "4000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "eti-5000",
+      name: "9mobile 22GB - 5,000 Naira - 30 Days",
+      variation_amount: "5000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "eti-10000",
+      name: "9mobile 50GB - 10,000 Naira - 30 days",
+      variation_amount: "10000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "eti-3000",
+      name: "9mobile 15GB (10GB + 5GB Night) - 3,000 Naira - 30 days",
+      variation_amount: "3000.00",
+      fixedPrice: "Yes",
+      planType: "monthly",
+    },
+    {
+      variation_code: "eti-50",
+      name: "9mobile 40MB - 50 Naira - 1 day",
+      variation_amount: "50.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-300",
+      name: "9mobile 1GB + 100MB  (1 day) - 350 Naira",
+      variation_amount: "300.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-500-3",
+      name: "9mobile 2GB +100MB - 500 Naira - 3 days",
+      variation_amount: "500.00",
+      fixedPrice: "Yes",
+      planType: "daily",
+    },
+    {
+      variation_code: "eti-100-social",
+      name: "9mobile 200MB Social Plan (1 Day) - 1 day",
+      variation_amount: "100.00",
+      fixedPrice: "Yes",
+      planType: "social",
+    },
   ],
 };

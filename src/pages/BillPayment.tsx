@@ -3,13 +3,15 @@ import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Smartphone, Wifi, Gift, Tv, Zap, Book } from "lucide-react";
 import { formatCurrency } from "../utils/formatters";
+import toast from "react-hot-toast";
 
 import { useAuthStore } from "../stores/authStore";
 
+import { AIRTEL, GLO, MTN, NINE_MOBILE } from "../constants/data-plans";
+import { ELECTRICITY_BILLERS } from "../constants/electricity-billers";
+import { DSTV, GOTV, SHOWMAX, STARTIMES } from "../constants/cable-providers";
+
 import { purchaseAirtme, purchaseData } from "../services/bills-payments";
-import { MTN } from "../constants/data-plans";
-import toast from "react-hot-toast";
-import { ELECTRICITY_BILLERS } from "../utils/constants";
 
 const billTypes = {
   airtime: {
@@ -57,6 +59,14 @@ const BillPayment: React.FC = () => {
     meter_type: "",
   });
   const [dataPlanType, setDataPlanType] = useState("");
+  const [variations, setVariations] = useState([
+    {
+      variation_code: "",
+      name: "",
+      variation_amount: "",
+      fixedPrice: "",
+    },
+  ]);
 
   const [dataPlanTypes, setDataPlanTypes] = useState<
     { value: string; label: string }[]
@@ -87,6 +97,15 @@ const BillPayment: React.FC = () => {
         case "mtn-data":
           setDataPlanTypes(MTN.planTypes);
           break;
+        case "airtel-data":
+          setDataPlanTypes(AIRTEL.planTypes);
+          break;
+        case "glo-data":
+          setDataPlanTypes(GLO.planTypes);
+          break;
+        case "etisalat-data":
+          setDataPlanTypes(NINE_MOBILE.planTypes);
+          break;
         default:
           setDataPlanTypes([]);
           break;
@@ -96,29 +115,103 @@ const BillPayment: React.FC = () => {
 
   useEffect(() => {
     if (dataPlanType !== "") {
-      const dPlans = MTN.dataPlans.filter(
-        (data) => data.planType === dataPlanType
-      );
-      setDataPlans(dPlans);
-      setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+      switch (billPaymentData.service_id) {
+        case "mtn-data":
+          const mtnDPlans = MTN.dataPlans.filter(
+            (data) => data.planType === dataPlanType
+          );
+          setDataPlans(mtnDPlans);
+          setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+          break;
+        case "airtel-data":
+          const airtelDPlans = AIRTEL.dataPlans.filter(
+            (data) => data.planType === dataPlanType
+          );
+          setDataPlans(airtelDPlans);
+          setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+          break;
+        case "glo-data":
+          const gloDPlans = GLO.dataPlans.filter(
+            (data) => data.planType === dataPlanType
+          );
+          setDataPlans(gloDPlans);
+          setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+          break;
+        case "etisalat-data":
+          const etisalatDataPlans = NINE_MOBILE.dataPlans.filter(
+            (data) => data.planType === dataPlanType
+          );
+          setDataPlans(etisalatDataPlans);
+          setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+          break;
+      }
     }
   }, [dataPlanType]);
 
   useEffect(() => {
     if (billPaymentData.variation_code !== "") {
-      const currentDataPlan = dataPlans.filter(
-        (dplan) => dplan.variation_code === billPaymentData.variation_code
-      )[0];
-      setBillPaymentData((prev) => ({
-        ...prev,
-        amount: currentDataPlan.variation_amount,
-        service_name: currentDataPlan.name,
-      }));
+      if (billType === "data") {
+        const currentDataPlan = dataPlans.filter(
+          (dplan) => dplan.variation_code === billPaymentData.variation_code
+        )[0];
+        setBillPaymentData((prev) => ({
+          ...prev,
+          amount: currentDataPlan.variation_amount,
+          service_name: currentDataPlan.name,
+        }));
+      }
+
+      if (billType === "cable-tv") {
+        const currentCablePlan = variations.filter(
+          (variation) =>
+            variation.variation_code === billPaymentData.variation_code
+        )[0];
+
+        setBillPaymentData((prev) => ({
+          ...prev,
+          amount: currentCablePlan.variation_amount,
+          // service_name: currentDataPlan.name,
+        }));
+      }
     }
   }, [billPaymentData.variation_code]);
 
+  useEffect(() => {
+    switch (billPaymentData.service_name) {
+      case "dstv":
+        setVariations(DSTV);
+        setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+        break;
+      case "gotv":
+        setVariations(GOTV);
+        setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+        break;
+      case "startimes":
+        setVariations(STARTIMES);
+        setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+        break;
+      case "showmax":
+        setVariations(SHOWMAX);
+        setBillPaymentData((prev) => ({ ...prev, amount: "" }));
+        break;
+      default:
+        break;
+    }
+  }, [billPaymentData.service_name]);
+
   const pathParts = location.pathname.split("/");
   const billType = pathParts[pathParts.length - 1] as keyof typeof billTypes;
+
+  useEffect(() => {
+    setBillPaymentData({
+      amount: "",
+      meter_type: "",
+      phone: "",
+      service_id: "",
+      service_name: "",
+      variation_code: "",
+    });
+  }, [billType]);
 
   const currentBill = billTypes[billType] || {
     title: "Bill Payment",
@@ -139,8 +232,13 @@ const BillPayment: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { amount, phone, service_id, service_name, variation_code } =
-      billPaymentData;
+    const {
+      amount,
+      phone,
+      service_id: _,
+      service_name,
+      variation_code,
+    } = billPaymentData;
 
     if (user && user.balance < Number(amount))
       return toast.error("Insufficient balance");
@@ -172,13 +270,13 @@ const BillPayment: React.FC = () => {
           !variation_code
         ) {
           try {
-            const res = await purchaseData({
-              amount,
-              phone,
-              service_id,
-              variation_code,
-              service_name,
-            });
+            // const res = await purchaseData({
+            //   amount,
+            //   phone,
+            //   service_id,
+            //   variation_code,
+            //   service_name,
+            // });
           } catch (error) {
             console.log(error);
             setLoading(false);
@@ -262,19 +360,19 @@ const BillPayment: React.FC = () => {
                 </>
               ) : billType === "data" ? (
                 <>
-                  <option value="mtn-data">MTN</option>
-                  <option value="airtel-data">Airtel</option>
-                  <option value="glo-data">Glo</option>
-                  <option value="etisalat-data">9mobile</option>
-                  <option value="spectranet">Spectranet</option>
-                  <option value="smile-direct">Smile Direct</option>
+                  <option value="mtn-data">MTN Data</option>
+                  <option value="airtel-data">Airtel Data</option>
+                  <option value="glo-data">Glo Data</option>
+                  <option value="etisalat-data">9mobile Data</option>
+                  {/* <option value="spectranet">Spectranet</option>
+                  <option value="smile-direct">Smile Direct</option> */}
                 </>
               ) : billType === "cable-tv" ? (
                 <>
-                  <option value="dstv">DStv</option>
-                  <option value="gotv">GOtv</option>
-                  <option value="startimes">StarTimes</option>
-                  <option value="showmax">Showmax</option>
+                  <option value="dstv">DStv Subscription</option>
+                  <option value="gotv">GOtv Payment</option>
+                  <option value="startimes">StarTimes Subscription</option>
+                  <option value="showmax">ShowMax</option>
                 </>
               ) : billType === "electricity" ? (
                 ELECTRICITY_BILLERS.map((electricBiller, i) => (
@@ -341,6 +439,33 @@ const BillPayment: React.FC = () => {
             </div>
           )}
 
+          {billType === "cable-tv" && (
+            <div>
+              <label
+                htmlFor="subscription-variation"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Subscription Variation
+              </label>
+
+              <select
+                id="subscription-variation"
+                name="variation_code"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                value={billPaymentData.variation_code}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select an option</option>
+                {variations.map((sVariation, i) => (
+                  <option key={i} value={sVariation.variation_code}>
+                    {sVariation.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="amount"
@@ -350,7 +475,7 @@ const BillPayment: React.FC = () => {
             </label>
 
             <input
-              disabled={billType === "data"}
+              disabled={billType === "data" || billType === "cable-tv"}
               type="number"
               name="amount"
               onChange={handleChange}
