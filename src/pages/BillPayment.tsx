@@ -11,7 +11,12 @@ import { AIRTEL, GLO, MTN, NINE_MOBILE } from "../constants/data-plans";
 import { ELECTRICITY_BILLERS } from "../constants/electricity-billers";
 import { DSTV, GOTV, SHOWMAX, STARTIMES } from "../constants/cable-providers";
 
-import { purchaseAirtme, purchaseData } from "../services/bills-payments";
+import {
+  payElectricityBill,
+  purchaseAirtme,
+  purchaseData,
+  subscribeCable,
+} from "../services/bills-payments";
 
 const billTypes = {
   airtime: {
@@ -57,6 +62,8 @@ const BillPayment: React.FC = () => {
     phone: "",
     variation_code: "",
     meter_type: "",
+    customer_id: "",
+    meter_number: "",
   });
   const [dataPlanType, setDataPlanType] = useState("");
   const [variations, setVariations] = useState([
@@ -210,6 +217,8 @@ const BillPayment: React.FC = () => {
       service_id: "",
       service_name: "",
       variation_code: "",
+      customer_id: "",
+      meter_number: "",
     });
   }, [billType]);
 
@@ -232,8 +241,16 @@ const BillPayment: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { amount, phone, service_id, service_name, variation_code } =
-      billPaymentData;
+    const {
+      amount,
+      phone,
+      service_id,
+      service_name,
+      variation_code,
+      customer_id,
+      meter_number,
+      meter_type,
+    } = billPaymentData;
 
     if (user && user.balance < Number(amount))
       return toast.error("Insufficient balance");
@@ -264,6 +281,8 @@ const BillPayment: React.FC = () => {
           !service_name ||
           !variation_code
         ) {
+          return alert("All fields are required");
+        } else {
           try {
             await purchaseData({
               amount,
@@ -279,8 +298,49 @@ const BillPayment: React.FC = () => {
         }
         break;
       case "cable-tv":
+        if (
+          !amount ||
+          !phone ||
+          !service_name ||
+          !service_id ||
+          !variation_code ||
+          !customer_id
+        )
+          return alert("All fields are required");
+        else {
+          try {
+            const res = await subscribeCable({
+              amount,
+              customer_id,
+              phone,
+              service_id,
+              variation_code,
+              service_name,
+            });
+
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
+        }
         break;
       case "electricity":
+        if (!amount || !phone || !service_name || !meter_number || !meter_type)
+          return alert("All fields are required");
+        else {
+          try {
+            const res = await payElectricityBill({
+              amount,
+              meter_number,
+              meter_type,
+              phone,
+              service_name,
+            });
+            console.log(res);
+          } catch (error) {
+            console.log(error);
+          }
+        }
         break;
       default:
         break;
@@ -465,6 +525,29 @@ const BillPayment: React.FC = () => {
             </div>
           )}
 
+          {billType === "cable-tv" && (
+            <div>
+              <label
+                htmlFor="customer_id"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Smart Card Number
+              </label>
+
+              <input
+                // disabled={billType === "data" || billType === "cable-tv"}
+                type="number"
+                name="customer_id"
+                onChange={handleChange}
+                id="customer_id"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                placeholder="Enter Smart Card Number"
+                required
+                value={billPaymentData.customer_id}
+              />
+            </div>
+          )}
+
           <div>
             <label
               htmlFor="amount"
@@ -516,8 +599,10 @@ const BillPayment: React.FC = () => {
               <input
                 type="text"
                 id="meter"
+                name="meter_number"
                 className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                 placeholder="Enter meter number"
+                onChange={handleChange}
               />
             </div>
           )}

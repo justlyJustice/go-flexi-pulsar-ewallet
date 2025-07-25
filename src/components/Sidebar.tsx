@@ -174,7 +174,7 @@ const Sidebar: React.FC = () => {
           {item.icon}
           <span className={isMobile ? "ml-2" : "ml-3"}>{item.label}</span>
         </div>
-        {item.isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        {item.isOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
       </button>
 
       {item.isOpen && (

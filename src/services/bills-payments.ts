@@ -13,10 +13,22 @@ interface DataBill extends DefaultBill {
   variation_code: string;
 }
 
+interface ElectricyBill extends DefaultBill {
+  meter_type: string;
+  meter_number: string;
+}
+
+interface CableBill extends DefaultBill {
+  customer_id: string;
+  variation_code: string;
+  service_id: string;
+}
+
 export const purchaseAirtme = ({ amount, phone, service_name }: AirtimeData) =>
   client.post("/airtime", { amount, phone, service_name });
 
-export const subscribeCable = () => client.post("/cable-subscription");
+export const subscribeCable = (data: CableBill) =>
+  client.post("/cable-subscription", data);
 
 export const purchaseData = ({
   amount,
@@ -32,3 +44,6 @@ export const purchaseData = ({
     variation_code,
     service_name,
   });
+
+export const payElectricityBill = (data: ElectricyBill) =>
+  client.post("/electricity", data);
