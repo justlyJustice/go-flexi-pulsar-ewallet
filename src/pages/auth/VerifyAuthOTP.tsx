@@ -65,6 +65,9 @@ const VerifyAuthOTP: React.FC = () => {
           joinDate: user.createdAt,
           phoneNumber: user.phoneNumber,
           transactions: user.transactions,
+          bvnVerified: user.bvnVerified,
+          isKYC: data.isKYC,
+          ninVerified: data.ninVerified,
         },
         data?.token!
       );
