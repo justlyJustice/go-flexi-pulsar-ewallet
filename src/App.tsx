@@ -96,7 +96,7 @@ function App() {
             /> */}
 
             {/* Financial Services */}
-            <Route
+            {/* <Route
               path="/services/virtual-naira-card"
               element={<VirtualCard cardType="naira" walletBalance={10000} />}
             />
@@ -109,7 +109,7 @@ function App() {
               element={<CurrencyExchange />}
             />
             <Route path="/services/usdt-funding" element={<USDTFunding />} />
-            <Route path="/services/bulk-sms" element={<BulkSMS />} />
+            <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
             {/* <Route path="/transfer" element={<Transfer />} />
             <Route path="/profile" element={<Profile />} /> */}
           </Route>
