@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal } from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 export const KycModal = ({
   setIsOpen,
@@ -8,7 +9,7 @@ export const KycModal = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  // const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -18,10 +19,10 @@ export const KycModal = ({
         title="KYC Verification Required"
         description="This feature is pending until you complete your KYC verification. Please complete your profile verification to access transfers."
         actionText="Complete KYC"
-        // onAction={() => {
-        //   setIsOpen(false);
-        //   window.location.href = "/verify-kyc";
-        // }}
+        onAction={() => {
+          setIsOpen(false);
+          navigate("/profile");
+        }}
       />
     </>
   );

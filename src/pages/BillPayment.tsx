@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useForceUpdate } from "framer-motion";
 import { Smartphone, Wifi, Gift, Tv, Zap, Book } from "lucide-react";
 import { formatCurrency } from "../utils/formatters";
 import toast from "react-hot-toast";
 
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore, User } from "../stores/authStore";
 
 import { AIRTEL, GLO, MTN, NINE_MOBILE } from "../constants/data-plans";
 import { ELECTRICITY_BILLERS } from "../constants/electricity-billers";
@@ -53,7 +53,7 @@ const billTypes = {
 
 const BillPayment: React.FC = () => {
   const location = useLocation();
-  const { user } = useAuthStore();
+  const { user, updateBalance } = useAuthStore();
 
   const [billPaymentData, setBillPaymentData] = useState({
     amount: "",
@@ -265,7 +265,10 @@ const BillPayment: React.FC = () => {
             const res = await purchaseAirtme({ amount, phone, service_name });
             setLoading(false);
 
-            console.log(res);
+            const user: User = res.data?.data;
+            updateBalance(user.balance);
+
+            toast.success("Payment sucessful!");
           } catch (error) {
             console.log(error);
             setLoading(false);
@@ -284,13 +287,20 @@ const BillPayment: React.FC = () => {
           return alert("All fields are required");
         } else {
           try {
-            await purchaseData({
+            setLoading(true);
+            const res = await purchaseData({
               amount,
               phone,
               service_id,
               variation_code,
               service_name,
             });
+            setLoading(false);
+
+            const user: User = res.data?.data;
+            updateBalance(user.balance);
+
+            toast.success("Payment sucessful!");
           } catch (error) {
             console.log(error);
             setLoading(false);
@@ -309,6 +319,7 @@ const BillPayment: React.FC = () => {
           return alert("All fields are required");
         else {
           try {
+            setLoading(true);
             const res = await subscribeCable({
               amount,
               customer_id,
@@ -317,9 +328,14 @@ const BillPayment: React.FC = () => {
               variation_code,
               service_name,
             });
+            setLoading(false);
 
-            console.log(res);
+            const user: User = res.data?.data;
+            updateBalance(user.balance);
+
+            toast.success("Payment sucessful!");
           } catch (error) {
+            toast.error("Something went wrong");
             console.log(error);
           }
         }
@@ -329,6 +345,7 @@ const BillPayment: React.FC = () => {
           return alert("All fields are required");
         else {
           try {
+            setLoading(true);
             const res = await payElectricityBill({
               amount,
               meter_number,
@@ -336,8 +353,14 @@ const BillPayment: React.FC = () => {
               phone,
               service_name,
             });
-            console.log(res);
+            setLoading(false);
+
+            const user: User = res.data?.data;
+            updateBalance(user.balance);
+
+            toast.success("Payment sucessful!");
           } catch (error) {
+            toast.error("Something went wrong!");
             console.log(error);
           }
         }

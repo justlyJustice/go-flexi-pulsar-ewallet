@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface User {
+export interface User {
   id: string;
   email: string;
   currency: string;
@@ -15,6 +15,9 @@ interface User {
   joinDate: string;
   balance: number;
   transactions: [];
+  bvnVerified: boolean;
+  ninVerified: boolean;
+  isKYC: "pending" | "verified" | "unverified";
 }
 
 interface AuthState {

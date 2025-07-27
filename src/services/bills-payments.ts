@@ -25,10 +25,10 @@ interface CableBill extends DefaultBill {
 }
 
 export const purchaseAirtme = ({ amount, phone, service_name }: AirtimeData) =>
-  client.post("/airtime", { amount, phone, service_name });
+  client.post<{ data: any }>("/airtime", { amount, phone, service_name });
 
 export const subscribeCable = (data: CableBill) =>
-  client.post("/cable-subscription", data);
+  client.post<{ data: any }>("/cable-subscription", data);
 
 export const purchaseData = ({
   amount,
@@ -37,7 +37,7 @@ export const purchaseData = ({
   variation_code,
   service_name,
 }: DataBill) =>
-  client.post("/data", {
+  client.post<{ data: any }>("/data", {
     amount,
     phone,
     service_id,
@@ -46,4 +46,4 @@ export const purchaseData = ({
   });
 
 export const payElectricityBill = (data: ElectricyBill) =>
-  client.post("/electricity", data);
+  client.post<{ data: any }>("/electricity", data);

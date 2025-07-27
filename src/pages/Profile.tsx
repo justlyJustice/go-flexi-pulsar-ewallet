@@ -11,10 +11,15 @@ import {
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
 import { formatDate } from "../utils/formatters";
+import KYCMethod from "../components/KYCMethod";
 
 const Profile: React.FC = () => {
   const { user, updateUser, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState("personal");
+
+  const [verificationMethod, setVerificationMethod] = useState<
+    "bvn" | "nin" | null
+  >(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     fullName: user?.fullName || "",
@@ -111,6 +116,18 @@ const Profile: React.FC = () => {
               >
                 <User size={22} className="mr-3" />
                 Personal Information
+              </button>
+
+              <button
+                // onClick={() => setActiveTab("kyc")}
+                className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
+                  activeTab === "kyc"
+                    ? "bg-primary-50 text-primary-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                <Shield size={22} className="mr-3" />
+                KYC Verification
               </button>
 
               <button
@@ -585,6 +602,99 @@ const Profile: React.FC = () => {
                       Save Preferences
                     </button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === "kyc" && (
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    KYC Verification
+                  </h2>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex">
+                      <div className="flex-shrink-0">
+                        <Shield className="h-5 w-5 text-blue-400" />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-blue-800">
+                          Identity Verification
+                        </h3>
+                        <div className="mt-2 text-sm text-blue-700">
+                          <p>
+                            To comply with regulations, we require you to verify
+                            your identity. Choose one of the verification
+                            methods below.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    {/* BVN Verification Card */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="p-3 bg-gray-50 border-b border-gray-200">
+                        <h3 className="text-lg font-medium text-gray-900">
+                          BVN Verification
+                        </h3>
+                      </div>
+
+                      <div className="p-4">
+                        <p className="text-sm text-gray-600 mb-4">
+                          Verify your identity using your Bank Verification
+                          Number (BVN)
+                        </p>
+
+                        <button
+                          disabled={verificationMethod === "bvn"}
+                          onClick={() => setVerificationMethod("bvn")}
+                          className="w-full btn btn-primary"
+                        >
+                          Verify with BVN
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* NIN Verification Card */}
+                    <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      <div className="p-3 bg-gray-50 border-b border-gray-200">
+                        <h3 className="text-lg font-medium text-gray-900">
+                          NIN Verification
+                        </h3>
+                      </div>
+
+                      <div className="p-4">
+                        <p className="text-sm text-gray-600 mb-4">
+                          Verify your identity using your National
+                          Identification Number (NIN)
+                        </p>
+
+                        <button
+                          disabled={verificationMethod === "nin"}
+                          onClick={() => setVerificationMethod("nin")}
+                          className="w-full btn btn-primary"
+                        >
+                          Verify with NIN
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {verificationMethod && (
+                    <KYCMethod
+                      method={verificationMethod}
+                      onCancel={() => setVerificationMethod(null)}
+                      onComplete={() => {
+                        setVerificationMethod(null);
+                        // Handle successful verification
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             )}
