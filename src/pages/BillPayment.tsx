@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { motion, useForceUpdate } from "framer-motion";
+import { motion } from "framer-motion";
 import { Smartphone, Wifi, Gift, Tv, Zap, Book } from "lucide-react";
 import { formatCurrency } from "../utils/formatters";
 import toast from "react-hot-toast";
@@ -265,10 +265,18 @@ const BillPayment: React.FC = () => {
             const res = await purchaseAirtme({ amount, phone, service_name });
             setLoading(false);
 
-            const user: User = res.data?.data;
-            updateBalance(user.balance);
+            if (res.ok) {
+              const user: User = res.data?.data;
+              updateBalance(user.balance);
 
-            toast.success("Payment sucessful!");
+              toast.success("Payment sucessful!");
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 7000);
+            } else {
+              toast.error(res.data?.error || "Something went wrong");
+            }
           } catch (error) {
             console.log(error);
             setLoading(false);
@@ -297,10 +305,16 @@ const BillPayment: React.FC = () => {
             });
             setLoading(false);
 
-            const user: User = res.data?.data;
-            updateBalance(user.balance);
+            if (res.ok) {
+              const user: User = res.data?.data;
+              updateBalance(user.balance);
 
-            toast.success("Payment sucessful!");
+              toast.success("Payment sucessful!");
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 7000);
+            }
           } catch (error) {
             console.log(error);
             setLoading(false);
@@ -330,10 +344,18 @@ const BillPayment: React.FC = () => {
             });
             setLoading(false);
 
-            const user: User = res.data?.data;
-            updateBalance(user.balance);
+            if (res.ok) {
+              const user: User = res.data?.data;
+              updateBalance(user.balance);
 
-            toast.success("Payment sucessful!");
+              toast.success("Payment sucessful!");
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 7000);
+            } else {
+              toast.error(res.data?.error || "Something went wrong");
+            }
           } catch (error) {
             toast.error("Something went wrong");
             console.log(error);
@@ -355,10 +377,18 @@ const BillPayment: React.FC = () => {
             });
             setLoading(false);
 
-            const user: User = res.data?.data;
-            updateBalance(user.balance);
+            if (res.ok) {
+              const user: User = res.data?.data;
+              updateBalance(user.balance);
 
-            toast.success("Payment sucessful!");
+              toast.success("Payment sucessful!");
+
+              setTimeout(() => {
+                window.location.reload();
+              }, 7000);
+            } else {
+              toast.error(res.data?.error || "Something went wrong");
+            }
           } catch (error) {
             toast.error("Something went wrong!");
             console.log(error);

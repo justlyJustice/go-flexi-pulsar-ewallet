@@ -19,9 +19,9 @@ import NewPassword from "./pages/auth/NewPassword";
 
 import { useBalancePolling } from "./hooks/useBalancePolling";
 import { useAuthStore } from "./stores/authStore";
-import CurrencyExchange from "./pages/services/CurrencyExchange";
-import BulkSMS from "./pages/services/BulkSMS";
-import USDTFunding from "./pages/services/USDTFunding";
+// import CurrencyExchange from "./pages/services/CurrencyExchange";
+// import BulkSMS from "./pages/services/BulkSMS";
+// import USDTFunding from "./pages/services/USDTFunding";
 import VirtualCard from "./pages/services/VirtualCard";
 
 function App() {
@@ -88,27 +88,38 @@ function App() {
               path="/bill-payment/recharge-card"
               element={<BillPayment />}
             /> */}
-            <Route path="/bill-payment/cable-tv" element={<BillPayment />} />
-            <Route path="/bill-payment/electricity" element={<BillPayment />} />
+            {/* <Route path="/bill-payment/cable-tv" element={<BillPayment />} />
+            <Route path="/bill-payment/electricity" element={<BillPayment />} /> */}
             {/* <Route
               path="/bill-payment/education-pin"
               element={<BillPayment />}
             /> */}
 
             {/* Financial Services */}
-            {/* <Route
+            <Route
               path="/services/virtual-naira-card"
-              element={<VirtualCard cardType="naira" walletBalance={10000} />}
+              element={
+                <VirtualCard
+                  cardType="naira"
+                  // walletBalance={10000}
+                />
+              }
             />
+
             <Route
               path="/services/virtual-usd-card"
-              element={<VirtualCard cardType="usd" walletBalance={500} />}
+              element={
+                <VirtualCard
+                  cardType="usd"
+                  // walletBalance={500}
+                />
+              }
             />
-            <Route
+            {/* <Route
               path="/services/currency-exchange"
               element={<CurrencyExchange />}
-            />
-            <Route path="/services/usdt-funding" element={<USDTFunding />} />
+            /> */}
+            {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
             <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
             {/* <Route path="/transfer" element={<Transfer />} />
             <Route path="/profile" element={<Profile />} /> */}

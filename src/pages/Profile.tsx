@@ -119,7 +119,10 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                // onClick={() => setActiveTab("kyc")}
+                onClick={() => {
+                  alert("Coming Soon");
+                  // setActiveTab("kyc")
+                }}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "kyc"
                     ? "bg-primary-50 text-primary-700"

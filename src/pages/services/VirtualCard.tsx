@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, ArrowRight, Loader } from "lucide-react";
 import { formatCurrency } from "../../utils/formatters";
+import { useAuthStore } from "../../stores/authStore";
 
 interface VirtualCardProps {
   cardType: "naira" | "usd";
-  walletBalance: number;
+  walletBalance?: number;
 }
 
 const VirtualCard: React.FC<VirtualCardProps> = ({
   cardType,
-  walletBalance,
+  // walletBalance,
 }) => {
   const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [cardDetails, setCardDetails] = useState<any>(null);
+  const { user } = useAuthStore();
 
   const createVirtualCard = () => {
     setIsLoading(true);
@@ -35,7 +37,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6"
+      className="space-y-4"
     >
       <div className="flex items-center justify-between">
         <div>
@@ -53,13 +55,13 @@ const VirtualCard: React.FC<VirtualCardProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-card shadow-card p-6">
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Available Balance
               </label>
               <div className="text-2xl font-bold text-gray-900">
-                {formatCurrency(walletBalance)}
+                {formatCurrency(user?.balance || 0)}
               </div>
             </div>
 
@@ -70,25 +72,28 @@ const VirtualCard: React.FC<VirtualCardProps> = ({
               >
                 Amount to Fund Card
               </label>
+
               <input
                 type="number"
                 id="amount"
                 value={amount}
+                disabled
                 onChange={(e) => setAmount(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                 placeholder={`Enter amount in ${cardType.toUpperCase()}`}
               />
             </div>
 
-            <div className="pt-4">
+            <div className="">
               <button
                 onClick={createVirtualCard}
-                disabled={isLoading || !amount}
+                // disabled={isLoading || !amount}
+                disabled
                 className={`w-full flex items-center justify-center ${
                   isLoading || !amount
                     ? "bg-gray-300 cursor-not-allowed"
                     : "bg-primary-600 hover:bg-primary-700"
-                } text-white py-3 px-4 rounded-lg transition-colors font-medium`}
+                } text-white py-1 px-4 rounded-lg transition-colors font-medium`}
               >
                 {isLoading ? (
                   <>
@@ -97,7 +102,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({
                   </>
                 ) : (
                   <>
-                    Create Virtual Card <ArrowRight className="ml-2 h-5 w-5" />
+                    Coming Soon <ArrowRight className="ml-2 h-5 w-5" />
                   </>
                 )}
               </button>
