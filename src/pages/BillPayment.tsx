@@ -6,6 +6,7 @@ import { formatCurrency } from "../utils/formatters";
 import toast from "react-hot-toast";
 
 import { useAuthStore, User } from "../stores/authStore";
+// import { useTransactionStore } from "../stores/transactionStore";
 
 import { AIRTEL, GLO, MTN, NINE_MOBILE } from "../constants/data-plans";
 import { ELECTRICITY_BILLERS } from "../constants/electricity-billers";
@@ -270,6 +271,12 @@ const BillPayment: React.FC = () => {
               updateBalance(user.balance);
 
               toast.success("Payment sucessful!");
+              // addTransaction({
+              //   amount: Number(amount),
+              //   description: `Airtime irtime (${amount}) Purchase`,
+              //   status: 'completed',
+              //   type: 'bill-payment'
+              // });
 
               setTimeout(() => {
                 window.location.reload();

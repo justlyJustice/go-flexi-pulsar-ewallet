@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, X, Smartphone, User, Calendar, Check } from "lucide-react";
+import { confirmKYC, verifyKYC } from "../services/kyc";
+import { useAuthStore, User as UserType } from "../stores/authStore";
+import toast from "react-hot-toast";
 
 interface KYCMethodProps {
   method: "bvn" | "nin";
@@ -13,6 +16,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   onCancel,
   onComplete,
 }) => {
+  const { user, updateUser } = useAuthStore();
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState({
     number: "",
@@ -21,7 +25,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     dateOfBirth: "",
     phoneNumber: "",
     verificationCode: "",
+    trx: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,16 +37,81 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (user?.balance! < 1000) {
+      return toast.error("Insufficient Balanc");
+    }
+
+    const {
+      dateOfBirth,
+      firstName,
+      lastName,
+      number,
+      phoneNumber,
+      trx,
+      verificationCode,
+    } = formData;
 
     if (method === "bvn") {
       if (step === 1) {
-        // Simulate sending verification code
-        setStep(2);
+        try {
+          setLoading(true);
+          const res = await verifyKYC("bvn", {
+            dateOfBirth,
+            firstName,
+            lastName,
+            number,
+            phoneNumber,
+          });
+          setLoading(false);
+
+          const resData = res.data;
+
+          if (res.ok) {
+            const data = resData?.data;
+
+            setFormData((prev) => ({
+              ...prev,
+              trx: "1234567890",
+              verificationCode: data?.otp!,
+            }));
+            toast.success(data?.message || "Success");
+            setStep(2);
+          } else {
+            toast.error(resData?.error || "Something went wrong!");
+          }
+        } catch (error) {
+          console.log(error);
+          console.log("An error occured!");
+        }
       } else {
-        // Simulate verification completion
-        onComplete();
+        try {
+          // Simulate verification completion
+          setLoading(true);
+          const res = await confirmKYC("bvn", { trx, otp: verificationCode });
+          setLoading(false);
+
+          const resData = res.data;
+
+          if (res.ok) {
+            const user: UserType = resData?.user;
+
+            updateUser({
+              balance: user.balance,
+              bvnVerified: user.bvnVerified,
+              isKYC: user.isKYC,
+            });
+            toast.success("Verification Complete!");
+            onComplete();
+          } else {
+            toast.error(resData?.error! || "Something went wrong!");
+          }
+        } catch (error) {
+          console.log(error);
+          console.log("An error occured!");
+        }
       }
     } else if (method === "nin") {
     }
@@ -150,7 +221,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                   Last Name
                 </label>
                 <div className="relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                     <User size={16} className="text-gray-400" />
                   </div>
                   <input
@@ -171,9 +242,10 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                 Date of Birth
               </label>
               <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Calendar size={16} className="text-gray-400" />
                 </div>
+
                 <input
                   type="date"
                   name="dateOfBirth"
@@ -190,9 +262,10 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                 Phone Number
               </label>
               <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                   <Smartphone size={16} className="text-gray-400" />
                 </div>
+
                 <input
                   type="tel"
                   name="phoneNumber"
@@ -250,8 +323,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               <button
                 type="button"
                 className="text-primary-600 hover:text-primary-700 font-medium"
+                onClick={() => setStep(1)}
               >
-                Resend code
+                Check number
               </button>
             </div>
           </div>
@@ -267,8 +341,12 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               Back
             </button>
           )}
-          <button type="submit" className="btn btn-primary">
-            {step === 1 ? "Send Verification Code" : "Complete Verification"}
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {step === 1
+              ? loading
+                ? "Loading"
+                : "Send Verification Code"
+              : "Complete Verification"}
           </button>
         </div>
       </form>

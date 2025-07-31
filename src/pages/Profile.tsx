@@ -10,8 +10,9 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
-import { formatDate } from "../utils/formatters";
+import { formatCurrency, formatDate } from "../utils/formatters";
 import KYCMethod from "../components/KYCMethod";
+import VerificationStatus from "../components/KYCStatus";
 
 const Profile: React.FC = () => {
   const { user, updateUser, logout } = useAuthStore();
@@ -120,8 +121,8 @@ const Profile: React.FC = () => {
 
               <button
                 onClick={() => {
-                  alert("Coming Soon");
-                  // setActiveTab("kyc")
+                  // alert("Coming Soon");
+                  setActiveTab("kyc");
                 }}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "kyc"
@@ -611,82 +612,98 @@ const Profile: React.FC = () => {
 
             {activeTab === "kyc" && (
               <div>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-3">
                   <h2 className="text-lg font-semibold text-gray-900">
                     KYC Verification
                   </h2>
                 </div>
 
-                <div className="space-y-6">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex">
-                      <div className="flex-shrink-0">
-                        <Shield className="h-5 w-5 text-blue-400" />
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-blue-800">
-                          Identity Verification
-                        </h3>
-                        <div className="mt-2 text-sm text-blue-700">
-                          <p>
-                            To comply with regulations, we require you to verify
-                            your identity. Choose one of the verification
-                            methods below.
-                          </p>
+                <div className="space-y-4">
+                  {user?.isKYC !== "verified" && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <Shield className="h-5 w-5 text-blue-400" />
+                        </div>
+
+                        <div className="ml-3">
+                          <h3 className="text-sm font-medium text-blue-800">
+                            Identity Verification
+                          </h3>
+
+                          <div className="mt-2 text-sm text-blue-700">
+                            <p>
+                              To comply with regulations, we require you to
+                              verify your identity, which will incure a service
+                              charge of {formatCurrency(1000)}.
+                            </p>
+
+                            <p className="mt-1">
+                              Choose one of the verification methods below.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {/* BVN Verification Card */}
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="p-3 bg-gray-50 border-b border-gray-200">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          BVN Verification
-                        </h3>
+                  {user?.isKYC === "verified" ? (
+                    <VerificationStatus
+                      type={user?.bvnVerified === true ? "bvn" : "nin"}
+                    />
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {/* BVN Verification Card */}
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="p-3 bg-gray-50 border-b border-gray-200">
+                          <h3 className="text-lg font-medium text-gray-900">
+                            BVN Verification
+                          </h3>
+                        </div>
+
+                        <div className="p-4">
+                          <p className="text-sm text-gray-600 mb-4">
+                            Verify your identity using your Bank Verification
+                            Number (BVN)
+                          </p>
+
+                          <button
+                            disabled={verificationMethod === "bvn"}
+                            onClick={() => setVerificationMethod("bvn")}
+                            className="w-full btn btn-primary"
+                          >
+                            Verify with BVN
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="p-4">
-                        <p className="text-sm text-gray-600 mb-4">
-                          Verify your identity using your Bank Verification
-                          Number (BVN)
-                        </p>
+                      {/* NIN Verification Card */}
+                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <div className="p-3 bg-gray-50 border-b border-gray-200">
+                          <h3 className="text-lg font-medium text-gray-900">
+                            NIN Verification
+                          </h3>
+                        </div>
 
-                        <button
-                          disabled={verificationMethod === "bvn"}
-                          onClick={() => setVerificationMethod("bvn")}
-                          className="w-full btn btn-primary"
-                        >
-                          Verify with BVN
-                        </button>
+                        <div className="p-4">
+                          <p className="text-sm text-gray-600 mb-4">
+                            Verify your identity using your National
+                            Identification Number (NIN)
+                          </p>
+
+                          <button
+                            disabled={false}
+                            // disabled={verificationMethod === "nin"}
+                            // onClick={() => setVerificationMethod("nin")}
+                            className="w-full btn btn-primary"
+                          >
+                            {/* Verify with NIN */}
+                            Coming Soon
+                          </button>
+                        </div>
                       </div>
                     </div>
-
-                    {/* NIN Verification Card */}
-                    <div className="border border-gray-200 rounded-lg overflow-hidden">
-                      <div className="p-3 bg-gray-50 border-b border-gray-200">
-                        <h3 className="text-lg font-medium text-gray-900">
-                          NIN Verification
-                        </h3>
-                      </div>
-
-                      <div className="p-4">
-                        <p className="text-sm text-gray-600 mb-4">
-                          Verify your identity using your National
-                          Identification Number (NIN)
-                        </p>
-
-                        <button
-                          disabled={verificationMethod === "nin"}
-                          onClick={() => setVerificationMethod("nin")}
-                          className="w-full btn btn-primary"
-                        >
-                          Verify with NIN
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  )}
 
                   {verificationMethod && (
                     <KYCMethod
