@@ -18,6 +18,7 @@ export interface User {
   bvnVerified: boolean;
   ninVerified: boolean;
   isKYC: "pending" | "verified" | "unverified";
+  vusd_card?: string;
 }
 
 interface AuthState {
@@ -58,6 +59,8 @@ export const useAuthStore = create<AuthState>()(
 
 // Export a direct way to access the token without hooks
 export const getToken = () => useAuthStore.getState().token;
+
+export const getUser = () => useAuthStore.getState().user;
 
 export const getTransactions = () =>
   useAuthStore.getState().user?.transactions || [];

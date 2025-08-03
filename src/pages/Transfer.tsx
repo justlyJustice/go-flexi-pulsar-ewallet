@@ -50,15 +50,17 @@ const Transfer: React.FC = () => {
       const result = await validateAccount(values.account_number, bankCode);
       setValidating(false);
 
-      if (result.status === false) {
-        toast.error(result.message);
-        setError(result.message);
-      }
+      console.log(result);
 
-      setValues((prevValues) => ({
-        ...prevValues,
-        name_enquiry_reference: result.data?.account_name! || "",
-      }));
+      // if (!result.status) {
+      //   toast.error(result.message);
+      //   setError(result.message);
+      // }
+
+      // setValues((prevValues) => ({
+      //   ...prevValues,
+      //   name_enquiry_reference: result.data?.account_name! || "",
+      // }));
     } catch (error) {
       console.log(error);
     }

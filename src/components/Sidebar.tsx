@@ -32,6 +32,8 @@ const Sidebar: React.FC = () => {
   const { logout } = useAuthStore();
   const [isOpen, setIsOpen] = useState(false);
 
+  const user = useAuthStore((store) => store.user);
+
   const location = useLocation();
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
@@ -85,6 +87,7 @@ const Sidebar: React.FC = () => {
       icon: <CreditCard size={22} />,
       label: "Naira Virtual Card",
       isActive: location.pathname === "/services/virtual-naira-card",
+      // onClick: () => user?.isKYC === 'unverified' /
     },
     {
       path: "/services/virtual-usd-card",
@@ -126,10 +129,14 @@ const Sidebar: React.FC = () => {
       isActive: location.pathname === "/add-funds",
     },
     {
+      // path: user?.isKYC !== "unverified" ? "/transfer" : "#",
       path: "#",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
-      onClick: () => setIsOpen(true),
+      onClick: () => {
+        setIsOpen(true);
+        // user && user.isKYC === "unverified" && setIsOpen(true);
+      },
       isActive: false,
     },
     {

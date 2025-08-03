@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { CreditCard, ArrowRight, Loader, Plus, DollarSign } from "lucide-react";
 
 import { formatCurrency } from "../../utils/formatters";
 import { useAuthStore } from "../../stores/authStore";
 
-import { createVirtualCard } from "../../services/cards";
+import { createVirtualCard, getVirtualCardDetails } from "../../services/cards";
 
 interface VirtualCardProps {
   cardType: "naira" | "usd";
@@ -20,6 +20,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
   });
   const [action, setAction] = useState<"create" | "fund">("create");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingCardDetails, setLoadingCardDetails] = useState(true);
   const [cardDetails, setCardDetails] = useState<any>(null);
   const { user } = useAuthStore();
 
@@ -30,6 +31,29 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
       [name]: value,
     });
   };
+
+  const getCardDetails = async () => {
+    try {
+      setLoadingCardDetails(true);
+      const res = await getVirtualCardDetails();
+
+      // if (!res.ok) {
+      //   console.log(res.data);
+      // } else {
+      //   console
+      // }
+
+      setCardDetails(false);
+
+      console.log(res);
+    } catch (error) {
+      console.log("An error occured");
+    }
+  };
+
+  useEffect(() => {
+    getCardDetails();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

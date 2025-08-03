@@ -13,10 +13,10 @@ interface BanksState {
   banks: Bank[];
 }
 
-const allBanks = banks.map((bank) => ({
-  name: bank.name,
-  code: bank.code,
-  id: bank.id,
+const allBanks = banks.map((bank, i) => ({
+  name: bank.bankName,
+  code: bank.bankCode,
+  id: i,
 }));
 
 export const useBankStore = create<BanksState>()(
