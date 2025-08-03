@@ -4,7 +4,7 @@ import { getUser } from "../stores/authStore";
 
 const user = getUser();
 
-const mode = "sandbox";
+const mode = "live";
 
 const ROUTE = "/virtual-card";
 
@@ -20,15 +20,18 @@ export const createVirtualCard = (
   { amount, card_type, customerEmail, name_on_card }: CardDetails
 ) => {
   return type === "usd"
-    ? client.post(`${ROUTE}/create-usd`, {
+    ? client.post<{ data: any }>(`${ROUTE}/create-usd`, {
         amount,
         card_type,
         customerEmail,
         name_on_card,
         mode,
       })
-    : client.post("/");
+    : client.post<{ data: any }>("/");
 };
 
 export const getVirtualCardDetails = () =>
-  client.post(`${ROUTE}/card-details`, { card_id: user?.vusd_card, mode });
+  client.post<{ data: { success: boolean; response: any } }>(
+    `${ROUTE}/card-details`,
+    { card_id: user?.vusd_card, mode }
+  );
