@@ -25,7 +25,16 @@ export const verifyKYC = (type: string, data: any) => {
     const reversedDate = reverseDate(dateOfBirth);
 
     return client.post<{
-      data: { message: string; otp: string; trx: string };
+      user?: any;
+      data:
+        | {
+            message: string;
+            otp: string;
+            trx: string;
+            success: boolean;
+            warnings?: string;
+          }
+        | any;
       success: boolean;
       error?: string;
     }>(
@@ -34,17 +43,23 @@ export const verifyKYC = (type: string, data: any) => {
   } else {
     const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;
 
+    const reversedDate = reverseDate(dateOfBirth);
+
     return client.post<{
-      data: { message: string; otp: string; trx: string };
+      data: {
+        message: string;
+        otp: string;
+        trx: string;
+        success: boolean;
+        warnings?: string;
+        user?: any;
+      };
+      user?: any;
       success: boolean;
       error?: string;
-    }>("/kyc/verify-nin", {
-      number,
-      firstName,
-      lastName,
-      dateOfBirth,
-      phoneNumber,
-    });
+    }>(
+      `/kyc/verify-nin?number_nin=${number}&surname=${lastName}&firstname=${firstName}&birthdate=${reversedDate}&telephoneno=${phoneNumber}`
+    );
   }
 };
 

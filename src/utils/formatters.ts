@@ -1,5 +1,5 @@
 export const formatCurrency = (amount: number, currency?: string): string => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: currency || "NGN",
     minimumFractionDigits: 2,
@@ -8,7 +8,7 @@ export const formatCurrency = (amount: number, currency?: string): string => {
 
 export const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-NG", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -17,7 +17,7 @@ export const formatDate = (dateString: string): string => {
 
 export const formatDateTime = (dateString: string): string => {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("en-NG", {
     month: "short",
     day: "numeric",
     year: "numeric",

@@ -23,9 +23,22 @@ import { useAuthStore } from "./stores/authStore";
 // import BulkSMS from "./pages/services/BulkSMS";
 // import USDTFunding from "./pages/services/USDTFunding";
 import VirtualCard from "./pages/services/VirtualCard";
+import { useEffect } from "react";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      localStorage.clear();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   useBalancePolling(user?.id);
 

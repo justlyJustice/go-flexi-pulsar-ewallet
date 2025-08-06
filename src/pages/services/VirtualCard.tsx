@@ -3,7 +3,11 @@ import { motion } from "framer-motion";
 import { CreditCard, ArrowRight, Loader, Plus, DollarSign } from "lucide-react";
 import { formatCurrency } from "../../utils/formatters";
 import { useAuthStore } from "../../stores/authStore";
-import { createVirtualCard, getVirtualCardDetails } from "../../services/cards";
+import {
+  createVirtualCard,
+  fundVirtualCard,
+  getVirtualCardDetails,
+} from "../../services/cards";
 import toast from "react-hot-toast";
 
 interface VirtualCardProps {
@@ -13,9 +17,9 @@ interface VirtualCardProps {
 const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
   const { user, updateUser } = useAuthStore();
   const [formData, setFormData] = useState({
-    name_on_card: "",
+    name_on_card: user?.fullName || "",
     card_type: cardType,
-    amount: "",
+    amount: "5",
     customerEmail: user?.email || "",
   });
   const [action, setAction] = useState<"create" | "fund">("create");
@@ -41,10 +45,14 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
 
         setCardDetails(data);
       } else {
+        toast.error(res.data!.error);
         setCardDetails(null);
       }
     } catch (error) {
       console.error("Error fetching card details:", error);
+      toast.error("Something went wrong. Please reload this page.", {
+        removeDelay: 10000,
+      });
       setCardDetails(null);
     } finally {
       setLoadingCardDetails(false);
@@ -64,7 +72,19 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
     e.preventDefault();
 
     if (action === "fund") {
-      return;
+      try {
+        const res = await fundVirtualCard(cardType, {
+          amount: formData.amount,
+        });
+
+        if (!res.ok) {
+          console.log(res);
+        }
+
+        console.log(res);
+      } catch (error) {
+        console.error("Error funding virtual card:", error);
+      }
     } else {
       try {
         setIsLoading(true);
@@ -88,6 +108,8 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
           // await getCardDetails();
           // Switch to fund mode
           // setAction("fund");
+        } else {
+          toast.error(res?.data!.error);
         }
       } catch (error) {
         console.error("Error creating virtual card:", error);
@@ -192,6 +214,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                         <input
                           type="text"
                           id="name_on_card"
+                          disabled
                           name="name_on_card"
                           value={formData.name_on_card}
                           onChange={handleInputChange}
@@ -208,8 +231,10 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                         >
                           Email Address
                         </label>
+
                         <input
                           type="email"
+                          disabled
                           id="customerEmail"
                           name="customerEmail"
                           value={formData.customerEmail}
@@ -242,6 +267,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                         ? "Initial Deposit"
                         : "Amount to Fund"}
                     </label>
+
                     <input
                       type="number"
                       id="amount"
@@ -251,18 +277,22 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                       className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
                       placeholder={`Enter amount in ${cardType.toUpperCase()}`}
                       required
-                      min={cardType === "naira" ? "100" : "1"}
+                      min={
+                        cardType === "naira"
+                          ? "100"
+                          : action === "create"
+                          ? "5"
+                          : "1"
+                      }
                     />
                   </div>
 
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={
-                        isLoading || !formData.amount || action === "fund"
-                      }
+                      disabled={isLoading || !formData.amount}
                       className={`p-2 w-full flex items-center justify-center ${
-                        isLoading || !formData.amount || action === "fund"
+                        isLoading || !formData.amount
                           ? "bg-gray-300 cursor-not-allowed"
                           : "bg-primary-600 hover:bg-primary-700"
                       } text-white px-4 rounded-lg transition-colors font-medium`}

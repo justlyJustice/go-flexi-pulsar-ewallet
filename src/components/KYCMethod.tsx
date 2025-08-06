@@ -41,7 +41,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     e.preventDefault();
 
     if (user?.balance! < 1000) {
-      return toast.error("Insufficient Balanc");
+      return toast.error("Insufficient Balance");
     }
 
     const {
@@ -114,6 +114,54 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
         }
       }
     } else if (method === "nin") {
+      if (step === 1) {
+        try {
+          setLoading(true);
+          const res = await verifyKYC("nin", {
+            dateOfBirth,
+            firstName,
+            lastName,
+            number,
+            phoneNumber,
+          });
+          setLoading(false);
+
+          const resData = res.data;
+
+          if (res.ok) {
+            const data = resData?.data;
+
+            if (!data?.success!) {
+              toast.error(
+                `
+                
+                ${data?.message!}
+
+                ${data?.warnings!}
+                `,
+                { removeDelay: 5000 }
+              );
+              return;
+            } else {
+              const user: UserType = resData?.data!;
+
+              updateUser({
+                // balance: user.balance,
+                bvnVerified: user.ninVerified,
+                isKYC: user.isKYC,
+              });
+              toast.success(data?.message || "Success");
+
+              onComplete();
+            }
+          } else {
+            toast.error(resData?.error || "Something went wrong!");
+          }
+        } catch (error) {
+          console.log(error);
+          console.log("An error occured!");
+        }
+      }
     }
   };
 

@@ -619,7 +619,7 @@ const Profile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {user?.isKYC !== "verified" && (
+                  {user?.isKYC === "verified" && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -647,14 +647,14 @@ const Profile: React.FC = () => {
                     </div>
                   )}
 
-                  {user?.isKYC === "verified" ? (
+                  {user?.isKYC !== "verified" ? (
                     <VerificationStatus
                       type={user?.bvnVerified === true ? "bvn" : "nin"}
                     />
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {/* BVN Verification Card */}
-                      <div className="border border-gray-200 rounded-lg overflow-hidden">
+                      {/* <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <div className="p-3 bg-gray-50 border-b border-gray-200">
                           <h3 className="text-lg font-medium text-gray-900">
                             BVN Verification
@@ -675,7 +675,7 @@ const Profile: React.FC = () => {
                             Verify with BVN
                           </button>
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* NIN Verification Card */}
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
@@ -692,13 +692,13 @@ const Profile: React.FC = () => {
                           </p>
 
                           <button
-                            disabled={false}
-                            // disabled={verificationMethod === "nin"}
-                            // onClick={() => setVerificationMethod("nin")}
+                            // disabled={false}
+                            disabled={verificationMethod === "nin"}
+                            onClick={() => setVerificationMethod("nin")}
                             className="w-full btn btn-primary"
                           >
-                            {/* Verify with NIN */}
-                            Coming Soon
+                            Verify with NIN
+                            {/* Coming Soon */}
                           </button>
                         </div>
                       </div>
