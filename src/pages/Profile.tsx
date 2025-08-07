@@ -106,7 +106,7 @@ const Profile: React.FC = () => {
               <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
 
-            <nav className="mt-6 space-y-1">
+            <nav className="space-y-1">
               <button
                 onClick={() => setActiveTab("personal")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
@@ -135,7 +135,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("security")}
+                // onClick={() => setActiveTab("security")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "security"
                     ? "bg-primary-50 text-primary-700"
@@ -159,7 +159,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                // onClick={() => setActiveTab("payment")}
+                onClick={() => setActiveTab("payment")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "payment"
                     ? "bg-primary-50 text-primary-700"
@@ -619,7 +619,7 @@ const Profile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {user?.isKYC !== "verified" && (
+                  {user?.isKYC === "unverified" && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -730,115 +730,7 @@ const Profile: React.FC = () => {
                   </button>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <rect
-                            x="1"
-                            y="4"
-                            width="22"
-                            height="16"
-                            rx="2"
-                            ry="2"
-                          ></rect>
-                          <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-900">
-                          Visa ending in 4242
-                        </p>
-                        <p className="text-xs text-gray-500">Expires 12/2025</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-800 rounded">
-                        Default
-                      </span>
-                      <button className="text-sm text-gray-500 hover:text-gray-700">
-                        Edit
-                      </button>
-                      <button className="text-sm text-red-500 hover:text-red-700">
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-gray-200 rounded-lg flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-gray-100 rounded-lg">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-6 w-6"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <rect
-                            x="1"
-                            y="4"
-                            width="22"
-                            height="16"
-                            rx="2"
-                            ry="2"
-                          ></rect>
-                          <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-sm font-medium text-gray-900">
-                          Mastercard ending in 8888
-                        </p>
-                        <p className="text-xs text-gray-500">Expires 08/2024</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button className="text-sm text-gray-500 hover:text-gray-700">
-                        Make Default
-                      </button>
-                      <button className="text-sm text-gray-500 hover:text-gray-700">
-                        Edit
-                      </button>
-                      <button className="text-sm text-red-500 hover:text-red-700">
-                        Remove
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="p-4 border border-gray-200 border-dashed rounded-lg">
-                    <div className="flex items-center justify-center py-4">
-                      <button className="flex items-center text-primary-600 hover:text-primary-700">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-3 w-3 mr-2"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Add a new payment method
-                      </button>
-                    </div>
-                  </div>
-                </div>
+                <div className="space-y-4"></div>
               </div>
             )}
           </div>

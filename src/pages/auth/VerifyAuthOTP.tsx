@@ -52,6 +52,7 @@ const VerifyAuthOTP: React.FC = () => {
 
       login(
         {
+          beneficiaries: user.beneficiaries,
           balance: user.accountBalance,
           bankInformation: {
             accountName: user.accountName,
@@ -69,6 +70,7 @@ const VerifyAuthOTP: React.FC = () => {
           isKYC: user.isKYC,
           ninVerified: user.ninVerified,
           vusd_card: user.vusd_card,
+          tier: user.tier,
         },
         data?.token!
       );

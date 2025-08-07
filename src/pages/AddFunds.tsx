@@ -35,7 +35,7 @@ const AddFunds: React.FC = () => {
   const [showExtendedWait, setShowExtendedWait] = useState(false);
   const extendedWaitRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [usdtAmount, setUsdtAmount] = useState(0); // New USDT amount state
+  const [usdtAmount, setUsdtAmount] = useState(0); // New USD amount state
   const [exchangeRate, setExchangeRate] = useState(0); // New exchange rate state
 
   // Add this new useEffect for exchange rate calculation
@@ -272,8 +272,8 @@ const AddFunds: React.FC = () => {
     console.log("Verification complete, current step:", step);
   };
 
-  // Add this new handler for USDT conversion
-  const handleConvertToUSDT = async (e: React.FormEvent) => {
+  // Add this new handler for USD conversion
+  const handleConvertToUSD = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // if (!amount || parseFloat(amount) <= 0) {
@@ -308,7 +308,7 @@ const AddFunds: React.FC = () => {
     //     type: "exchange",
     //     description: `Converted ${formatCurrency(
     //       nairaAmount
-    //     )} to ${finalUsdtAmount.toFixed(2)} USDT`,
+    //     )} to ${finalUsdtAmount.toFixed(2)} USD`,
     //     status: "completed",
     //   });
 
@@ -360,12 +360,12 @@ const AddFunds: React.FC = () => {
 
       <motion.div variants={itemVariants}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          {activeTab === "add-naira" ? "Add Funds" : "Fund USDT Account"}
+          {activeTab === "add-naira" ? "Add Funds" : "Fund USD Account"}
         </h1>
         <p className="text-gray-600 mb-4">
           {activeTab === "add-naira"
             ? "Add money to your Rulsar account"
-            : "Convert Naira to USDT"}
+            : "Convert Naira to USD"}
         </p>
       </motion.div>
 
@@ -388,7 +388,7 @@ const AddFunds: React.FC = () => {
           }`}
           onClick={() => setActiveTab("convert-to-usdt")}
         >
-          Fund USDT
+          Fund USD
         </button>
       </div>
 
@@ -976,7 +976,7 @@ const AddFunds: React.FC = () => {
                 <div className="mb-4">
                   <div className="flex items-center justify-between">
                     <h2 className="text-lg font-semibold text-gray-900">
-                      Convert Naira to USDT
+                      Convert Naira to USD
                     </h2>
                     <div className="bg-gray-100 rounded-full p-2">
                       <ArrowRight className="h-3 w-3 text-gray-500" />
@@ -1036,13 +1036,13 @@ const AddFunds: React.FC = () => {
                         </div>
                         <div className="text-gray-600">Exchange rate:</div>
                         <div className="text-right font-medium">
-                          1 USDT = ₦{exchangeRate.toFixed(2)}
+                          1 USD = ₦{exchangeRate.toFixed(2)}
                         </div>
                         <div className="text-gray-600 font-semibold">
                           You'll receive:
                         </div>
                         <div className="text-right font-semibold text-blue-600">
-                          {usdtAmount.toFixed(2)} USDT
+                          {usdtAmount.toFixed(2)} USD
                         </div>
                       </div>
                     </div>
@@ -1086,7 +1086,7 @@ const AddFunds: React.FC = () => {
                   </div>
                 )}
 
-                <form onSubmit={handleConvertToUSDT}>
+                <form onSubmit={handleConvertToUSD}>
                   <div className="space-y-4">
                     <div className="p-4 bg-primary-50 border border-primary-100 rounded-lg">
                       <h3 className="font-medium text-primary-800 mb-2">
@@ -1101,7 +1101,7 @@ const AddFunds: React.FC = () => {
                       <div className="flex items-center justify-between py-3">
                         <span className="text-gray-600">To:</span>
                         <span className="font-medium">
-                          {usdtAmount.toFixed(2)} USDT
+                          {usdtAmount.toFixed(2)} USD
                         </span>
                       </div>
                     </div>
@@ -1127,10 +1127,11 @@ const AddFunds: React.FC = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-500">
-                          USDT Balance After:
+                          USD Balance After:
                         </span>
+
                         <span className="text-sm font-medium">
-                          {(0 + usdtAmount).toFixed(2)} USDT
+                          {(0 + usdtAmount).toFixed(2)} USD
                         </span>
                       </div>
                     </div>
@@ -1172,7 +1173,7 @@ const AddFunds: React.FC = () => {
                   Conversion Successful!
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  You've received {usdtAmount.toFixed(2)} USDT
+                  You've received {usdtAmount.toFixed(2)} USD
                   <span className="block text-sm text-gray-500 mt-1">
                     (from {formatCurrency(parseFloat(amount))} NGN)
                   </span>
@@ -1181,7 +1182,7 @@ const AddFunds: React.FC = () => {
                   <div className="flex items-center justify-center">
                     <Wallet className="h-5 w-5 text-primary-600 mr-2" />
                     <span className="font-medium text-gray-900">
-                      New USDT Balance: {(0).toFixed(2)} USDT
+                      New USD Balance: {(0).toFixed(2)} USD
                     </span>
                   </div>
                 </div>

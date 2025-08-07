@@ -10,21 +10,22 @@ import {
   CheckCircle,
   ArrowRight,
   FileDigit,
+  Plus,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { AddBeneficiaryModal } from "../components/AddBeneficiaryModal";
 import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { formatCurrency } from "../utils/formatters";
-import { useBankStore } from "../stores/banksStore";
-import { validateAccount } from "../utils/banks";
+// import { useBankStore } from "../stores/banksStore";
+
 import { transferFunds } from "../services/transfer";
 
 const Transfer: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateBalance } = useAuthStore();
   const addTransaction = useTransactionStore((state) => state.addTransaction);
-  const banks = useBankStore((state) => state.banks);
 
   const [values, setValues] = useState({
     account_number: "",
@@ -35,54 +36,13 @@ const Transfer: React.FC = () => {
   });
 
   const [error, setError] = useState("");
-  const [validating, setValidating] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [bankCode, setBankCode] = useState("");
+
+  const [addBeneficiary, setAddBeneficiary] = useState(false);
 
   const TRANSFER_FEE = 20;
-
-  const handleValidateAccount = async () => {
-    setValues((prevValues) => ({
-      ...prevValues,
-      name_enquiry_reference: "",
-    }));
-
-    try {
-      setValidating(true);
-      const res = await validateAccount(values.account_number, bankCode);
-      setValidating(false);
-
-      if (res.status !== 200) {
-        toast.error(res.data.message);
-        setError(res.data.message);
-      } else {
-        const data = res.data.data;
-        setValues((prevValues) => ({
-          ...prevValues,
-          name_enquiry_reference: data.account_name,
-        }));
-      }
-    } catch (error: any) {
-      console.log(error);
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setValidating(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!bankCode || bankCode === "") return;
-
-    handleValidateAccount();
-  }, [bankCode]);
-
-  useEffect(() => {
-    if (values.account_number === "") {
-      setBankCode("");
-      setValues((prev) => ({ ...prev, name_enquiry_reference: "" }));
-    }
-  }, [values.account_number]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -204,6 +164,15 @@ const Transfer: React.FC = () => {
         </p>
       </motion.div>
 
+      <AddBeneficiaryModal
+        onAction={() => {}}
+        onClose={() => {}}
+        actionText="Create"
+        title="Add New Beneficiary"
+        description="Enter beneficiary information below"
+        isOpen={addBeneficiary}
+      />
+
       <div className="bg-white rounded-card shadow-card p-6">
         {step === 1 && (
           <motion.div
@@ -223,7 +192,7 @@ const Transfer: React.FC = () => {
               </div>
 
               <p className="text-sm text-gray-500 mt-1">
-                Enter recipient account information
+                Select existing or add a new beneficiary
               </p>
             </div>
 
@@ -232,6 +201,43 @@ const Transfer: React.FC = () => {
                 {error}
               </div>
             )}
+
+            {user?.beneficiaries && user?.beneficiaries.length === 0 && (
+              <div className="my-2 space-y-2">
+                <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="p-2 bg-primary-100 rounded-full">
+                        <User className="h-3 w-3 text-primary-600" />
+                      </div>
+
+                      <div className="ml-3">
+                        <p className="text-sm font-medium text-gray-900">
+                          Password
+                        </p>
+
+                        <p className="text-xs text-gray-500">
+                          Change your password
+                          {/* Last changed 3 months ago */}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
+                      Select
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <button
+              className="btn text-primary rounded-lg mb-4 flex items-center gap-2"
+              onClick={() => setAddBeneficiary(true)}
+            >
+              <Plus className="h-2 w-2" />
+              Add Beneficiary
+            </button>
 
             <div className="space-y-3 mb-6">
               <div>
@@ -268,204 +274,18 @@ const Transfer: React.FC = () => {
                   </p>
                 </div>
               </div>
-
-              <div>
-                <label
-                  htmlFor="account_number"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Account Number
-                </label>
-
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <FileDigit className="h-4 w-3 text-gray-400" />
-                  </div>
-
-                  <input
-                    type="text"
-                    id="account_number"
-                    name="account_number"
-                    className="input pl-10"
-                    // placeholder="email@example.com"
-                    value={values.account_number}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                {/* {recentContacts.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs text-gray-500 mb-2">
-                      Recent contacts
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {recentContacts.map((contact) => (
-                        <button
-                          key={contact.email}
-                          type="button"
-                          onClick={() => setRecipient(contact.email)}
-                          className={`text-xs py-1 px-2 rounded-full flex items-center ${
-                            recipient === contact.email
-                              ? "bg-primary-100 text-primary-700 border border-primary-200"
-                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
-                        >
-                          <span className="w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center text-[10px] mr-1">
-                            {contact.name.charAt(0)}
-                          </span>
-                          {contact.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )} */}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="bank-select"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Bank Name
-                </label>
-
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <Landmark className="h-4 w-3 text-gray-400" />
-                  </div>
-
-                  <select
-                    disabled={values.account_number.length <= 5}
-                    className="input pl-4"
-                    name="bank-select"
-                    id="bank-select"
-                    value={bankCode}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-                      const { value } = e.target;
-                      setBankCode(value);
-
-                      const selectedBank = banks.filter(
-                        (bank) => bank.code === value
-                      )[0];
-                      setValues((prevValues) => ({
-                        ...prevValues,
-                        bank_name: selectedBank.name,
-                      }));
-                    }}
-                  >
-                    <option value="">Select Bank</option>
-
-                    {banks.map((bank, i) => (
-                      <option className="ml-2" key={i} value={bank.code}>
-                        {bank.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* <input
-                    type="email"
-                    id="recipient"
-                    className="input pl-10"
-                    placeholder="email@example.com"
-                    value={recipient}
-                    onChange={(e) => setRecipient(e.target.value)}
-                    required
-                  /> */}
-                </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="name_enquiry_reference"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Account Name
-                </label>
-
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
-                    <User className="h-4 w-3 text-gray-400" />
-                  </div>
-
-                  <input
-                    disabled
-                    type="text"
-                    id="name_enquiry_reference"
-                    name="name_enquiry_reference"
-                    className="input pl-10"
-                    value={values.name_enquiry_reference}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                {/* {recentContacts.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-xs text-gray-500 mb-2">
-                      Recent contacts
-                    </p>
-
-                    <div className="flex flex-wrap gap-2">
-                      {recentContacts.map((contact) => (
-                        <button
-                          key={contact.email}
-                          type="button"
-                          onClick={() => setRecipient(contact.email)}
-                          className={`text-xs py-1 px-2 rounded-full flex items-center ${
-                            recipient === contact.email
-                              ? "bg-primary-100 text-primary-700 border border-primary-200"
-                              : "bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200"
-                          }`}
-                        >
-                          <span className="w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center text-[10px] mr-1">
-                            {contact.name.charAt(0)}
-                          </span>
-                          {contact.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )} */}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="narration"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Narration (Optional)
-                </label>
-
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                    <MessageSquare className="h-3 w-2 text-gray-400" />
-                  </div>
-
-                  <input
-                    type="text"
-                    id="narration"
-                    name="narration"
-                    className="input pl-10"
-                    placeholder="What's this for?"
-                    value={values.narration}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="flex justify-end">
               <button
-                disabled={validating}
+                disabled={isLoading}
                 type="button"
                 onClick={handleContinue}
                 className={`btn btn-primary px-6 ${
-                  validating ? "disabled btn-primary-100" : ""
+                  isLoading ? "disabled btn-primary-100" : ""
                 }`}
               >
-                {!validating ? (
+                {!isLoading ? (
                   "Continue"
                 ) : (
                   <span className="flex items-center">
@@ -597,6 +417,7 @@ const Transfer: React.FC = () => {
                     />
                   </svg>
                 </div>
+
                 <div className="ml-3">
                   <p className="text-sm text-accent-700">
                     By confirming this transfer, you agree that the recipient

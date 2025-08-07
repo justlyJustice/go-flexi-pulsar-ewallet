@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+type Beneficiary = {
+  beneficiaryType: "individaul" | "business";
+  bankName: string;
+  accountNumber: string;
+  accountName: string;
+};
+
 export interface User {
   id: string;
   email: string;
@@ -19,6 +26,8 @@ export interface User {
   ninVerified: boolean;
   isKYC: "pending" | "verified" | "unverified";
   vusd_card?: string;
+  beneficiaries: Beneficiary[] | [];
+  tier: string;
 }
 
 interface AuthState {
