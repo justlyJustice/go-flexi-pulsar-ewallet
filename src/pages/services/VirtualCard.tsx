@@ -22,6 +22,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
     amount: "5",
     customerEmail: user?.email || "",
   });
+  // const [createdType, setCreatedType] = useState<"new" | "">("");
   const [action, setAction] = useState<"create" | "fund">("create");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCardDetails, setLoadingCardDetails] = useState(true);

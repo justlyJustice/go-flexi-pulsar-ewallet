@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
@@ -6,7 +7,7 @@ import BillPayment from "./pages/BillPayment";
 import Register from "./pages/auth/Register";
 import Dashboard from "./pages/Dashboard";
 import AddFunds from "./pages/AddFunds";
-// import Transfer from "./pages/Transfer";
+import Transfer from "./pages/Transfer";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -23,7 +24,6 @@ import { useAuthStore } from "./stores/authStore";
 // import BulkSMS from "./pages/services/BulkSMS";
 // import USDTFunding from "./pages/services/USDTFunding";
 import VirtualCard from "./pages/services/VirtualCard";
-import { useEffect } from "react";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -33,10 +33,16 @@ function App() {
       localStorage.clear();
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener(
+      "beforeunload",
+      import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+    );
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener(
+        "beforeunload",
+        import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+      );
     };
   }, []);
 
@@ -134,8 +140,8 @@ function App() {
             /> */}
             {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
             <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
-            {/* <Route path="/transfer" element={<Transfer />} />
-            <Route path="/profile" element={<Profile />} /> */}
+            {/* <Route path="/profile" element={<Profile />} /> */}
+            <Route path="/transfer" element={<Transfer />} />
           </Route>
         </Route>
 

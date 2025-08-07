@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   Landmark,
   Send,
@@ -11,12 +12,13 @@ import {
   FileDigit,
 } from "lucide-react";
 import { motion } from "framer-motion";
+
 import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { formatCurrency } from "../utils/formatters";
 import { useBankStore } from "../stores/banksStore";
 import { validateAccount } from "../utils/banks";
-import toast from "react-hot-toast";
+import { transferFunds } from "../services/transfer";
 
 const Transfer: React.FC = () => {
   const navigate = useNavigate();
@@ -32,12 +34,13 @@ const Transfer: React.FC = () => {
     narration: "",
   });
 
-  const [description, setDescription] = useState("");
   const [error, setError] = useState("");
   const [validating, setValidating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [bankCode, setBankCode] = useState("");
+
+  const TRANSFER_FEE = 20;
 
   const handleValidateAccount = async () => {
     setValues((prevValues) => ({
@@ -47,30 +50,39 @@ const Transfer: React.FC = () => {
 
     try {
       setValidating(true);
-      const result = await validateAccount(values.account_number, bankCode);
+      const res = await validateAccount(values.account_number, bankCode);
       setValidating(false);
 
-      console.log(result);
-
-      // if (!result.status) {
-      //   toast.error(result.message);
-      //   setError(result.message);
-      // }
-
-      // setValues((prevValues) => ({
-      //   ...prevValues,
-      //   name_enquiry_reference: result.data?.account_name! || "",
-      // }));
-    } catch (error) {
+      if (res.status !== 200) {
+        toast.error(res.data.message);
+        setError(res.data.message);
+      } else {
+        const data = res.data.data;
+        setValues((prevValues) => ({
+          ...prevValues,
+          name_enquiry_reference: data.account_name,
+        }));
+      }
+    } catch (error: any) {
       console.log(error);
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setValidating(false);
     }
   };
 
   useEffect(() => {
-    if (!bankCode) return;
+    if (!bankCode || bankCode === "") return;
 
     handleValidateAccount();
   }, [bankCode]);
+
+  useEffect(() => {
+    if (values.account_number === "") {
+      setBankCode("");
+      setValues((prev) => ({ ...prev, name_enquiry_reference: "" }));
+    }
+  }, [values.account_number]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -88,62 +100,64 @@ const Transfer: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // if (!recipient.trim()) {
-    //   setError("Please enter a valid recipient email");
-    //   return;
-    // }
-    // if (!values.amount || parseFloat(values.amount) <= 0) {
-    //   setError("Please enter a valid amount");
-    //   return;
-    // }
-    // const amountValue = parseFloat(values.amount);
-    // if ((user?.balance || 0) < amountValue) {
-    //   setError("Insufficient balance");
-    //   return;
-    // }
-    // setError("");
-    // setStep(2);
+    const { account_number, amount, bank_name, name_enquiry_reference } =
+      values;
+
+    if (!account_number || !amount || !bank_name || !name_enquiry_reference) {
+      setError("All fields are required");
+      return toast.error("All fields are required");
+    }
+
+    if (user?.balance! < parseFloat(amount)) {
+      toast.error("Insufficient balance");
+      return setError("Insufficient balance");
+    }
+
+    setError("");
+    setStep(2);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const amountValue = parseFloat(values.amount);
-
-    // if (!recipient || !amount || amountValue <= 0) {
-    //   setError("Please fill in all required fields");
-    //   return;
-    // }
-
-    if ((user?.balance || 0) < amountValue) {
-      setError("Insufficient balance");
-      return;
-    }
-
-    setIsLoading(true);
-    setError("");
+    const amountValue = parseFloat(values.amount) + TRANSFER_FEE;
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Update user balance
-      updateBalance(-amountValue);
-
-      // Add transaction
-      addTransaction({
-        amount: amountValue,
-        type: "transfer-out",
-        description:
-          description || `Transfer to ${values.name_enquiry_reference}`,
-        recipient: values.name_enquiry_reference,
-        status: "completed",
+      setIsLoading(true);
+      const res = await transferFunds({
+        ...values,
+        amount: String(amountValue),
       });
+      setIsLoading(false);
 
-      // Go to success step
-      setStep(3);
-    } catch (err) {
-      setError("Transaction failed. Please try again.");
+      if (!res.ok) {
+        setError(res.data?.message || "Transfer failed");
+        toast.error(res.data?.message || "Transfer failed");
+      } else {
+        console.log(res.data);
+        // toast.success(res.data?.message!);
+
+        // const expectedBalance = user?.balance! - amountValue;
+
+        // // Update user balance
+        // updateBalance(expectedBalance);
+
+        // // Add transaction
+        // addTransaction({
+        //   amount: amountValue,
+        //   type: "transfer-out",
+        //   description:
+        //     values.narration || `Transfer to ${values.name_enquiry_reference}`,
+        //   recipient: values.name_enquiry_reference,
+        //   status: "completed",
+        // });
+
+        // // Go to success step
+        // setStep(3);
+      }
+    } catch (err: any) {
+      setError(err.message || "Transaction failed. Please try again.");
+      toast.error(err.message || "Transaction failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -173,12 +187,6 @@ const Transfer: React.FC = () => {
       },
     },
   };
-
-  // const recentContacts = [
-  //   { email: "john@example.com", name: "John Doe" },
-  //   { email: "jane@example.com", name: "Jane Smith" },
-  //   { email: "mike@example.com", name: "Mike Johnson" },
-  // ];
 
   return (
     <motion.div
@@ -347,9 +355,7 @@ const Transfer: React.FC = () => {
                       }));
                     }}
                   >
-                    <option className="" value="">
-                      Select Bank
-                    </option>
+                    <option value="">Select Bank</option>
 
                     {banks.map((bank, i) => (
                       <option className="ml-2" key={i} value={bank.code}>
@@ -389,7 +395,6 @@ const Transfer: React.FC = () => {
                     id="name_enquiry_reference"
                     name="name_enquiry_reference"
                     className="input pl-10"
-                    // placeholder="email@example.com"
                     value={values.name_enquiry_reference}
                     onChange={handleChange}
                     required
@@ -460,7 +465,34 @@ const Transfer: React.FC = () => {
                   validating ? "disabled btn-primary-100" : ""
                 }`}
               >
-                {!validating ? "Continue" : "Validing account"}
+                {!validating ? (
+                  "Continue"
+                ) : (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-3 w-2 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+
+                    <span>Verifying...</span>
+                  </span>
+                )}
               </button>
             </div>
           </motion.div>
@@ -472,13 +504,14 @@ const Transfer: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="mb-6">
+            <div className="mb-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-semibold text-gray-900">
                   Confirm Transfer
                 </h2>
+
                 <div className="bg-gray-100 rounded-full p-2">
-                  <Send className="h-5 w-5 text-gray-500" />
+                  <Send className="h-3 w-3 text-gray-500" />
                 </div>
               </div>
               <p className="text-sm text-gray-500 mt-1">
@@ -492,44 +525,64 @@ const Transfer: React.FC = () => {
               </div>
             )}
 
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-              <div className="space-y-3">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
+              <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-500">Recipient</span>
+                  <span className="text-sm text-gray-500">Account Name</span>
                   <span className="text-sm font-medium text-gray-900">
                     {values.name_enquiry_reference}
                   </span>
                 </div>
+
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">Account Number</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {values.account_number}
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500">Bank Name</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    {values.bank_name}
+                  </span>
+                </div>
+
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-500">Amount</span>
                   <span className="text-sm font-medium text-gray-900">
                     {formatCurrency(parseFloat(values.amount) || 0)}
                   </span>
                 </div>
-                {description && (
+
+                {values.narration && (
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-500">Description</span>
                     <span className="text-sm font-medium text-gray-900">
-                      {description}
+                      {values.narration}
                     </span>
                   </div>
                 )}
+
                 <div className="flex justify-between pt-2 border-t border-gray-200">
                   <span className="text-sm text-gray-500">Fee</span>
                   <span className="text-sm font-medium text-gray-900">
-                    $0.00
+                    {formatCurrency(TRANSFER_FEE)}
                   </span>
                 </div>
+
                 <div className="flex justify-between font-medium">
                   <span className="text-gray-900">Total</span>
                   <span className="text-primary-700">
-                    {formatCurrency(parseFloat(values.amount) || 0)}
+                    {formatCurrency(
+                      parseFloat(values.amount) + TRANSFER_FEE || 0
+                    )}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-accent-50 border border-accent-100 rounded-lg p-4 mb-6">
+            <div className="bg-accent-50 border border-accent-100 rounded-lg p-2 mb-4">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <svg
@@ -585,6 +638,7 @@ const Transfer: React.FC = () => {
                         stroke="currentColor"
                         strokeWidth="4"
                       ></circle>
+
                       <path
                         className="opacity-75"
                         fill="currentColor"
@@ -636,10 +690,14 @@ const Transfer: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  // setRecipient("");
-                  // setAmount("");
-                  // setDescription("");
-                  // setStep(1);
+                  setValues({
+                    account_number: "",
+                    amount: "",
+                    bank_name: "",
+                    name_enquiry_reference: "",
+                    narration: "",
+                  });
+                  setStep(1);
                 }}
                 className="btn btn-outline flex items-center"
               >

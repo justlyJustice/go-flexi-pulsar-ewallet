@@ -154,7 +154,7 @@ const BalanceCard: React.FC<{
           <div className="space-y-1">
             <div>
               <p className="text-xs text-white text-opacity-70">
-                USDT Wallet Address
+                USD Wallet Address
               </p>
               <div className="flex items-center justify-between">
                 <p className="font-medium truncate">

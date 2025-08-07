@@ -129,15 +129,12 @@ const Sidebar: React.FC = () => {
       isActive: location.pathname === "/add-funds",
     },
     {
-      // path: user?.isKYC !== "unverified" ? "/transfer" : "#",
-      path: "#",
+      path: user?.isKYC === "verified" ? "/transfer" : "#",
+      // path: "/transfer",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
-      onClick: () => {
-        setIsOpen(true);
-        // user && user.isKYC === "unverified" && setIsOpen(true);
-      },
-      isActive: false,
+      onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
+      isActive: location.pathname === "/transfer",
     },
     {
       type: "dropdown",

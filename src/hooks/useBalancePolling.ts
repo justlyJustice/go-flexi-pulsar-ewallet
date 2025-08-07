@@ -5,7 +5,7 @@ import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { getUpdatedUserBalance } from "../services/add-funds";
 
-const POLLING_INTERVAL = 12000; // 60 seconds
+const POLLING_INTERVAL = 24000; // 120 seconds
 
 export const useBalancePolling = (userId: string | undefined) => {
   const { user, updateBalance } = useAuthStore();

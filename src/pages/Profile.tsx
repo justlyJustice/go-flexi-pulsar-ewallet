@@ -619,7 +619,7 @@ const Profile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {user?.isKYC === "verified" && (
+                  {user?.isKYC !== "verified" && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -647,9 +647,9 @@ const Profile: React.FC = () => {
                     </div>
                   )}
 
-                  {user?.isKYC !== "verified" ? (
+                  {user?.isKYC === "verified" ? (
                     <VerificationStatus
-                      type={user?.bvnVerified === true ? "bvn" : "nin"}
+                      type={user?.bvnVerified ? "bvn" : "nin"}
                     />
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

@@ -31,7 +31,7 @@ export const createVirtualCard = (
           card_type,
           customerEmail,
           name_on_card,
-          mode,
+          // mode,
         }
       )
     : client.post<{ data: any; success: boolean; error: string }>("/");
@@ -52,6 +52,6 @@ export const fundVirtualCard = (
     {
       amount,
       card_id: user?.vusd_card,
-      mode: "sandbox",
+      // mode: "sandbox",
     }
   );
