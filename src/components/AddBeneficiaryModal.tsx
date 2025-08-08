@@ -6,14 +6,13 @@ import { FileDigit, Landmark, User } from "lucide-react";
 import toast from "react-hot-toast";
 
 import { createBeneficiary } from "../services/beneficiaries";
+import { useAuthStore } from "../stores/authStore";
 
 type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   description: string;
-  actionText?: string;
-  onAction?: () => void;
 };
 
 export const AddBeneficiaryModal = ({
@@ -21,8 +20,6 @@ export const AddBeneficiaryModal = ({
   onClose,
   title,
   description,
-  actionText,
-  onAction,
 }: ModalProps) => {
   const [values, setValues] = useState({
     account_number: "",
@@ -33,8 +30,9 @@ export const AddBeneficiaryModal = ({
     bank_code: "",
     beneficiary_type: "",
   });
-  const [bankName, setBankName] = useState("");
   const banks = useBankStore((state) => state.banks);
+  const updateUser = useAuthStore((store) => store.updateUser);
+  const [bankName, setBankName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -112,9 +110,16 @@ export const AddBeneficiaryModal = ({
       if (!res.ok) {
         setError(res.data?.error!);
         toast.error(res.data?.error!);
+
+        setTimeout(() => {
+          setError("");
+        }, 5000);
       } else {
-        const data = res.data?.data;
-        console.log(data);
+        const beneficiaries = res.data?.beneficiaries!;
+        updateUser({ beneficiaries });
+
+        toast.success("Add beneficiary successfullly");
+        onClose();
       }
     } catch (error: any) {
       console.log(error);
@@ -133,7 +138,7 @@ export const AddBeneficiaryModal = ({
       <div className="fixed inset-0 bg-black/90" aria-hidden="true" />
 
       <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-lg z-50">
-        <DialogTitle className="text-xl font-bold text-gray-900 mb-1">
+        <DialogTitle className="text-xl font-bold text-gray-900">
           {title}
         </DialogTitle>
 
@@ -145,7 +150,7 @@ export const AddBeneficiaryModal = ({
           </div>
         )}
 
-        <form className="my-3" onSubmit={handleSubmit}>
+        <form className="my-2" onSubmit={handleSubmit}>
           <div className="mb-1">
             <label
               htmlFor="account_number"
@@ -164,7 +169,7 @@ export const AddBeneficiaryModal = ({
                 id="account_number"
                 name="account_number"
                 className="input pl-10"
-                // placeholder="email@example.com"
+                placeholder="0123456789"
                 value={values.account_number}
                 onChange={handleChange}
                 required
@@ -216,7 +221,7 @@ export const AddBeneficiaryModal = ({
             </div>
           </div>
 
-          <div className="mb-3">
+          <div className="mb-1">
             <label
               htmlFor="name_enquiry_reference"
               className="block text-sm font-medium text-gray-700 mb-1"
@@ -266,30 +271,39 @@ export const AddBeneficiaryModal = ({
 
                 <option value="individual">Individual</option>
                 <option value="business">Business</option>
-                <option value="merchant">Merchang5</option>
+                <option value="merchant">Merchant</option>
               </select>
             </div>
           </div>
 
-          <div className="flex justify-end space-x-3 mt-5">
+          <div className="flex justify-end space-x-3 mt-3">
             <button
-              onClick={onClose}
+              onClick={() => {
+                onClose();
+
+                setValues({
+                  account_number: "",
+                  amount: "",
+                  bank_name: "",
+                  name_enquiry_reference: "",
+                  narration: "",
+                  bank_code: "",
+                  beneficiary_type: "",
+                });
+              }}
               className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
               type="button"
             >
               Close
             </button>
 
-            {actionText && onAction && (
-              <button
-                disabled={loading}
-                onClick={onAction}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                type="submit"
-              >
-                {loading ? "Validating" : actionText}
-              </button>
-            )}
+            <button
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              type="submit"
+            >
+              {loading ? "Validating" : "Create"}
+            </button>
           </div>
         </form>
       </div>

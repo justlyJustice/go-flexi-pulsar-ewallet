@@ -1,11 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Beneficiary = {
-  beneficiaryType: "individaul" | "business";
+export type Beneficiary = {
+  beneficiaryType: "individual" | "business" | "merchant";
   bankName: string;
   accountNumber: string;
   accountName: string;
+  _id: string;
 };
 
 export interface User {

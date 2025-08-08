@@ -1,4 +1,3 @@
-import { getUser } from "../stores/authStore";
 import client from "./client";
 
 type TransferParams = {
@@ -9,8 +8,6 @@ type TransferParams = {
   bank_name: string;
 };
 
-const user = getUser();
-
 export const transferFunds = ({
   account_number,
   amount,
@@ -18,8 +15,8 @@ export const transferFunds = ({
   name_enquiry_reference,
   narration,
 }: TransferParams) =>
-  client.post<{ message: string; success: boolean; data: any }>(
-    `/transfer?amount=${amount}&account_number=${account_number}&narration=${narration}&name_enquiry_reference=${name_enquiry_reference}}&bank_name=${bank_name}&senderName=${user?.fullName}`
+  client.post<{ error: string; success: boolean; data: any }>(
+    `/transfer?amount=${amount}&account_number=${account_number}&narration=${narration}&name_enquiry_reference=${name_enquiry_reference}&bank_name=${bank_name} `
   );
 
 export const verifyAccountName = (bankCode: string, accountNumber: string) =>

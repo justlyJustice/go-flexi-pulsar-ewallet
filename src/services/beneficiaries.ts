@@ -1,6 +1,8 @@
 import client from "./client";
 
-type Beneficiary = {
+import { Beneficiary } from "../stores/authStore";
+
+type BeneficiaryData = {
   bank_code: string;
   account_number: string;
   account_name: string;
@@ -8,8 +10,9 @@ type Beneficiary = {
   beneficiary_type: string;
 };
 
-export const createBeneficiary = (beneficiary: Beneficiary) =>
-  client.post<{ error: string; data: any; success: boolean }>(
-    "/users/add-beneficiary",
-    beneficiary
-  );
+export const createBeneficiary = (beneficiary: BeneficiaryData) =>
+  client.post<{
+    error: string;
+    beneficiaries: Beneficiary[];
+    success: boolean;
+  }>("/users/add-beneficiary", beneficiary);

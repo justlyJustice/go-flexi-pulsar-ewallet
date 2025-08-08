@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -6,16 +6,14 @@ import {
   Send,
   User,
   DollarSign,
-  MessageSquare,
   CheckCircle,
   ArrowRight,
-  FileDigit,
   Plus,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { AddBeneficiaryModal } from "../components/AddBeneficiaryModal";
-import { useAuthStore } from "../stores/authStore";
+import { Beneficiary, useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { formatCurrency } from "../utils/formatters";
 // import { useBankStore } from "../stores/banksStore";
@@ -26,6 +24,7 @@ const Transfer: React.FC = () => {
   const navigate = useNavigate();
   const { user, updateBalance } = useAuthStore();
   const addTransaction = useTransactionStore((state) => state.addTransaction);
+  const [selectedBeneficiaryID, setSelectedBeneficiaryID] = useState("");
 
   const [values, setValues] = useState({
     account_number: "",
@@ -36,19 +35,11 @@ const Transfer: React.FC = () => {
   });
 
   const [error, setError] = useState("");
-
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-
   const [addBeneficiary, setAddBeneficiary] = useState(false);
 
   const TRANSFER_FEE = 20;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setValues((prevValues) => ({ ...prevValues, [name]: value }));
-  };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -91,8 +82,12 @@ const Transfer: React.FC = () => {
       setIsLoading(false);
 
       if (!res.ok) {
-        setError(res.data?.message || "Transfer failed");
-        toast.error(res.data?.message || "Transfer failed");
+        setError(res.data?.error || "Transfer failed");
+        toast.error(res.data?.error || "Transfer failed");
+
+        setTimeout(() => {
+          setError("");
+        }, 5000);
       } else {
         console.log(res.data);
         // toast.success(res.data?.message!);
@@ -148,6 +143,17 @@ const Transfer: React.FC = () => {
     },
   };
 
+  const selectBeneficiary = (beneficiary: Beneficiary) => {
+    setSelectedBeneficiaryID(beneficiary._id);
+
+    setValues((prev) => ({
+      ...prev,
+      account_number: beneficiary.accountNumber,
+      bank_name: beneficiary.bankName,
+      name_enquiry_reference: beneficiary.accountName,
+    }));
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -165,9 +171,7 @@ const Transfer: React.FC = () => {
       </motion.div>
 
       <AddBeneficiaryModal
-        onAction={() => {}}
-        onClose={() => {}}
-        actionText="Create"
+        onClose={() => setAddBeneficiary(false)}
         title="Add New Beneficiary"
         description="Enter beneficiary information below"
         isOpen={addBeneficiary}
@@ -202,32 +206,49 @@ const Transfer: React.FC = () => {
               </div>
             )}
 
-            {user?.beneficiaries && user?.beneficiaries.length === 0 && (
+            {user?.beneficiaries && user?.beneficiaries.length > 0 && (
               <div className="my-2 space-y-2">
-                <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="p-2 bg-primary-100 rounded-full">
-                        <User className="h-3 w-3 text-primary-600" />
+                {user.beneficiaries.map((beneficiary: Beneficiary, i) => (
+                  <div
+                    className={`${
+                      beneficiary._id === selectedBeneficiaryID
+                        ? "outline-2 outline outline-primary-500"
+                        : ""
+                    } p-2 bg-gray-50 border border-gray-200 rounded-lg`}
+                    key={i}
+                    onClick={() => selectBeneficiary(beneficiary)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <div className="p-2 bg-primary-100 rounded-full">
+                          <User className="h-2 w-2 text-primary-600" />
+                        </div>
+
+                        <div className="ml-3">
+                          <h4 className="font-bold">
+                            {beneficiary.accountName}
+                          </h4>
+
+                          <p className="text-sm font-medium text-gray-900 flex">
+                            NGN <Landmark className="w-2 h-2 mx-1.5" />{" "}
+                            {beneficiary.accountNumber}
+                          </p>
+
+                          <p className="text-xs text-gray-500">
+                            {beneficiary.bankName}
+                          </p>
+                        </div>
                       </div>
 
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">
-                          Password
-                        </p>
-
-                        <p className="text-xs text-gray-500">
-                          Change your password
-                          {/* Last changed 3 months ago */}
-                        </p>
-                      </div>
+                      <button
+                        className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                        onClick={() => selectBeneficiary(beneficiary)}
+                      >
+                        Select
+                      </button>
                     </div>
-
-                    <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                      Select
-                    </button>
                   </div>
-                </div>
+                ))}
               </div>
             )}
 
@@ -326,17 +347,20 @@ const Transfer: React.FC = () => {
           >
             <div className="mb-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Confirm Transfer
-                </h2>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Confirm Transfer
+                  </h2>
+
+                  <p className="text-sm text-gray-500">
+                    Please review the details before confirming
+                  </p>
+                </div>
 
                 <div className="bg-gray-100 rounded-full p-2">
                   <Send className="h-3 w-3 text-gray-500" />
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
-                Please review the details before confirming
-              </p>
             </div>
 
             {error && (

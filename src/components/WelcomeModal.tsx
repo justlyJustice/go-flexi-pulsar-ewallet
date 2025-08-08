@@ -35,8 +35,8 @@ export const WelcomeModal = () => {
           </p>
           <ul className="mt-3 space-y-2 text-sm text-gray-600">
             <li>• Complete your profile to unlock all features</li>
-            <li>• Verify your email for account security</li>
-            <li>• Check out our getting started guide</li>
+            <li>• You can add funds to your account</li>
+            <li>• Make swift and easy transfers</li>
           </ul>
         </Description>
 
