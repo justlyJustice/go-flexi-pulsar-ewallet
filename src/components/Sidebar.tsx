@@ -167,7 +167,7 @@ const Sidebar: React.FC = () => {
       <button
         onClick={item.toggle}
         className={`flex items-center justify-between w-full ${
-          isMobile ? "p-3" : "px-3 py-2"
+          isMobile ? "px-3 py-2" : "px-3 py-2"
         } rounded-lg transition-colors ${
           item.items.some((subItem: any) => subItem.isActive)
             ? "bg-primary-50 text-primary-700"
@@ -210,7 +210,7 @@ const Sidebar: React.FC = () => {
       <KycModal isOpen={isOpen} setIsOpen={setIsOpen} />
 
       {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-4 left-4 z-20">
+      <div className="lg:hidden fixed left-4 z-20">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 rounded-lg bg-white shadow-md text-gray-700"
@@ -233,20 +233,21 @@ const Sidebar: React.FC = () => {
         ></div>
 
         <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
-          <div className="p-6">
-            <div className="flex items-center justify-between mb-8">
+          <div className="p-4">
+            {/* <div className="flex items-center justify-between mb-8">
               <div className="flex items-center">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
                   Rulsar
                 </span>
               </div>
+
               <button onClick={closeMobileMenu} className="lg:hidden">
                 <X size={24} className="text-gray-500" />
               </button>
-            </div>
+            </div> */}
 
-            <nav className="space-y-2">
+            <nav className="mt-5">
               {navItems.map((item, i) => {
                 if (item.type === "dropdown") {
                   return renderDropdown(item, true);
@@ -261,7 +262,7 @@ const Sidebar: React.FC = () => {
                       item.onClick && item.onClick();
                     }}
                     className={() =>
-                      `flex items-center p-3 rounded-lg transition-colors ${
+                      `flex items-center p-2 rounded-lg transition-colors ${
                         item.isActive
                           ? "bg-primary-50 text-primary-700"
                           : "text-gray-700 hover:bg-gray-100"
@@ -279,7 +280,7 @@ const Sidebar: React.FC = () => {
                   logout();
                   closeMobileMenu();
                 }}
-                className="flex items-center w-full p-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                className="flex items-center w-full p-3 rounded-lg text-red-700 hover:bg-red-100 transition-colors mt-2"
               >
                 <LogOut size={20} />
                 <span className="ml-3">Logout</span>

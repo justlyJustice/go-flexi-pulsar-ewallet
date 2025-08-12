@@ -103,10 +103,10 @@ const Profile: React.FC = () => {
           Account Tier Benefits
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid lg:grid-cols-3 gap-3 md:grid-cols-1">
           {/* Personal Tier */}
           <div
-            className={`border rounded-lg p-4 h-fit ${
+            className={`border rounded-lg p-3 h-fit w-fit md:w-[100%] ${
               currentTier === "individual"
                 ? "border-primary-500 bg-primary-50"
                 : "border-gray-200"
@@ -141,7 +141,7 @@ const Profile: React.FC = () => {
 
           {/* Business Tier */}
           <div
-            className={`border rounded-lg p-4 h-fit ${
+            className={`border rounded-lg p-3 h-fit w-fit md:w-[100%] ${
               currentTier === "business"
                 ? "border-primary-500 bg-primary-50"
                 : "border-gray-200"
@@ -153,6 +153,7 @@ const Profile: React.FC = () => {
               )}
               Business Tier
             </h4>
+
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               <li className="flex items-start">
                 {currentTier === "business" ? (
@@ -183,11 +184,21 @@ const Profile: React.FC = () => {
                 <span>5-hour cooldown between transfers</span>
               </li>
             </ul>
+
+            {currentTier === "individual" && (
+              <button
+                type="button"
+                className="btn btn-primary my-2 w-full"
+                onClick={() => setActiveTab("kyc")}
+              >
+                Upgrade
+              </button>
+            )}
           </div>
 
           {/* Merchant Tier */}
           <div
-            className={`border rounded-lg p-4 h-fit ${
+            className={`border rounded-lg p-3 h-fit w-fit md:w-[100%] ${
               currentTier === "merchant"
                 ? "border-primary-500 bg-primary-50"
                 : "border-gray-200"
@@ -199,6 +210,7 @@ const Profile: React.FC = () => {
               )}
               Merchant Tier
             </h4>
+
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               <li className="flex items-start">
                 {currentTier === "merchant" ? (
@@ -229,6 +241,16 @@ const Profile: React.FC = () => {
                 <span>Minimum $15 deposit required</span>
               </li>
             </ul>
+
+            {currentTier === "business" && (
+              <button
+                type="button"
+                className="btn btn-primary my-2 w-full"
+                onClick={() => setActiveTab("kyc")}
+              >
+                Upgrade
+              </button>
+            )}
           </div>
         </div>
 
