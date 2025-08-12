@@ -21,7 +21,7 @@ import { WelcomeModal } from "../components/WelcomeModal";
 
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
   // const getTransactions = useTransactionStore((state) => state.getTransactions);
 
   // const transactions = getTransactions();
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
   // Format balance with asterisks if hidden
   const displayBalance = showBalance
     ? formatCurrency(user?.balance || 0)
-    : "******"; // Or use •••••• for dots
+    : "******";
 
   return (
     <motion.div

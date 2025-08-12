@@ -1,4 +1,4 @@
 import client from "./client";
 
-export const getUpdatedUserBalance = (id: string) =>
-  client.get<{ user: any }>(`/users/${id}`);
+export const getUpdatedUser = (id: string) =>
+  client.get<{ user: any; error: string }>(`/users/${id}`);

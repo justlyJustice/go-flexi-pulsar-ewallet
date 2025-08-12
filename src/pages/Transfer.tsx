@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
@@ -7,6 +7,7 @@ import {
   User,
   DollarSign,
   CheckCircle,
+  MessageSquare,
   ArrowRight,
   Plus,
 } from "lucide-react";
@@ -19,10 +20,11 @@ import { formatCurrency } from "../utils/formatters";
 // import { useBankStore } from "../stores/banksStore";
 
 import { transferFunds } from "../services/transfer";
+import { getUpdatedUser } from "../services/add-funds";
 
 const Transfer: React.FC = () => {
   const navigate = useNavigate();
-  const { user, updateBalance } = useAuthStore();
+  const { user, updateUser } = useAuthStore();
   const addTransaction = useTransactionStore((state) => state.addTransaction);
   const [selectedBeneficiaryID, setSelectedBeneficiaryID] = useState("");
 
@@ -38,8 +40,59 @@ const Transfer: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [addBeneficiary, setAddBeneficiary] = useState(false);
-
+  const [transferLimits, setTransferLimits] = useState({
+    daily: { limit: 50000, used: 0, lastReset: null as Date | null },
+    monthly: { limit: 250000, used: 0, lastReset: null as Date | null },
+    lastTransferTime: null as Date | null,
+    cooldownHours: 5,
+  });
   const TRANSFER_FEE = 20;
+
+  // Initialize transfer limits from user data
+  useEffect(() => {
+    if (user) {
+      setTransferLimits({
+        daily: {
+          limit: user.dailyTransferLimit || 50000,
+          used: user.dailyTransferAmount || 0,
+          lastReset: user.lastDailyReset ? new Date(user.lastDailyReset) : null,
+        },
+        monthly: {
+          limit: user.monthlyTransferLimit || 250000,
+          used: user.monthlyTransferAmount || 0,
+          lastReset: user.lastMonthlyReset
+            ? new Date(user.lastMonthlyReset)
+            : null,
+        },
+        lastTransferTime: user.lastTransferTime
+          ? new Date(user.lastTransferTime)
+          : null,
+        cooldownHours: 5,
+      });
+    }
+  }, [user]);
+
+  // Calculate time remaining for cooldown
+  const getCooldownRemaining = () => {
+    if (!transferLimits.lastTransferTime) return null;
+
+    const now = new Date();
+    const cooldownMs = transferLimits.cooldownHours * 60 * 60 * 1000;
+    const nextTransferTime = new Date(
+      transferLimits.lastTransferTime.getTime() + cooldownMs
+    );
+
+    if (now < nextTransferTime) {
+      const diffMs = nextTransferTime.getTime() - now.getTime();
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      return `${hours}h ${minutes}m`;
+    }
+
+    return null;
+  };
+
+  const cooldownRemaining = getCooldownRemaining();
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -51,10 +104,21 @@ const Transfer: React.FC = () => {
   };
 
   const handleContinue = () => {
-    const { account_number, amount, bank_name, name_enquiry_reference } =
-      values;
+    const {
+      account_number,
+      amount,
+      bank_name,
+      name_enquiry_reference,
+      narration,
+    } = values;
 
-    if (!account_number || !amount || !bank_name || !name_enquiry_reference) {
+    if (
+      !account_number ||
+      !amount ||
+      !bank_name ||
+      !name_enquiry_reference ||
+      !narration
+    ) {
       setError("All fields are required");
       return toast.error("All fields are required");
     }
@@ -71,7 +135,22 @@ const Transfer: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const amountValue = parseFloat(values.amount) + TRANSFER_FEE;
+    const amountValue = parseFloat(values.amount);
+
+    if (user?.balance! < amountValue) {
+      setError("Not enough funds.");
+      toast.error("Not enough funds!");
+
+      return setTimeout(() => {
+        setError("");
+      }, 5000);
+    }
+
+    // Client-side validation
+    if (amountValue > 10000) {
+      setError("Maximum single transfer is ₦10,000");
+      return toast.error("Maximum single transfer is ₦10,000");
+    }
 
     try {
       setIsLoading(true);
@@ -79,36 +158,72 @@ const Transfer: React.FC = () => {
         ...values,
         amount: String(amountValue),
       });
-      setIsLoading(false);
 
       if (!res.ok) {
         setError(res.data?.error || "Transfer failed");
         toast.error(res.data?.error || "Transfer failed");
+        setIsLoading(false);
 
         setTimeout(() => {
           setError("");
         }, 5000);
       } else {
-        console.log(res.data);
-        // toast.success(res.data?.message!);
+        toast.success(res.data?.message!);
 
-        // const expectedBalance = user?.balance! - amountValue;
+        const userRes = await getUpdatedUser(user?.id!);
+        const updatedUser = userRes.data!.user;
+        setIsLoading(false);
 
-        // // Update user balance
-        // updateBalance(expectedBalance);
+        if (res.ok) {
+          updateUser({
+            ...updatedUser,
+            balance: userRes.data?.user.accountBalance,
+          });
 
-        // // Add transaction
-        // addTransaction({
-        //   amount: amountValue,
-        //   type: "transfer-out",
-        //   description:
-        //     values.narration || `Transfer to ${values.name_enquiry_reference}`,
-        //   recipient: values.name_enquiry_reference,
-        //   status: "completed",
-        // });
+          // Update local state
+          setTransferLimits({
+            daily: {
+              limit: userRes.data?.user.dailyTransferLimit || 50000,
+              used: userRes.data?.user.dailyTransferAmount || 0,
+              lastReset: userRes.data?.user.lastDailyReset
+                ? new Date(userRes.data?.user.lastDailyReset)
+                : null,
+            },
+            monthly: {
+              limit: userRes.data?.user.monthlyTransferLimit || 250000,
+              used: userRes.data?.user.monthlyTransferAmount || 0,
+              lastReset: userRes.data?.user.lastMonthlyReset
+                ? new Date(userRes.data?.user.lastMonthlyReset)
+                : null,
+            },
+            lastTransferTime: userRes.data?.user.lastTranserTime
+              ? new Date(userRes.data?.user.lastTranserTime)
+              : new Date(),
+            cooldownHours: 5,
+          });
 
-        // // Go to success step
-        // setStep(3);
+          // Add transaction
+          addTransaction({
+            amount: amountValue,
+            type: "transfer-out",
+            description:
+              values.narration ||
+              `Transfer to ${values.name_enquiry_reference}`,
+            recipient: values.name_enquiry_reference,
+            status: "completed",
+          });
+
+          // Go to success step
+          setStep(3);
+        } else {
+          setError(userRes?.data!.error || "Error getting user");
+          toast.error(userRes?.data!.error || "Error getting user");
+          setIsLoading(false);
+
+          setTimeout(() => {
+            setError("");
+          }, 5000);
+        }
       }
     } catch (err: any) {
       setError(err.message || "Transaction failed. Please try again.");
@@ -130,6 +245,12 @@ const Transfer: React.FC = () => {
         staggerChildren: 0.1,
       },
     },
+  };
+
+  // Format date for display
+  const formatDate = (date: Date | null) => {
+    if (!date) return "Not set";
+    return new Date(date).toLocaleDateString();
   };
 
   const itemVariants = {
@@ -154,6 +275,10 @@ const Transfer: React.FC = () => {
     }));
   };
 
+  const isDailyExceeded = transferLimits.daily.used === 50000;
+  const isMonthlyExceeded = transferLimits.monthly.used === 250000;
+  const isCooldownActive = () => getCooldownRemaining() !== null;
+
   return (
     <motion.div
       initial="hidden"
@@ -162,7 +287,7 @@ const Transfer: React.FC = () => {
       className="max-w-2xl mx-auto"
     >
       <motion.div variants={itemVariants}>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 mb-1">
           Transfer Funds
         </h1>
         <p className="text-gray-600 mb-6">
@@ -186,18 +311,20 @@ const Transfer: React.FC = () => {
           >
             <div className="mb-3">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Transfer Details
-                </h2>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">
+                    Transfer Details
+                  </h2>
+
+                  <p className="text-sm text-gray-500">
+                    Select existing or add a new beneficiary
+                  </p>
+                </div>
 
                 <div className="bg-gray-100 rounded-full p-2">
                   <Send className="h-5 w-5 text-gray-500" />
                 </div>
               </div>
-
-              <p className="text-sm text-gray-500 mt-1">
-                Select existing or add a new beneficiary
-              </p>
             </div>
 
             {error && (
@@ -253,14 +380,14 @@ const Transfer: React.FC = () => {
             )}
 
             <button
-              className="btn text-primary rounded-lg mb-4 flex items-center gap-2"
+              className="btn text-primary rounded-lg mb-2 flex items-center gap-2"
               onClick={() => setAddBeneficiary(true)}
             >
               <Plus className="h-2 w-2" />
               Add Beneficiary
             </button>
 
-            <div className="space-y-3 mb-6">
+            <div className="space-y-1">
               <div>
                 <label
                   htmlFor="amount"
@@ -284,6 +411,7 @@ const Transfer: React.FC = () => {
                     placeholder="0.00"
                     value={values.amount}
                     onChange={handleAmountChange}
+                    max={10000}
                     required
                   />
                 </div>
@@ -295,15 +423,93 @@ const Transfer: React.FC = () => {
                   </p>
                 </div>
               </div>
+
+              <div>
+                <label
+                  htmlFor="narration"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Narration
+                </label>
+
+                <div className="mt-1 relative rounded-md shadow-sm">
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <MessageSquare className="h-3 w-2 text-gray-400" />
+                  </div>
+
+                  <input
+                    type="text"
+                    id="narration"
+                    name="narration"
+                    className="input pl-10"
+                    placeholder="What's this for?"
+                    value={values.narration}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                      setValues((prev) => ({
+                        ...prev,
+                        narration: e.target.value,
+                      }));
+                    }}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="my-3 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+              <h3 className="text-sm font-medium text-blue-800 mb-2">
+                Transaction Limits
+              </h3>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div className="text-gray-600">Max Single Transfer:</div>
+                <div className="text-right font-medium">
+                  {formatCurrency(10000)}
+                </div>
+
+                <div className="text-gray-600">Daily Limit:</div>
+                <div className="text-right font-medium">
+                  {formatCurrency(transferLimits.daily.used)} /{" "}
+                  {formatCurrency(transferLimits.daily.limit)}
+                  <div className="text-xs text-gray-500">
+                    Resets: {formatDate(transferLimits.daily.lastReset)}
+                  </div>
+                </div>
+
+                <div className="text-gray-600">Monthly Limit:</div>
+                <div className="text-right font-medium">
+                  {formatCurrency(transferLimits.monthly.used)} /{" "}
+                  {formatCurrency(transferLimits.monthly.limit)}
+                  <div className="text-xs text-gray-500">
+                    Resets: {formatDate(transferLimits.monthly.lastReset)}
+                  </div>
+                </div>
+
+                <div className="text-gray-600">Transfer Cooldown:</div>
+                <div className="text-right font-medium">
+                  {cooldownRemaining
+                    ? cooldownRemaining + " left"
+                    : "Ready to transfer"}
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-end">
               <button
-                disabled={isLoading}
+                disabled={
+                  isLoading ||
+                  isDailyExceeded ||
+                  isMonthlyExceeded ||
+                  isCooldownActive()
+                }
                 type="button"
                 onClick={handleContinue}
                 className={`btn btn-primary px-6 ${
-                  isLoading ? "disabled btn-primary-100" : ""
+                  isLoading ||
+                  isDailyExceeded ||
+                  isMonthlyExceeded ||
+                  isCooldownActive()
+                    ? "disabled btn-primary-100"
+                    : ""
                 }`}
               >
                 {!isLoading ? (

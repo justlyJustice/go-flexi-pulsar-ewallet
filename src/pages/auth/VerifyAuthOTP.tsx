@@ -71,6 +71,13 @@ const VerifyAuthOTP: React.FC = () => {
           ninVerified: user.ninVerified,
           vusd_card: user.vusd_card,
           tier: user.tier,
+          dailyTransferAmount: user.dailyTransferAmount,
+          dailyTransferLimit: user.dailyTransferLimit,
+          monthlyTransferAmount: user.monthlyTransferAmount,
+          monthlyTransferLimit: user.monthlyTransferLimit,
+          lastDailyReset: user.lastDailyReset,
+          lastMonthlyReset: user.lastMonthlyReset,
+          lastTransferTime: user.lastTransferTime,
         },
         data?.token!
       );

@@ -5,8 +5,12 @@ import {
   Lock,
   Shield,
   Bell,
+  Check,
+  X,
   CreditCard,
   LogOut,
+  Clock,
+  DollarSign,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
@@ -76,6 +80,182 @@ const Profile: React.FC = () => {
     },
   };
 
+  const formatAccountType = (type: "individual" | "merchant" | "business") => {
+    switch (type) {
+      case "individual":
+        return "Individual";
+      case "business":
+        return "Business";
+      case "merchant":
+        return "Merchant";
+      default:
+        return "Normal";
+    }
+  };
+
+  const renderTierRequirements = () => {
+    const currentTier = user?.tier || "individual";
+    const isVerified = user?.isKYC === "verified";
+
+    return (
+      <div className="mt-4 space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Account Tier Benefits
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Personal Tier */}
+          <div
+            className={`border rounded-lg p-4 h-fit ${
+              currentTier === "individual"
+                ? "border-primary-500 bg-primary-50"
+                : "border-gray-200"
+            }`}
+          >
+            <h4 className="font-medium text-gray-900 flex items-center">
+              {currentTier === "individual" && (
+                <Check className="h-4 w-4 text-primary-600 mr-2" />
+              )}
+              Personal Tier
+            </h4>
+
+            <ul className="mt-2 space-y-2 text-sm text-gray-600">
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Bill payments only</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>No KYC required</span>
+              </li>
+              <li className="flex items-start">
+                <X className="h-3 w-3 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
+                <span>No transfers allowed</span>
+              </li>
+              <li className="flex items-start">
+                <X className="h-3 w-3 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
+                <span>No virtual cards</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Business Tier */}
+          <div
+            className={`border rounded-lg p-4 h-fit ${
+              currentTier === "business"
+                ? "border-primary-500 bg-primary-50"
+                : "border-gray-200"
+            }`}
+          >
+            <h4 className="font-medium text-gray-900 flex items-center">
+              {currentTier === "business" && (
+                <Check className="h-4 w-4 text-primary-600 mr-2" />
+              )}
+              Business Tier
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-600">
+              <li className="flex items-start">
+                {currentTier === "business" ? (
+                  <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                )}
+                <span>NIN verification required</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Transfers up to ₦10,000 per transaction</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Daily limit: ₦50,000</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Monthly limit: ₦250,000</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Virtual Naira & USD cards</span>
+              </li>
+              <li className="flex items-start">
+                <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>5-hour cooldown between transfers</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Merchant Tier */}
+          <div
+            className={`border rounded-lg p-4 h-fit ${
+              currentTier === "merchant"
+                ? "border-primary-500 bg-primary-50"
+                : "border-gray-200"
+            }`}
+          >
+            <h4 className="font-medium text-gray-900 flex items-center">
+              {currentTier === "merchant" && (
+                <Check className="h-4 w-4 text-primary-600 mr-2" />
+              )}
+              Merchant Tier
+            </h4>
+            <ul className="mt-2 space-y-2 text-sm text-gray-600">
+              <li className="flex items-start">
+                {currentTier === "merchant" ? (
+                  <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                )}
+                <span>NIN & BVN verification required</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>CAC registration required</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>All Business tier benefits</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>USDT receiving capability</span>
+              </li>
+              <li className="flex items-start">
+                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Monthly limit: ₦500,000</span>
+              </li>
+              <li className="flex items-start">
+                <DollarSign className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span>Minimum $15 deposit required</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {currentTier === "individual" && (
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <Shield className="h-5 w-5 text-blue-400" />
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-blue-800">
+                  Upgrade Your Account
+                </h3>
+                <div className="mt-2 text-sm text-blue-700">
+                  <p>
+                    To access transfers, virtual cards, and higher limits,
+                    upgrade to Business or Merchant tier.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <motion.div
       initial="hidden"
@@ -100,10 +280,14 @@ const Profile: React.FC = () => {
               <div className="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mb-1">
                 <User size={40} />
               </div>
+
               <h3 className="text-lg font-medium text-gray-900">
                 {user?.fullName}
               </h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
+              <p className="mt-1 text-xs text-gray-700">
+                Account Type: {formatAccountType(user?.tier!)}
+              </p>
             </div>
 
             <nav className="space-y-1">
@@ -159,7 +343,7 @@ const Profile: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setActiveTab("payment")}
+                // onClick={() => setActiveTab("payment")}
                 className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                   activeTab === "payment"
                     ? "bg-primary-50 text-primary-700"
@@ -354,6 +538,8 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
                 )}
+
+                {renderTierRequirements()}
               </div>
             )}
 
@@ -715,6 +901,33 @@ const Profile: React.FC = () => {
                       }}
                     />
                   )}
+                </div>
+
+                <div className="mt-3 p-3 bg-green-50 border border-green-100 rounded-lg">
+                  <h3 className="text-sm font-medium text-green-800 mb-2">
+                    KYC Requirements for Your Tier
+                  </h3>
+
+                  <div className="text-sm text-green-700">
+                    {user?.tier === "business" && (
+                      <p>
+                        Business tier requires NIN verification to access
+                        transfers and virtual cards.
+                      </p>
+                    )}
+                    {user?.tier === "merchant" && (
+                      <p>
+                        Merchant tier requires both NIN and BVN verification,
+                        plus CAC documentation.
+                      </p>
+                    )}
+                    {user?.tier === "individual" && (
+                      <p>
+                        Personal tier doesn't require KYC but has limited
+                        functionality.
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             )}

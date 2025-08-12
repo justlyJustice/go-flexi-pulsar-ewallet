@@ -28,7 +28,14 @@ export interface User {
   isKYC: "pending" | "verified" | "unverified";
   vusd_card?: string;
   beneficiaries: Beneficiary[] | [];
-  tier: string;
+  tier: "individual" | "merchant" | "business";
+  dailyTransferAmount: number;
+  dailyTransferLimit: number;
+  monthlyTransferAmount: number;
+  monthlyTransferLimit: number;
+  lastDailyReset?: Date;
+  lastMonthlyReset?: Date;
+  lastTransferTime?: Date;
 }
 
 interface AuthState {

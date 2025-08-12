@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 
 import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
-import { getUpdatedUserBalance } from "../services/add-funds";
+import { getUpdatedUser } from "../services/add-funds";
 
 const POLLING_INTERVAL = 24000; // 120 seconds
 
@@ -19,7 +19,7 @@ export const useBalancePolling = (userId: string | undefined) => {
 
     const pollBalance = async () => {
       try {
-        const res = await getUpdatedUserBalance(userId);
+        const res = await getUpdatedUser(userId);
 
         if (isMounted && res.ok) {
           const newBalance = res.data?.user.accountBalance;

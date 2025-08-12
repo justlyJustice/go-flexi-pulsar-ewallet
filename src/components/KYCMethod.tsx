@@ -131,10 +131,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
           if (res.ok) {
             const data = resData?.data;
 
-            if (!data?.success!) {
+            if (data?.success! === false) {
               toast.error(
                 `
-                
                 ${data?.message!}
 
                 ${data?.warnings!}
@@ -146,9 +145,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               const user: UserType = resData?.data!;
 
               updateUser({
-                // balance: user.balance,
-                bvnVerified: user.ninVerified,
+                ninVerified: user.ninVerified,
                 isKYC: user.isKYC,
+                tier: user.tier,
               });
               toast.success(data?.message || "Success");
 
@@ -393,6 +392,8 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             {step === 1
               ? loading
                 ? "Loading"
+                : method === "nin"
+                ? "Complete Verification"
                 : "Send Verification Code"
               : "Complete Verification"}
           </button>

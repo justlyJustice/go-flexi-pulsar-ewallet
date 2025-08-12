@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { formatCurrency } from "../utils/formatters";
-import { getUpdatedUserBalance } from "../services/add-funds";
+import { getUpdatedUser } from "../services/add-funds";
 
 type TabType = "add-naira" | "convert-to-usdt";
 
@@ -185,7 +185,7 @@ const AddFunds: React.FC = () => {
 
   const checkBalanceUpdate = async (userId: string) => {
     try {
-      const res = await getUpdatedUserBalance(userId);
+      const res = await getUpdatedUser(userId);
 
       if (!res.ok) {
         throw new Error("Failed to fetch updated balance");

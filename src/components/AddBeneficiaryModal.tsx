@@ -26,7 +26,6 @@ export const AddBeneficiaryModal = ({
     amount: "",
     bank_name: "",
     name_enquiry_reference: "",
-    narration: "",
     bank_code: "",
     beneficiary_type: "",
   });
@@ -286,7 +285,6 @@ export const AddBeneficiaryModal = ({
                   amount: "",
                   bank_name: "",
                   name_enquiry_reference: "",
-                  narration: "",
                   bank_code: "",
                   beneficiary_type: "",
                 });
