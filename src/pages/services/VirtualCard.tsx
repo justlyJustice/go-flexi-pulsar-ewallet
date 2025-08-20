@@ -74,9 +74,11 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
 
     if (action === "fund") {
       try {
+        setIsLoading(true);
         const res = await fundVirtualCard(cardType, {
           amount: formData.amount,
         });
+        setIsLoading(false);
 
         if (!res.ok) {
           console.log(res);

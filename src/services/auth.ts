@@ -8,6 +8,7 @@ type Data = {
   gender: string;
 };
 
+// Registration/Login
 export const loginUser = (data: { email: string; password: string }) =>
   client.post<{
     success: boolean;
@@ -29,6 +30,7 @@ export const registerUser = (data: Data) =>
     data: Record<string, string>;
   }>("/auth/signup", data);
 
+// Password Reset
 export const requestPasswordRequest = (email: string) =>
   client.post("/auth/request-password-reset", { email });
 
@@ -41,4 +43,4 @@ export const resetPassword = ({
 }) => client.post("/auth/reset-password", { email, newPassword });
 
 export const verifyResetCode = (data: { email: string; emailOTP: string }) =>
-  client.post("/auth/verify-otp", data);
+  client.post("/auth/verify-password-otp", data);

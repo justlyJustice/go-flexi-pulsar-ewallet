@@ -85,3 +85,68 @@ export const confirmKYC = (type: string, data: any) => {
     );
   }
 };
+
+interface CACData {
+  rc_number: string;
+  email: string;
+  entity_type: string;
+  company_type: string;
+  company_name: string;
+  surname: string;
+  firstname: string;
+  phoneNumber: string;
+  gender: string;
+  city: string;
+  occupation: string;
+}
+
+export const verifyCAC = (data: CACData) => {
+  const {
+    city,
+    company_name,
+    company_type,
+    email,
+    entity_type,
+    firstname,
+    gender,
+    occupation,
+    phoneNumber,
+    rc_number,
+    surname,
+  } = data;
+
+  return client.post<{
+    data: any;
+    user?: any;
+    success: boolean;
+    error?: string;
+  }>(
+    `/kyc/verify-cac?rc_number=${rc_number}&company_name=${company_name}&company_type=${company_type}&entity_type=${entity_type}&email=${email}&firstname=${firstname}&surname=${surname}&gender=${gender}&occupation=${occupation}&city=${city}&phoneNumber=${phoneNumber}`
+  );
+};
+
+type CorporateKyc = {
+  account_number: string;
+  business_name: string;
+  image: File;
+  bank_name: string;
+};
+
+export const verifyCorporateKYC = (data: CorporateKyc) => {
+  const formData = new FormData();
+
+  formData.append("account_number", data.account_number);
+  formData.append("business_name", data.business_name);
+  formData.append("image", data.image);
+  formData.append("bank_name", data.bank_name);
+
+  return client.post<{ error: string; data: any; user: any }>(
+    "/kyc/verify-corporate-business",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};

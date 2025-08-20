@@ -23,7 +23,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("personal");
 
   const [verificationMethod, setVerificationMethod] = useState<
-    "bvn" | "nin" | null
+    "bvn" | "nin" | "cac" | null
   >(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -95,7 +95,7 @@ const Profile: React.FC = () => {
 
   const renderTierRequirements = () => {
     const currentTier = user?.tier || "individual";
-    const isVerified = user?.isKYC === "verified";
+    // const isVerified = user?.isKYC === "verified";
 
     return (
       <div className="mt-4 space-y-4">
@@ -163,10 +163,22 @@ const Profile: React.FC = () => {
                 )}
                 <span>NIN verification required</span>
               </li>
+
+              <li className="flex items-start">
+                {currentTier === "business" ? (
+                  <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                ) : (
+                  <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                )}
+
+                <span>CAC registration required</span>
+              </li>
+
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Transfers up to ₦10,000 per transaction</span>
               </li>
+
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Daily limit: ₦50,000</span>
@@ -218,12 +230,9 @@ const Profile: React.FC = () => {
                 ) : (
                   <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 )}
-                <span>NIN & BVN verification required</span>
+                <span>NIN, CAC & BVN verification required</span>
               </li>
-              <li className="flex items-start">
-                <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                <span>CAC registration required</span>
-              </li>
+
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>All Business tier benefits</span>
@@ -238,7 +247,7 @@ const Profile: React.FC = () => {
               </li>
               <li className="flex items-start">
                 <DollarSign className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Minimum $15 deposit required</span>
+                <span>Upgrade fee of $15</span>
               </li>
             </ul>
 
@@ -260,10 +269,12 @@ const Profile: React.FC = () => {
               <div className="flex-shrink-0">
                 <Shield className="h-5 w-5 text-blue-400" />
               </div>
+
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-blue-800">
                   Upgrade Your Account
                 </h3>
+
                 <div className="mt-2 text-sm text-blue-700">
                   <p>
                     To access transfers, virtual cards, and higher limits,
@@ -842,8 +853,9 @@ const Profile: React.FC = () => {
                           <div className="mt-2 text-sm text-blue-700">
                             <p>
                               To comply with regulations, we require you to
-                              verify your identity, which will incure a service
-                              charge of {formatCurrency(1000)}.
+                              verify your identity, using NIN and CAC which will
+                              incure a service charge of {formatCurrency(1000)}{" "}
+                              and {formatCurrency(5500)} appropriately.
                             </p>
 
                             <p className="mt-1">
@@ -855,57 +867,106 @@ const Profile: React.FC = () => {
                     </div>
                   )}
 
+                  <div className="mt-3 p-3 bg-green-50 border border-green-100 rounded-lg">
+                    <h3 className="text-sm font-medium text-green-800 mb-2">
+                      KYC Requirements for Your Tier
+                    </h3>
+
+                    <div className="text-sm text-green-700">
+                      {user?.tier === "business" && (
+                        <p>
+                          Business tier requires NIN verification to access
+                          transfers and virtual cards.
+                        </p>
+                      )}
+
+                      {user?.tier === "merchant" && (
+                        <p>
+                          Merchant tier requires both NIN and BVN verification,
+                          plus CAC documentation.
+                        </p>
+                      )}
+
+                      {user?.tier === "individual" && (
+                        <p>
+                          Personal tier doesn't require KYC but has limited
+                          functionality.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
                   {user?.isKYC === "verified" ? (
-                    <VerificationStatus
-                      type={user?.bvnVerified ? "bvn" : "nin"}
-                    />
-                  ) : (
+                    <>
+                      {user?.tier === "business" &&
+                        user?.ninVerified &&
+                        user?.cacVerified && (
+                          <VerificationStatus
+                            state={user?.isKYC}
+                            type="nin & cac"
+                          />
+                        )}
+
+                      {user?.tier === "merchant" && user?.bvnVerified && (
+                        <VerificationStatus state={user?.isKYC} type="bvn" />
+                      )}
+
+                      {/* {user?.tier === "business" && (
+                        <div className="border border-gray-200 rounded-lg overflow-hidden">
+                          <div className="p-3 bg-blue-50 border-b border-blue-200">
+                            <h3 className="text-lg font-medium text-gray-900">
+                              Upgrade to Merchant Tier
+                            </h3>
+                          </div>
+
+                          <div className="p-4">
+                            <p className="text-sm text-gray-600 mb-4">
+                              BVN Verification is required to upgrade to a
+                              merchant tier. Verify your identity using your
+                              Bank Verification Number (BVN).
+                            </p>
+
+                            <button
+                              disabled={verificationMethod === "bvn"}
+                              onClick={() => setVerificationMethod("bvn")}
+                              className="w-full btn bg-blue-600 text-white"
+                            >
+                              Get Started
+                            </button>
+                          </div>
+                        </div>
+                      )} */}
+                    </>
+                  ) : user?.isKYC === "pending" ? null : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {/* BVN Verification Card */}
-                      {/* <div className="border border-gray-200 rounded-lg overflow-hidden">
-                        <div className="p-3 bg-gray-50 border-b border-gray-200">
-                          <h3 className="text-lg font-medium text-gray-900">
-                            BVN Verification
-                          </h3>
-                        </div>
-
-                        <div className="p-4">
-                          <p className="text-sm text-gray-600 mb-4">
-                            Verify your identity using your Bank Verification
-                            Number (BVN)
-                          </p>
-
-                          <button
-                            disabled={verificationMethod === "bvn"}
-                            onClick={() => setVerificationMethod("bvn")}
-                            className="w-full btn btn-primary"
-                          >
-                            Verify with BVN
-                          </button>
-                        </div>
-                      </div> */}
-
-                      {/* NIN Verification Card */}
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <div className="p-3 bg-gray-50 border-b border-gray-200">
                           <h3 className="text-lg font-medium text-gray-900">
-                            NIN Verification
+                            NIN and CAC Verification
                           </h3>
                         </div>
 
                         <div className="p-4">
                           <p className="text-sm text-gray-600 mb-4">
                             Verify your identity using your National
-                            Identification Number (NIN)
+                            Identification Number (NIN) and your business
+                            registration with Corporate Affairs Commission.
+                            Required for Business accounts.
                           </p>
 
                           <button
-                            // disabled={false}
+                            // disabled
                             disabled={verificationMethod === "nin"}
-                            onClick={() => setVerificationMethod("nin")}
+                            onClick={() => {
+                              if (user?.ninVerified) {
+                                setVerificationMethod("cac");
+                              }
+
+                              setVerificationMethod("nin");
+                            }}
                             className="w-full btn btn-primary"
                           >
-                            Verify with NIN
+                            Start NIN & CAC Verification
                             {/* Coming Soon */}
                           </button>
                         </div>
@@ -913,43 +974,21 @@ const Profile: React.FC = () => {
                     </div>
                   )}
 
+                  {user?.isKYC === "pending" && (
+                    <VerificationStatus state={user?.isKYC} type="nin & cac" />
+                  )}
+
                   {verificationMethod && (
                     <KYCMethod
                       method={verificationMethod}
                       onCancel={() => setVerificationMethod(null)}
+                      setMethod={setVerificationMethod}
                       onComplete={() => {
                         setVerificationMethod(null);
                         // Handle successful verification
                       }}
                     />
                   )}
-                </div>
-
-                <div className="mt-3 p-3 bg-green-50 border border-green-100 rounded-lg">
-                  <h3 className="text-sm font-medium text-green-800 mb-2">
-                    KYC Requirements for Your Tier
-                  </h3>
-
-                  <div className="text-sm text-green-700">
-                    {user?.tier === "business" && (
-                      <p>
-                        Business tier requires NIN verification to access
-                        transfers and virtual cards.
-                      </p>
-                    )}
-                    {user?.tier === "merchant" && (
-                      <p>
-                        Merchant tier requires both NIN and BVN verification,
-                        plus CAC documentation.
-                      </p>
-                    )}
-                    {user?.tier === "individual" && (
-                      <p>
-                        Personal tier doesn't require KYC but has limited
-                        functionality.
-                      </p>
-                    )}
-                  </div>
                 </div>
               </div>
             )}

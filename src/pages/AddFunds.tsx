@@ -975,16 +975,19 @@ const AddFunds: React.FC = () => {
               >
                 <div className="mb-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-gray-900">
-                      Convert Naira to USD
-                    </h2>
+                    <div>
+                      <h2 className="text-lg font-semibold text-gray-900">
+                        Convert Naira to USD
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Enter the amount you want to convert
+                      </p>
+                    </div>
+
                     <div className="bg-gray-100 rounded-full p-2">
                       <ArrowRight className="h-3 w-3 text-gray-500" />
                     </div>
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Enter the amount you want to convert
-                  </p>
                 </div>
 
                 {error && (
@@ -1000,6 +1003,7 @@ const AddFunds: React.FC = () => {
                   >
                     Amount (₦)
                   </label>
+
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                       <span className="text-gray-500 sm:text-sm">₦</span>
@@ -1055,9 +1059,9 @@ const AddFunds: React.FC = () => {
                     disabled
                     type="button"
                     onClick={() => setStep(2)}
-                    className="btn btn-primary px-6"
+                    className="btn bg-blue-400 text-white px-4"
                   >
-                    Continue
+                    Coming Soon
                   </button>
                 </div>
               </motion.div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import {
   // BarChart3,
@@ -64,6 +65,10 @@ const Dashboard: React.FC = () => {
       variants={containerVariants}
       className="space-y-6"
     >
+      <Helmet>
+        <title>Rulsar | Dashboard</title>
+      </Helmet>
+
       <WelcomeModal />
 
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">

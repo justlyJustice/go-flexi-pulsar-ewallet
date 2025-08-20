@@ -52,6 +52,6 @@ export const fundVirtualCard = (
     {
       amount,
       card_id: user?.vusd_card,
-      // mode: "sandbox",
+      mode,
     }
   );

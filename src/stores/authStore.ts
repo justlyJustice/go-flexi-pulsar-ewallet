@@ -23,6 +23,7 @@ export interface User {
   joinDate: string;
   balance: number;
   transactions: [];
+  cacVerified: boolean;
   bvnVerified: boolean;
   ninVerified: boolean;
   isKYC: "pending" | "verified" | "unverified";

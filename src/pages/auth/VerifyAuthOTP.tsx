@@ -69,6 +69,7 @@ const VerifyAuthOTP: React.FC = () => {
           bvnVerified: user.bvnVerified,
           isKYC: user.isKYC,
           ninVerified: user.ninVerified,
+          cacVerified: user.cacVerified,
           vusd_card: user.vusd_card,
           tier: user.tier,
           dailyTransferAmount: user.dailyTransferAmount,

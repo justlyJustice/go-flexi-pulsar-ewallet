@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Wallet } from "lucide-react";
+import toast from "react-hot-toast";
+
 import useSubmit from "../../hooks/useSubmit";
 import { requestPasswordRequest } from "../../services/auth";
-import toast from "react-hot-toast";
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
