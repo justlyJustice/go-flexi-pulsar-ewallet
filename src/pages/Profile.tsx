@@ -853,13 +853,15 @@ const Profile: React.FC = () => {
                           <div className="mt-2 text-sm text-blue-700">
                             <p>
                               To comply with regulations, we require you to
-                              verify your identity, using NIN and CAC which will
-                              incure a service charge of {formatCurrency(1000)}{" "}
-                              and {formatCurrency(5500)} appropriately.
+                              verify your identity, using NIN and CAC
+                              Verification/Legal Search and Verification, which
+                              will incure a service charge of{" "}
+                              {formatCurrency(1000)} and {formatCurrency(5500)}{" "}
+                              appropriately.
                             </p>
 
                             <p className="mt-1">
-                              Choose one of the verification methods below.
+                              Click the button below to get started.
                             </p>
                           </div>
                         </div>

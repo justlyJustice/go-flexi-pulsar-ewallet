@@ -141,7 +141,7 @@ function App() {
             {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
             <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
             {/* <Route path="/profile" element={<Profile />} /> */}
-            <Route path="/transfer" element={<Transfer />} />
+            {/* <Route path="/transfer" element={<Transfer />} /> */}
           </Route>
         </Route>
 

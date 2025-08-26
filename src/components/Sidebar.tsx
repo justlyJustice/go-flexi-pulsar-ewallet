@@ -128,14 +128,14 @@ const Sidebar: React.FC = () => {
       label: "Add Funds",
       isActive: location.pathname === "/add-funds",
     },
-    {
-      path: user?.isKYC === "verified" ? "/transfer" : "#",
-      // path: "/transfer",
-      icon: <SendHorizonal size={20} />,
-      label: "Transfer",
-      onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
-      isActive: location.pathname === "/transfer",
-    },
+    // {
+    //   path: user?.isKYC === "verified" ? "/transfer" : "#",
+    //   // path: "/transfer",
+    //   icon: <SendHorizonal size={20} />,
+    //   label: "Transfer",
+    //   onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
+    //   isActive: location.pathname === "/transfer",
+    // },
     {
       type: "dropdown",
       name: "billPayment",
@@ -259,7 +259,7 @@ const Sidebar: React.FC = () => {
                     to={item.path!}
                     onClick={() => {
                       closeMobileMenu();
-                      item.onClick && item.onClick();
+                      // item.onClick && item.onClick();
                     }}
                     className={() =>
                       `flex items-center p-2 rounded-lg transition-colors ${
@@ -312,7 +312,7 @@ const Sidebar: React.FC = () => {
                     <NavLink
                       key={i}
                       to={item.path!}
-                      onClick={() => item.onClick && item.onClick()}
+                      // onClick={() => item.onClick && item.onClick()}
                       className={() =>
                         `flex items-center px-3 py-2 rounded-lg transition-colors ${
                           item.isActive
