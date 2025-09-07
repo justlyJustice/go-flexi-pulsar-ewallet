@@ -259,7 +259,7 @@ const Sidebar: React.FC = () => {
                     to={item.path!}
                     onClick={() => {
                       closeMobileMenu();
-                      // item.onClick && item.onClick();
+                      item.onClick && item.onClick();
                     }}
                     className={() =>
                       `flex items-center p-2 rounded-lg transition-colors ${
