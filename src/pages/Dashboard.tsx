@@ -67,6 +67,7 @@ const Dashboard: React.FC = () => {
     >
       <Helmet>
         <title>Rulsar | Dashboard</title>
+        <meta name="description" content="Your rulsar user dashboard." />
       </Helmet>
 
       <WelcomeModal />

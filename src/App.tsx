@@ -58,12 +58,12 @@ function App() {
           element={!isAuthenticated ? <Login /> : <Navigate to="/dashboard" />}
         />
 
-        <Route
+        {/* <Route
           path="/auth/verify"
           element={
             !isAuthenticated ? <VerifyAuthOTP /> : <Navigate to="/dashboard" />
           }
-        />
+        /> */}
 
         <Route
           path="/register"
@@ -141,7 +141,7 @@ function App() {
             {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
             <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
             {/* <Route path="/profile" element={<Profile />} /> */}
-            {/* <Route path="/transfer" element={<Transfer />} /> */}
+            <Route path="/transfer" element={<Transfer />} />
           </Route>
         </Route>
 

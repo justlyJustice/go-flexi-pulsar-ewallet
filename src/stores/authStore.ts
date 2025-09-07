@@ -26,6 +26,7 @@ export interface User {
   cacVerified: boolean;
   bvnVerified: boolean;
   ninVerified: boolean;
+  isBlocked: boolean;
   isKYC: "pending" | "verified" | "unverified";
   vusd_card?: string;
   beneficiaries: Beneficiary[] | [];

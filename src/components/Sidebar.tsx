@@ -128,14 +128,14 @@ const Sidebar: React.FC = () => {
       label: "Add Funds",
       isActive: location.pathname === "/add-funds",
     },
-    // {
-    //   path: user?.isKYC === "verified" ? "/transfer" : "#",
-    //   // path: "/transfer",
-    //   icon: <SendHorizonal size={20} />,
-    //   label: "Transfer",
-    //   onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
-    //   isActive: location.pathname === "/transfer",
-    // },
+    {
+      path: user?.isKYC === "verified" ? "/transfer" : "#",
+      // path: "/transfer",
+      icon: <SendHorizonal size={20} />,
+      label: "Transfer",
+      onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
+      isActive: location.pathname === "/transfer",
+    },
     {
       type: "dropdown",
       name: "billPayment",
@@ -297,6 +297,7 @@ const Sidebar: React.FC = () => {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4 mb-5">
                 <Wallet className="h-8 w-8 text-primary-600" />
+
                 <span className="ml-2 text-xl font-bold text-gray-900">
                   Rulsar
                 </span>
@@ -312,7 +313,7 @@ const Sidebar: React.FC = () => {
                     <NavLink
                       key={i}
                       to={item.path!}
-                      // onClick={() => item.onClick && item.onClick()}
+                      onClick={() => item.onClick && item.onClick()}
                       className={() =>
                         `flex items-center px-3 py-2 rounded-lg transition-colors ${
                           item.isActive

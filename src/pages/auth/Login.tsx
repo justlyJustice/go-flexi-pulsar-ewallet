@@ -7,7 +7,6 @@ import { toast } from "react-hot-toast";
 import { loginUser } from "../../services/auth";
 import { useAuthStore } from "../../stores/authStore";
 import useSubmit from "../../hooks/useSubmit";
-import { IS_DEV } from "../../config/env-settings";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -45,52 +44,58 @@ const Login: React.FC = () => {
     if (!res) return;
 
     if (res.ok) {
-      // if (IS_DEV) {
-      //   const data = res.data?.data;
-      //   const user = data?.user;
+      const data = res.data?.data;
+      const user = data?.user;
 
-      //   login(
-      //     {
-      //       beneficiaries: user.beneficiaries,
-      //       balance: user.accountBalance,
-      //       bankInformation: {
-      //         accountName: user.accountName,
-      //         accountNumber: user.accountNumber,
-      //         bankName: user.bankName,
-      //       },
-      //       currency: user.currency,
-      //       email: user.email,
-      //       fullName: user.fullName,
-      //       id: user._id,
-      //       joinDate: user.createdAt,
-      //       phoneNumber: user.phoneNumber,
-      //       transactions: user.transactions,
-      //       bvnVerified: user.bvnVerified,
-      //       isKYC: user.isKYC,
-      //       cacVerified: user.cacVerified,
-      //       ninVerified: user.ninVerified,
-      //       vusd_card: user.vusd_card,
-      //       tier: user.tier,
-      //       dailyTransferAmount: user.dailyTransferAmount,
-      //       dailyTransferLimit: user.dailyTransferLimit,
-      //       monthlyTransferAmount: user.monthlyTransferAmount,
-      //       monthlyTransferLimit: user.monthlyTransferLimit,
-      //       lastDailyReset: user.lastDailyReset,
-      //       lastMonthlyReset: user.lastMonthlyReset,
-      //       lastTransferTime: user.lastTransferTime,
-      //     },
-      //     data?.token!
-      //   );
+      if (user.isBlocked) {
+        return toast.error(
+          "Your account has been blocked. Please contact admin."
+        );
+      }
 
-      //   toast.success("Login Successful!");
+      login(
+        {
+          beneficiaries: user.beneficiaries,
+          balance: user.accountBalance,
+          bankInformation: {
+            accountName: user.accountName,
+            accountNumber: user.accountNumber,
+            bankName: user.bankName,
+          },
+          currency: user.currency,
+          email: user.email,
+          fullName: user.fullName,
+          id: user._id,
+          joinDate: user.createdAt,
+          phoneNumber: user.phoneNumber,
+          transactions: user.transactions,
+          bvnVerified: user.bvnVerified,
+          isKYC: user.isKYC,
+          isBlocked: user.isBlocked,
+          cacVerified: user.cacVerified,
+          ninVerified: user.ninVerified,
+          vusd_card: user.vusd_card,
+          tier: user.tier,
+          dailyTransferAmount: user.dailyTransferAmount,
+          dailyTransferLimit: user.dailyTransferLimit,
+          monthlyTransferAmount: user.monthlyTransferAmount,
+          monthlyTransferLimit: user.monthlyTransferLimit,
+          lastDailyReset: user.lastDailyReset,
+          lastMonthlyReset: user.lastMonthlyReset,
+          lastTransferTime: user.lastTransferTime,
+        },
+        data?.token!
+      );
 
-      //   setTimeout(() => {
-      //     navigate("/dashboard");
-      //     // location.state = {};
-      //   }, 1000);
-      // }
-      toast.success(res.data?.data.message);
-      navigate("/auth/verify", { state: { email } });
+      toast.success("Login Successful!");
+
+      setTimeout(() => {
+        navigate("/dashboard");
+        // location.state = {};
+      }, 1000);
+
+      // toast.success(res.data?.data.message);
+      // navigate("/auth/verify", { state: { email } });
     }
   };
 
