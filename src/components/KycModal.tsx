@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal } from "./Modal";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export const KycModal = ({
   setIsOpen,
@@ -9,7 +9,7 @@ export const KycModal = ({
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -21,7 +21,7 @@ export const KycModal = ({
         actionText="Complete KYC"
         onAction={() => {
           setIsOpen(false);
-          // navigate("/profile");
+          navigate("/profile");
         }}
       />
     </>
