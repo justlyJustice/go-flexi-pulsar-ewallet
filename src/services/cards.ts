@@ -55,3 +55,6 @@ export const fundVirtualCard = (
       mode,
     }
   );
+
+export const getExchangeRates = () =>
+  client.post("/virtual-card/exchange-rate");

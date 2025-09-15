@@ -15,7 +15,7 @@ import Layout from "./components/Layout";
 
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import VerifyCode from "./pages/auth/VerifyCode";
-import VerifyAuthOTP from "./pages/auth/VerifyAuthOTP";
+// import VerifyAuthOTP from "./pages/auth/VerifyAuthOTP";
 import NewPassword from "./pages/auth/NewPassword";
 
 import { useBalancePolling } from "./hooks/useBalancePolling";
@@ -23,7 +23,7 @@ import { useAuthStore } from "./stores/authStore";
 // import CurrencyExchange from "./pages/services/CurrencyExchange";
 // import BulkSMS from "./pages/services/BulkSMS";
 // import USDTFunding from "./pages/services/USDTFunding";
-import VirtualCard from "./pages/services/VirtualCard";
+// import VirtualCard from "./pages/services/VirtualCard";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -115,7 +115,7 @@ function App() {
             /> */}
 
             {/* Financial Services */}
-            <Route
+            {/* <Route
               path="/services/virtual-naira-card"
               element={
                 <VirtualCard
@@ -133,7 +133,7 @@ function App() {
                   // walletBalance={500}
                 />
               }
-            />
+            /> */}
             {/* <Route
               path="/services/currency-exchange"
               element={<CurrencyExchange />}

@@ -38,7 +38,7 @@ export const verifyKYC = (type: string, data: any) => {
       success: boolean;
       error?: string;
     }>(
-      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}&mode=sandbox`
+      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}`
     );
   } else {
     const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;
@@ -68,7 +68,7 @@ export const confirmKYC = (type: string, data: any) => {
     const { trx, otp } = data;
 
     return client.post<{ error?: string; user: any; success: boolean }>(
-      `/kyc/confirm-bvn?trx=${trx}&otp=${otp}&mode=sandbox`
+      `/kyc/confirm-bvn?trx=${trx}&otp=${otp}`
     );
   } else {
     const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;

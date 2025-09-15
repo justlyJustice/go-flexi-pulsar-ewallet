@@ -1,7 +1,7 @@
 import { ShieldCheck, BadgeCheck, Clock } from "lucide-react";
 
 interface VerificationStatusProps {
-  type: "bvn" | "nin & cac";
+  type: "bvn" | "nin & cac/legal search";
   state: "pending" | "verified";
 }
 

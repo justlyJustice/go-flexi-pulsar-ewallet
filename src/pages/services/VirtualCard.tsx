@@ -6,6 +6,7 @@ import { useAuthStore } from "../../stores/authStore";
 import {
   createVirtualCard,
   fundVirtualCard,
+  getExchangeRates,
   getVirtualCardDetails,
 } from "../../services/cards";
 import toast from "react-hot-toast";
@@ -68,6 +69,12 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
       setLoadingCardDetails(false);
     }
   }, [user?.vusd_card, cardType]);
+
+  useEffect(() => {
+    async () => {
+      await getExchangeRates();
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

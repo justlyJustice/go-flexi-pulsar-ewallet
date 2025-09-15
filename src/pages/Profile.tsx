@@ -171,7 +171,10 @@ const Profile: React.FC = () => {
                   <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 )}
 
-                <span>CAC registration required</span>
+                <span>
+                  CAC Registration/ <br /> Legal Search and Verification
+                  required
+                </span>
               </li>
 
               <li className="flex items-start">
@@ -230,7 +233,10 @@ const Profile: React.FC = () => {
                 ) : (
                   <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 )}
-                <span>NIN, CAC & BVN verification required</span>
+                <span>
+                  NIN, CAC/Legal Search and Verification & BVN verification
+                  required
+                </span>
               </li>
 
               <li className="flex items-start">
@@ -838,7 +844,7 @@ const Profile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {user?.isKYC === "unverified" && (
+                  {(user?.tier === "business" || "individual") && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -885,7 +891,7 @@ const Profile: React.FC = () => {
                       {user?.tier === "merchant" && (
                         <p>
                           Merchant tier requires both NIN and BVN verification,
-                          plus CAC documentation.
+                          plus CAC/Legal Search and Verification documentation.
                         </p>
                       )}
 
@@ -905,7 +911,7 @@ const Profile: React.FC = () => {
                         user?.cacVerified && (
                           <VerificationStatus
                             state={user?.isKYC}
-                            type="nin & cac"
+                            type="nin & cac/legal search"
                           />
                         )}
 
@@ -913,7 +919,7 @@ const Profile: React.FC = () => {
                         <VerificationStatus state={user?.isKYC} type="bvn" />
                       )}
 
-                      {/* {user?.tier === "business" && (
+                      {user?.tier === "business" && (
                         <div className="border border-gray-200 rounded-lg overflow-hidden">
                           <div className="p-3 bg-blue-50 border-b border-blue-200">
                             <h3 className="text-lg font-medium text-gray-900">
@@ -937,7 +943,7 @@ const Profile: React.FC = () => {
                             </button>
                           </div>
                         </div>
-                      )} */}
+                      )}
                     </>
                   ) : user?.isKYC === "pending" ? null : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -977,7 +983,18 @@ const Profile: React.FC = () => {
                   )}
 
                   {user?.isKYC === "pending" && (
-                    <VerificationStatus state={user?.isKYC} type="nin & cac" />
+                    <>
+                      {user?.tier === "individual" && (
+                        <VerificationStatus
+                          state={user?.isKYC}
+                          type="nin & cac/legal search"
+                        />
+                      )}
+
+                      {user?.tier === "business" && (
+                        <VerificationStatus state={user?.isKYC} type="bvn" />
+                      )}
+                    </>
                   )}
 
                   {verificationMethod && (

@@ -82,10 +82,6 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (user?.balance! < 1000) {
-      return toast.error("Insufficient Balance");
-    }
-
     const {
       dateOfBirth,
       firstName,
@@ -97,6 +93,12 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     } = formData;
 
     if (method === "bvn") {
+      if (user?.balance! < 5500) {
+        return toast.error(
+          "Insufficient Balance. Cannot continue upgrade to Merchant Tier."
+        );
+      }
+
       if (step === 1) {
         try {
           setLoading(true);
@@ -116,7 +118,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
 
             setFormData((prev) => ({
               ...prev,
-              trx: "1234567890",
+              trx: data?.trx,
               verificationCode: data?.otp!,
             }));
             toast.success(data?.message || "Success");
@@ -155,6 +157,12 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
         }
       }
     } else if (method === "nin") {
+      if (user?.balance! < 1000) {
+        return toast.error(
+          "Insufficient Balance. Cannot continue upgrade to Business Tier"
+        );
+      }
+
       if (step === 1) {
         try {
           setLoading(true);
@@ -452,7 +460,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
 
         {step === 2 && method === "bvn" && (
           <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <Smartphone className="h-5 w-5 text-blue-400" />
@@ -462,6 +470,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                   <h3 className="text-sm font-medium text-blue-800">
                     Verification Code Sent
                   </h3>
+
                   <div className="mt-2 text-sm text-blue-700">
                     <p>
                       We've sent a 6-digit verification code to{" "}
@@ -470,12 +479,13 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Verification Code
               </label>
+
               <input
                 type="text"
                 name="verificationCode"
