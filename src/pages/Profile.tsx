@@ -23,7 +23,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("personal");
 
   const [verificationMethod, setVerificationMethod] = useState<
-    "bvn" | "nin" | "cac" | null
+    "nin" | "cac" | null
   >(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -95,7 +95,6 @@ const Profile: React.FC = () => {
 
   const renderTierRequirements = () => {
     const currentTier = user?.tier || "individual";
-    // const isVerified = user?.isKYC === "verified";
 
     return (
       <div className="mt-4 space-y-4">
@@ -124,14 +123,17 @@ const Profile: React.FC = () => {
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Bill payments only</span>
               </li>
+
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>No KYC required</span>
               </li>
+
               <li className="flex items-start">
                 <X className="h-3 w-3 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
                 <span>No transfers allowed</span>
               </li>
+
               <li className="flex items-start">
                 <X className="h-3 w-3 text-gray-400 mr-2 mt-0.5 flex-shrink-0" />
                 <span>No virtual cards</span>
@@ -164,7 +166,7 @@ const Profile: React.FC = () => {
                 <span>NIN verification required</span>
               </li>
 
-              <li className="flex items-start">
+              {/* <li className="flex items-start">
                 {currentTier === "business" ? (
                   <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 ) : (
@@ -175,7 +177,7 @@ const Profile: React.FC = () => {
                   CAC Registration/ <br /> Legal Search and Verification
                   required
                 </span>
-              </li>
+              </li> */}
 
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -233,10 +235,7 @@ const Profile: React.FC = () => {
                 ) : (
                   <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
                 )}
-                <span>
-                  NIN, CAC/Legal Search and Verification & BVN verification
-                  required
-                </span>
+                <span>NIN & CAC/Legal Search and Verification required</span>
               </li>
 
               <li className="flex items-start">
@@ -844,7 +843,8 @@ const Profile: React.FC = () => {
                 </div>
 
                 <div className="space-y-4">
-                  {(user?.tier === "business" || "individual") && (
+                  {(user?.tier === "business" ||
+                    user?.tier === "individual") && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <div className="flex">
                         <div className="flex-shrink-0">
@@ -890,8 +890,8 @@ const Profile: React.FC = () => {
 
                       {user?.tier === "merchant" && (
                         <p>
-                          Merchant tier requires both NIN and BVN verification,
-                          plus CAC/Legal Search and Verification documentation.
+                          Merchant tier requires NIN plus CAC/Legal Search and
+                          Verification documentation.
                         </p>
                       )}
 
@@ -906,17 +906,15 @@ const Profile: React.FC = () => {
 
                   {user?.isKYC === "verified" ? (
                     <>
-                      {user?.tier === "business" &&
-                        user?.ninVerified &&
-                        user?.cacVerified && (
-                          <VerificationStatus
-                            state={user?.isKYC}
-                            type="nin & cac/legal search"
-                          />
-                        )}
+                      {user?.tier === "business" && user?.ninVerified && (
+                        <VerificationStatus state={user?.isKYC} type="nin" />
+                      )}
 
-                      {user?.tier === "merchant" && user?.bvnVerified && (
-                        <VerificationStatus state={user?.isKYC} type="bvn" />
+                      {user?.tier === "merchant" && user?.cacVerified && (
+                        <VerificationStatus
+                          state={user?.isKYC}
+                          type="nin & cac/legal search"
+                        />
                       )}
 
                       {user?.tier === "business" && (
@@ -929,14 +927,14 @@ const Profile: React.FC = () => {
 
                           <div className="p-4">
                             <p className="text-sm text-gray-600 mb-4">
-                              BVN Verification is required to upgrade to a
-                              merchant tier. Verify your identity using your
-                              Bank Verification Number (BVN).
+                              CAC/Legal Search Verification is required to
+                              upgrade to a merchant tier. Click the button below
+                              to get started.
                             </p>
 
                             <button
-                              disabled={verificationMethod === "bvn"}
-                              onClick={() => setVerificationMethod("bvn")}
+                              disabled={verificationMethod === "cac"}
+                              onClick={() => setVerificationMethod("cac")}
                               className="w-full btn bg-blue-600 text-white"
                             >
                               Get Started
@@ -945,12 +943,26 @@ const Profile: React.FC = () => {
                         </div>
                       )}
                     </>
-                  ) : user?.isKYC === "pending" ? null : (
+                  ) : user?.isKYC === "pending" ? (
+                    <>
+                      {user?.tier === "individual" && (
+                        <VerificationStatus state={user?.isKYC} type="nin" />
+                      )}
+
+                      {user?.tier === "business" && (
+                        <VerificationStatus
+                          state={user?.isKYC}
+                          type="nin & cac/legal search"
+                        />
+                      )}
+                    </>
+                  ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <div className="p-3 bg-gray-50 border-b border-gray-200">
                           <h3 className="text-lg font-medium text-gray-900">
-                            NIN and CAC Verification
+                            {/* NIN and CAC Verification */}
+                            NIN Verification
                           </h3>
                         </div>
 
@@ -974,27 +986,13 @@ const Profile: React.FC = () => {
                             }}
                             className="w-full btn btn-primary"
                           >
-                            Start NIN & CAC Verification
+                            Start NIN Verification
+                            {/* Start NIN & CAC Verification */}
                             {/* Coming Soon */}
                           </button>
                         </div>
                       </div>
                     </div>
-                  )}
-
-                  {user?.isKYC === "pending" && (
-                    <>
-                      {user?.tier === "individual" && (
-                        <VerificationStatus
-                          state={user?.isKYC}
-                          type="nin & cac/legal search"
-                        />
-                      )}
-
-                      {user?.tier === "business" && (
-                        <VerificationStatus state={user?.isKYC} type="bvn" />
-                      )}
-                    </>
                   )}
 
                   {verificationMethod && (

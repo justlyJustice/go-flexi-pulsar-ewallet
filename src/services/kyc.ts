@@ -38,7 +38,7 @@ export const verifyKYC = (type: string, data: any) => {
       success: boolean;
       error?: string;
     }>(
-      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}`
+      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}&mode=sandbox`
     );
   } else {
     const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;
@@ -63,27 +63,12 @@ export const verifyKYC = (type: string, data: any) => {
   }
 };
 
-export const confirmKYC = (type: string, data: any) => {
-  if (type === "bvn") {
-    const { trx, otp } = data;
+export const confirmKYC = (data: any) => {
+  const { trx } = data;
 
-    return client.post<{ error?: string; user: any; success: boolean }>(
-      `/kyc/confirm-bvn?trx=${trx}&otp=${otp}`
-    );
-  } else {
-    const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;
-
-    return client.post<{ error?: string; user: any; success: boolean }>(
-      "/kyc/confirm-nin",
-      {
-        number,
-        firstName,
-        lastName,
-        dateOfBirth,
-        phoneNumber,
-      }
-    );
-  }
+  return client.post<{ error?: string; user: any; success: boolean }>(
+    `/kyc/confirm-bvn?trx=${trx}&mode=sandbox`
+  );
 };
 
 interface CACData {

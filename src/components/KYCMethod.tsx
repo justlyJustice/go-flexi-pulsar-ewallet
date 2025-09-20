@@ -12,7 +12,7 @@ import {
   Mail,
 } from "lucide-react";
 import {
-  confirmKYC,
+  // confirmKYC,
   verifyCAC,
   verifyCorporateKYC,
   verifyKYC,
@@ -22,10 +22,8 @@ import toast from "react-hot-toast";
 import CorporateKYCForm from "./kyc/Corporate";
 
 interface KYCMethodProps {
-  setMethod?: React.Dispatch<
-    React.SetStateAction<"bvn" | "nin" | "cac" | null>
-  >;
-  method: "bvn" | "nin" | "cac" | null;
+  setMethod?: React.Dispatch<React.SetStateAction<"nin" | "cac" | null>>;
+  method: "nin" | "cac" | null;
   onCancel: () => void;
   onComplete: () => void;
 }
@@ -34,7 +32,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   method,
   onCancel,
   onComplete,
-  setMethod,
+  // setMethod,
 }) => {
   const { user, updateUser } = useAuthStore();
   const [step, setStep] = useState<number>(method === "cac" ? 2 : 1);
@@ -88,75 +86,97 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
       lastName,
       number,
       phoneNumber,
-      trx,
-      verificationCode,
+      // trx,
+      // verificationCode,
     } = formData;
 
-    if (method === "bvn") {
-      if (user?.balance! < 5500) {
-        return toast.error(
-          "Insufficient Balance. Cannot continue upgrade to Merchant Tier."
-        );
-      }
+    // if (method === "bvn") {
+    //
 
-      if (step === 1) {
-        try {
-          setLoading(true);
-          const res = await verifyKYC("bvn", {
-            dateOfBirth,
-            firstName,
-            lastName,
-            number,
-            phoneNumber,
-          });
-          setLoading(false);
+    //   if (step === 1) {
+    //     try {
+    //       setLoading(true);
+    //       const res = await verifyKYC("bvn", {
+    //         dateOfBirth,
+    //         firstName,
+    //         lastName,
+    //         number,
+    //         phoneNumber,
+    //       });
 
-          const resData = res.data;
+    //       const resData = res.data;
 
-          if (res.ok) {
-            const data = resData?.data;
+    //       if (res.ok) {
+    //         const data = resData?.data;
 
-            setFormData((prev) => ({
-              ...prev,
-              trx: data?.trx,
-              verificationCode: data?.otp!,
-            }));
-            toast.success(data?.message || "Success");
-            setStep(2);
-          } else {
-            toast.error(resData?.error || "Something went wrong!");
-          }
-        } catch (error) {
-          console.log(error);
-          console.log("An error occured!");
-        }
-      } else {
-        try {
-          setLoading(true);
-          const res = await confirmKYC("bvn", { trx, otp: verificationCode });
-          setLoading(false);
+    //         const confirmRes = await confirmKYC({
+    //           trx: data?.trx,
+    //         });
 
-          const resData = res.data;
+    //         setLoading(false);
 
-          if (res.ok) {
-            const user = resData?.user;
+    //         const confirmResData = confirmRes.data;
 
-            updateUser({
-              balance: user.balance,
-              bvnVerified: user.bvnVerified,
-              isKYC: user.isKYC,
-            });
-            toast.success("Verification Complete!");
-            onComplete();
-          } else {
-            toast.error(resData?.error! || "Something went wrong!");
-          }
-        } catch (error) {
-          console.log(error);
-          console.log("An error occured!");
-        }
-      }
-    } else if (method === "nin") {
+    //         if (confirmRes.ok) {
+    //           // const user = resData?.user;
+
+    //           // updateUser({
+    //           //   balance: user.balance,
+    //           //   bvnVerified: user.bvnVerified,
+    //           //   isKYC: user.isKYC,
+    //           // });
+    //           toast.success("Verification Complete!");
+    //           // onComplete();
+
+    //           console.log(confirmResData);
+
+    //           // setFormData((prev) => ({
+    //           //   ...prev,
+    //           //   trx: data?.trx,
+    //           //   verificationCode: data?.otp!,
+    //           // }));
+    //           // toast.success(data?.message || "Success");
+    //           // setStep(2);
+    //         } else {
+    //           toast.error(resData?.error || "Something went wrong!");
+    //         }
+    //       }
+    //     } catch (error) {
+    //       console.log(error);
+    //       console.log("An error occured!");
+    //     }
+    //   } else {
+    //     try {
+    //       setLoading(true);
+    //       const res = await confirmKYC({
+    //         trx: "1234567890",
+    //         otp: verificationCode,
+    //       });
+    //       setLoading(false);
+
+    //       const resData = res.data;
+
+    //       if (res.ok) {
+    //         const user = resData?.user;
+
+    //         updateUser({
+    //           balance: user.balance,
+    //           bvnVerified: user.bvnVerified,
+    //           isKYC: user.isKYC,
+    //         });
+    //         toast.success("Verification Complete!");
+    //         onComplete();
+    //       } else {
+    //         toast.error(resData?.error! || "Something went wrong!");
+    //       }
+    //     } catch (error) {
+    //       console.log(error);
+    //       console.log("An error occured!");
+    //     }
+    //   }
+    // }
+
+    if (method === "nin") {
       if (user?.balance! < 1000) {
         return toast.error(
           "Insufficient Balance. Cannot continue upgrade to Business Tier"
@@ -191,18 +211,19 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               );
               return;
             } else {
-              setStep(2);
-              setMethod!("cac");
-              // const user: UserType = resData?.data!;
+              // setStep(2);
+              // setMethod!("cac");
+              const user = resData?.data!;
 
-              // updateUser({
-              //   ninVerified: user.ninVerified,
-              //   isKYC: user.isKYC,
-              //   tier: user.tier,
-              // });
-              // toast.success(data?.message || "Success");
+              updateUser({
+                ninVerified: user.ninVerified,
+                isKYC: user.isKYC,
+                tier: user.tier,
+              });
 
-              // onComplete();
+              toast.success(data?.message || "Success");
+
+              onComplete();
             }
           } else {
             toast.error(resData?.error || "Something went wrong!");
@@ -213,6 +234,12 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
         }
       }
     } else if (method === "cac") {
+      if (user?.balance! < 5500) {
+        return toast.error(
+          "Insufficient Balance. Cannot continue upgrade to Merchant Tier."
+        );
+      }
+
       if (activeTab === "cac") {
         try {
           setLoading(true);
@@ -300,7 +327,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     >
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium text-gray-900">
-          {method === "bvn" && "BVN Verification"}
+          {/* {method === "bvn" && "BVN Verification"} */}
           {method === "cac" && "CAC Verification"}
           {method === "nin" && "NIN Verification"}
         </h3>
@@ -329,6 +356,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             step >= 2 ? "bg-primary-600" : "bg-gray-200"
           }`}
         ></div>
+
         <div
           className={`flex items-center justify-center w-8 h-8 rounded-full ${
             step === 2
@@ -347,7 +375,8 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
           <div className="space-y-2">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {method === "bvn" ? "BVN Number" : "NIN Number"}
+                NIN Number
+                {/* {method === "bvn" ? "BVN Number" : "NIN Number"} */}
               </label>
 
               <div className="relative rounded-md shadow-sm">
@@ -361,12 +390,15 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                   value={formData.number}
                   onChange={handleInputChange}
                   className="input pl-10"
-                  placeholder={
-                    method === "bvn" ? "Enter your BVN" : "Enter your NIN"
-                  }
+                  // placeholder={
+                  //   method === "bvn" ? "Enter your BVN" : "Enter your NIN"
+                  // }
+                  placeholder="Enter your NIN"
                   required
-                  maxLength={method === "bvn" ? 11 : 11}
-                  pattern={method === "bvn" ? "\\d{11}" : "\\d{11}"}
+                  maxLength={11}
+                  // pattern="\\d{11}"
+                  // maxLength={method === "bvn" ? 11 : 11}
+                  // pattern={method === "bvn" ? "\\d{11}" : "\\d{11}"}
                 />
               </div>
             </div>
@@ -458,9 +490,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
           </div>
         )}
 
-        {step === 2 && method === "bvn" && (
+        {/* {step === 2 && method === "bvn" && (
           <div className="space-y-4">
-            {/* <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <Smartphone className="h-5 w-5 text-blue-400" />
@@ -479,7 +511,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
                   </div>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -510,7 +542,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               </button>
             </div>
           </div>
-        )}
+        )} */}
 
         {step === 2 && method === "cac" && (
           <>
@@ -772,15 +804,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
           )}
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {step === 1
-              ? loading
-                ? "Loading"
-                : method === "nin"
-                ? "Submit"
-                : "Send Verification Code"
-              : loading
-              ? "Loading..."
-              : "Complete Verification"}
+            {step === 2 ? (loading ? "Loading..." : "Submit ") : ""}
           </button>
         </div>
       </form>
