@@ -183,14 +183,14 @@ const Transfer: React.FC = () => {
           // Update local state
           setTransferLimits({
             daily: {
-              limit: userRes.data?.user.dailyTransferLimit || 50000,
+              limit: userRes.data?.user.dailyTransferLimit || 0,
               used: userRes.data?.user.dailyTransferAmount || 0,
               lastReset: userRes.data?.user.lastDailyReset
                 ? new Date(userRes.data?.user.lastDailyReset)
                 : null,
             },
             monthly: {
-              limit: userRes.data?.user.monthlyTransferLimit || 250000,
+              limit: userRes.data?.user.monthlyTransferLimit || 0,
               used: userRes.data?.user.monthlyTransferAmount || 0,
               lastReset: userRes.data?.user.lastMonthlyReset
                 ? new Date(userRes.data?.user.lastMonthlyReset)
@@ -466,14 +466,18 @@ const Transfer: React.FC = () => {
                   {formatCurrency(10000)}
                 </div>
 
-                <div className="text-gray-600">Daily Limit:</div>
-                <div className="text-right font-medium">
-                  {formatCurrency(transferLimits.daily.used)} /{" "}
-                  {formatCurrency(transferLimits.daily.limit)}
-                  <div className="text-xs text-gray-500">
-                    Resets: {formatDate(transferLimits.daily.lastReset)}
-                  </div>
-                </div>
+                {(user?.tier === "individual" || user?.tier === "business") && (
+                  <>
+                    <div className="text-gray-600">Daily Limit:</div>
+                    <div className="text-right font-medium">
+                      {formatCurrency(transferLimits.daily.used)} /{" "}
+                      {formatCurrency(transferLimits.daily.limit)}
+                      <div className="text-xs text-gray-500">
+                        Resets: {formatDate(transferLimits.daily.lastReset)}
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 <div className="text-gray-600">Monthly Limit:</div>
                 <div className="text-right font-medium">

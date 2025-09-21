@@ -269,6 +269,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               isKYC: user.isKYC,
               tier: user.tier,
               balance: user.accountBalance,
+              merchantVerificationCode: user.merchantVerificationCode,
             });
             toast.success("Success");
 
@@ -793,7 +794,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
         )}
 
         <div className="mt-4 flex justify-end space-x-3">
-          {step === 2 && (
+          {/* {step === 2 && (
             <button
               type="button"
               onClick={() => setStep(1)}
@@ -801,10 +802,10 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             >
               Back
             </button>
-          )}
+          )} */}
 
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {step === 2 ? (loading ? "Loading..." : "Submit ") : ""}
+            {loading ? "Loading..." : "Submit "}
           </button>
         </div>
       </form>

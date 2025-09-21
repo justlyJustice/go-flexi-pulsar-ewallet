@@ -24,6 +24,7 @@ export interface User {
   balance: number;
   transactions: [];
   cacVerified: boolean;
+  merchantVerificationCode?: string;
   bvnVerified: boolean;
   ninVerified: boolean;
   isBlocked: boolean;

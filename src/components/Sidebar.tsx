@@ -21,7 +21,7 @@ import {
   // Bitcoin,
   // MessageSquare,
   FolderKanban,
-  // BadgeDollarSign,
+  BadgeDollarSign,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { KycModal } from "./KycModal";
@@ -81,39 +81,39 @@ const Sidebar: React.FC = () => {
     // },
   ];
 
-  // const financialServicesItems = [
-  //   {
-  //     path: "/services/virtual-naira-card",
-  //     icon: <CreditCard size={22} />,
-  //     label: "Naira Virtual Card",
-  //     isActive: location.pathname === "/services/virtual-naira-card",
-  //     // onClick: () => user?.isKYC === 'unverified' /
-  //   },
-  //   {
-  //     path: "/services/virtual-usd-card",
-  //     icon: <CreditCard size={22} />,
-  //     label: "USD Virtual Card",
-  //     isActive: location.pathname === "/services/virtual-usd-card",
-  //   },
-  //   // {
-  //   //   path: "/services/currency-exchange",
-  //   //   icon: <Repeat size={22} />,
-  //   //   label: "Currency Exchange",
-  //   //   isActive: location.pathname === "/services/currency-exchange",
-  //   // },
-  //   // {
-  //   //   path: "/services/usdt-funding",
-  //   //   icon: <Bitcoin size={22} />,
-  //   //   label: "USDT Funding",
-  //   //   isActive: location.pathname === "/services/usdt-funding",
-  //   // },
-  //   // {
-  //   //   path: "/services/bulk-sms",
-  //   //   icon: <MessageSquare size={22} />,
-  //   //   label: "Bulk SMS",
-  //   //   isActive: location.pathname === "/services/bulk-sms",
-  //   // },
-  // ];
+  const financialServicesItems = [
+    // {
+    //   path: "/services/virtual-naira-card",
+    //   icon: <CreditCard size={22} />,
+    //   label: "Naira Virtual Card",
+    //   isActive: location.pathname === "/services/virtual-naira-card",
+    //   // onClick: () => user?.isKYC === 'unverified' /
+    // },
+    {
+      path: "/services/virtual-usd-card",
+      icon: <CreditCard size={22} />,
+      label: "USD Virtual Card",
+      isActive: location.pathname === "/services/virtual-usd-card",
+    },
+    // {
+    //   path: "/services/currency-exchange",
+    //   icon: <Repeat size={22} />,
+    //   label: "Currency Exchange",
+    //   isActive: location.pathname === "/services/currency-exchange",
+    // },
+    // {
+    //   path: "/services/usdt-funding",
+    //   icon: <Bitcoin size={22} />,
+    //   label: "USDT Funding",
+    //   isActive: location.pathname === "/services/usdt-funding",
+    // },
+    // {
+    //   path: "/services/bulk-sms",
+    //   icon: <MessageSquare size={22} />,
+    //   label: "Bulk SMS",
+    //   isActive: location.pathname === "/services/bulk-sms",
+    // },
+  ];
 
   const navItems = [
     {
@@ -145,15 +145,15 @@ const Sidebar: React.FC = () => {
       toggle: () => toggleDropdown("billPayment"),
       items: billPaymentItems,
     },
-    // {
-    //   type: "dropdown",
-    //   name: "financialServices",
-    //   label: "Financial Services",
-    //   icon: <BadgeDollarSign size={30} />,
-    //   isOpen: openDropdown === "financialServices",
-    //   toggle: () => toggleDropdown("financialServices"),
-    //   items: financialServicesItems,
-    // },
+    {
+      type: "dropdown",
+      name: "financialServices",
+      label: "Financial Services",
+      icon: <BadgeDollarSign size={30} />,
+      isOpen: openDropdown === "financialServices",
+      toggle: () => toggleDropdown("financialServices"),
+      items: financialServicesItems,
+    },
     {
       path: "/profile",
       icon: <User size={20} />,

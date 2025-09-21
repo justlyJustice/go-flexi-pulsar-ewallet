@@ -158,7 +158,7 @@ const Profile: React.FC = () => {
 
             <ul className="mt-2 space-y-2 text-sm text-gray-600">
               <li className="flex items-start">
-                {currentTier === "business" ? (
+                {currentTier === "merchant" ? (
                   <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 ) : (
                   <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -242,18 +242,20 @@ const Profile: React.FC = () => {
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>All Business tier benefits</span>
               </li>
-              <li className="flex items-start">
+
+              {/* <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>USDT receiving capability</span>
-              </li>
+              </li> */}
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Monthly limit: ₦500,000</span>
               </li>
-              <li className="flex items-start">
+
+              {/* <li className="flex items-start">
                 <DollarSign className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Upgrade fee of $15</span>
-              </li>
+              </li> */}
             </ul>
 
             {currentTier === "business" && (

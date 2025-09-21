@@ -23,7 +23,7 @@ import { useAuthStore } from "./stores/authStore";
 // import CurrencyExchange from "./pages/services/CurrencyExchange";
 // import BulkSMS from "./pages/services/BulkSMS";
 // import USDTFunding from "./pages/services/USDTFunding";
-// import VirtualCard from "./pages/services/VirtualCard";
+import VirtualCard from "./pages/services/VirtualCard";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -103,6 +103,17 @@ function App() {
 
             <Route path="/bill-payment/airtime" element={<BillPayment />} />
             <Route path="/bill-payment/data" element={<BillPayment />} />
+
+            <Route
+              path="/services/virtual-usd-card"
+              element={
+                <VirtualCard
+                  cardType="usd"
+                  // walletBalance={500}
+                />
+              }
+            />
+
             {/* <Route
               path="/bill-payment/recharge-card"
               element={<BillPayment />}
@@ -125,15 +136,7 @@ function App() {
               }
             />
 
-            <Route
-              path="/services/virtual-usd-card"
-              element={
-                <VirtualCard
-                  cardType="usd"
-                  // walletBalance={500}
-                />
-              }
-            /> */}
+             */}
             {/* <Route
               path="/services/currency-exchange"
               element={<CurrencyExchange />}

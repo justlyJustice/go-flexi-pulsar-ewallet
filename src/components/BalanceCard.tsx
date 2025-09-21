@@ -100,11 +100,29 @@ const BalanceCard: React.FC<{
         </div>
       </div>
 
-      <div className="mb-3">
-        <p className="text-sm text-white text-opacity-80">Available Balance</p>
-        <p className="text-3xl font-bold mt-1">
-          {currency === "NGN" ? displayBalance : `$ ${(0).toFixed(2)}`}
-        </p>
+      <div className="flex justify-between mb-3">
+        <div className="space-y-1">
+          <p className="text-sm text-white text-opacity-80">
+            Available Balance
+          </p>
+          <p className="text-3xl font-bold">
+            {currency === "NGN" ? displayBalance : `$ ${(0).toFixed(2)}`}
+          </p>
+        </div>
+
+        {user?.tier === "merchant" && (
+          <div className="space-y-1">
+            <p className="text-sm text-white text-opacity-80">
+              Merchant Verification Code
+            </p>
+
+            <div className=" bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition w-fit px-2">
+              <p className="text-2xl font-bold">
+                {user?.merchantVerificationCode}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="mb-6 bg-white bg-opacity-10 rounded-lg p-4">
