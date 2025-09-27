@@ -50,7 +50,7 @@ function App() {
 
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" toastOptions={{ removeDelay: 6000 }} />
 
       <Routes>
         <Route

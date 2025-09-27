@@ -23,7 +23,7 @@ const Profile: React.FC = () => {
   const [activeTab, setActiveTab] = useState("personal");
 
   const [verificationMethod, setVerificationMethod] = useState<
-    "nin" | "cac" | null
+    "bvn" | "nin" | "cac" | null
   >(null);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({

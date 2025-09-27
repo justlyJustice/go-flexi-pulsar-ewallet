@@ -116,9 +116,9 @@ const BalanceCard: React.FC<{
               Merchant Verification Code
             </p>
 
-            <div className=" bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition w-fit px-2">
-              <p className="text-2xl font-bold">
-                {user?.merchantVerificationCode}
+            <div className=" bg-white bg-opacity-20 rounded-full hover:bg-opacity-30 transition w-fit px-3">
+              <p className="text-xl font-bold">
+                DWC: {user?.merchantVerificationCode}
               </p>
             </div>
           </div>

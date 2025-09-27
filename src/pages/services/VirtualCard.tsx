@@ -8,12 +8,16 @@ import {
   fundVirtualCard,
   getExchangeRates,
   getVirtualCardDetails,
-} from "../../services/cards";
+} from "../../services/virtual-card";
 import toast from "react-hot-toast";
+import CardCustomerForm from "../../components/CardCustomerForm";
+import VirtualCardForm from "../../components/VirtualCardForm";
 
 interface VirtualCardProps {
   cardType: "naira" | "usd";
 }
+
+type TabType = "create-customer" | "virtual-card";
 
 const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
   const { user, updateUser } = useAuthStore();
@@ -23,7 +27,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
     amount: "5",
     customerEmail: user?.email || "",
   });
-  // const [createdType, setCreatedType] = useState<"new" | "">("");
+  const [activeTab, setActiveTab] = useState<TabType>("create-customer");
   const [action, setAction] = useState<"create" | "fund">("create");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCardDetails, setLoadingCardDetails] = useState(true);
@@ -170,7 +174,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
         </div>
       ) : (
         <>
-          <div className="flex space-x-2 mb-4">
+          <div className="space-x-2 mb-4">
             <button
               onClick={() => setAction("create")}
               className={`px-4 py-1 rounded-lg font-medium text-sm ${
@@ -184,148 +188,185 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                 Create New Card
               </div>
             </button>
+
             <button
               onClick={() => setAction("fund")}
-              className={`px-4 py-2 rounded-lg font-medium text-sm ${
+              className={`px-4 py-1 rounded-lg font-medium text-sm ${
                 action === "fund"
                   ? "bg-primary-600 text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               <div className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
+                <DollarSign className="h-3 w-3 mr-2" />
                 Fund Existing Card
               </div>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-card shadow-card p-6">
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Available Balance
-                    </label>
-                    <div className="text-2xl font-bold text-gray-900">
-                      {formatCurrency(user?.balance || 0)}
-                    </div>
-                  </div>
+            <div className="bg-white rounded-card shadow-card p-4">
+              <div className="flex border-b border-gray-200 mb-6">
+                <button
+                  // disabled={activeTab === "virtual-card"}
+                  className={`py-2 px-4 font-medium text-sm ${
+                    activeTab === "create-customer"
+                      ? "border-b-2 border-primary-500 text-primary-600"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                  onClick={() => setActiveTab("create-customer")}
+                >
+                  Create Customer
+                </button>
 
-                  {action === "create" && (
-                    <>
-                      <div>
-                        <label
-                          htmlFor="name_on_card"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Name on Card
-                        </label>
-                        <input
-                          type="text"
-                          id="name_on_card"
-                          disabled
-                          name="name_on_card"
-                          value={formData.name_on_card}
-                          onChange={handleInputChange}
-                          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                          placeholder="Enter name as it will appear on card"
-                          required
-                        />
-                      </div>
+                <button
+                  // disabled={activeTab === "create-customer"}
+                  className={`py-2 px-4 font-medium text-sm ${
+                    activeTab === "virtual-card"
+                      ? "border-b-2 border-primary-500 text-primary-600"
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                  onClick={() => setActiveTab("virtual-card")}
+                >
+                  Virtual Card
+                </button>
+              </div>
 
-                      <div>
-                        <label
-                          htmlFor="customerEmail"
-                          className="block text-sm font-medium text-gray-700 mb-1"
-                        >
-                          Email Address
-                        </label>
+              {activeTab === "create-customer" && (
+                <CardCustomerForm setActiveTab={setActiveTab} />
+              )}
 
-                        <input
-                          type="email"
-                          disabled
-                          id="customerEmail"
-                          name="customerEmail"
-                          value={formData.customerEmail}
-                          onChange={handleInputChange}
-                          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                          placeholder="Your email address"
-                          required
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {action === "fund" && cardDetails && (
+              {activeTab === "virtual-card" && (
+                <form onSubmit={handleSubmit}>
+                  <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Card Number
+                        Available Balance
                       </label>
-                      <div className="p-2 bg-gray-50 rounded-lg font-mono">
-                        {cardDetails.card_number}
+                      <div className="text-2xl font-bold text-gray-900">
+                        {formatCurrency(user?.balance || 0)}
                       </div>
                     </div>
-                  )}
 
-                  <div>
-                    <label
-                      htmlFor="amount"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      {action === "create"
-                        ? "Initial Deposit"
-                        : "Amount to Fund"}
-                    </label>
+                    {action === "create" && (
+                      <>
+                        <div>
+                          <label
+                            htmlFor="name_on_card"
+                            className="block text-sm font-medium text-gray-700 mb-1"
+                          >
+                            Name on Card
+                          </label>
 
-                    <input
-                      type="number"
-                      id="amount"
-                      name="amount"
-                      value={formData.amount}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                      placeholder={`Enter amount in ${cardType.toUpperCase()}`}
-                      required
-                      min={
-                        cardType === "naira"
-                          ? "100"
-                          : action === "create"
-                          ? "5"
-                          : "1"
-                      }
-                    />
+                          <input
+                            type="text"
+                            id="name_on_card"
+                            disabled
+                            name="name_on_card"
+                            value={formData.name_on_card}
+                            onChange={handleInputChange}
+                            className="w-full p-1 px-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Enter name as it will appear on card"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="customerEmail"
+                            className="block text-sm font-medium text-gray-700 mb-1"
+                          >
+                            Email Address
+                          </label>
+
+                          <input
+                            type="email"
+                            disabled
+                            id="customerEmail"
+                            name="customerEmail"
+                            value={formData.customerEmail}
+                            onChange={handleInputChange}
+                            className="w-full p-1 px-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Your email address"
+                            required
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {action === "fund" && cardDetails && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Card Number
+                        </label>
+                        <div className="p-2 bg-gray-50 rounded-lg font-mono">
+                          {cardDetails.card_number}
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <label
+                        htmlFor="amount"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        {action === "create"
+                          ? "Initial Deposit"
+                          : "Amount to Fund"}
+                      </label>
+
+                      <input
+                        disabled
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        value={formData.amount}
+                        onChange={handleInputChange}
+                        className="w-full p-1 px-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
+                        placeholder={`Enter amount in ${cardType.toUpperCase()}`}
+                        required
+                        min={
+                          cardType === "naira"
+                            ? "100"
+                            : action === "create"
+                            ? "5"
+                            : "1"
+                        }
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <button
+                        type="submit"
+                        // disabled={isLoading || !formData.amount}
+                        // disabled
+                        className={`p-1 w-full flex items-center justify-center ${
+                          isLoading || !formData.amount
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-primary-600 hover:bg-primary-700"
+                        } text-white px-4 rounded-lg transition-colors font-medium`}
+                      >
+                        {isLoading ? (
+                          <>
+                            <Loader className="animate-spin h-2 w-2 mr-2" />
+                            {action === "create"
+                              ? "Creating Card..."
+                              : "Funding Card..."}
+                          </>
+                        ) : (
+                          <>
+                            {/* Coming Soon */}
+                            {action === "create"
+                              ? "Create Virtual Card"
+                              : "Fund Card"}
+                            <ArrowRight className="ml-2 h-3 w-3" />
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={isLoading || !formData.amount}
-                      className={`p-2 w-full flex items-center justify-center ${
-                        isLoading || !formData.amount
-                          ? "bg-gray-300 cursor-not-allowed"
-                          : "bg-primary-600 hover:bg-primary-700"
-                      } text-white px-4 rounded-lg transition-colors font-medium`}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader className="animate-spin h-5 w-5 mr-2" />
-                          {action === "create"
-                            ? "Creating Card..."
-                            : "Funding Card..."}
-                        </>
-                      ) : (
-                        <>
-                          {action === "create"
-                            ? "Create Virtual Card"
-                            : "Fund Card"}
-                          <ArrowRight className="ml-2 h-3 w-3" />
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </form>
+                </form>
+              )}
             </div>
 
             {loadingCardDetails ? (

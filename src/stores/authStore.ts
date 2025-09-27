@@ -11,6 +11,7 @@ export type Beneficiary = {
 
 export interface User {
   id: string;
+  idCardType?: string;
   email: string;
   currency: string;
   bankInformation: {
@@ -22,7 +23,10 @@ export interface User {
   phoneNumber: string;
   joinDate: string;
   balance: number;
+  idCard?: string;
+  idNumber?: string;
   transactions: [];
+  profileImage?: string;
   cacVerified: boolean;
   merchantVerificationCode?: string;
   bvnVerified: boolean;
