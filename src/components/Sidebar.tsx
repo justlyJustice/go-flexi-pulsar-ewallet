@@ -150,8 +150,12 @@ const Sidebar: React.FC = () => {
       name: "financialServices",
       label: "Financial Services",
       icon: <BadgeDollarSign size={30} />,
-      isOpen: openDropdown === "financialServices",
-      toggle: () => toggleDropdown("financialServices"),
+      isOpen:
+        user?.isKYC === "verified" && openDropdown === "financialServices",
+      toggle:
+        user?.isKYC === "verified"
+          ? () => toggleDropdown("financialServices")
+          : () => setIsOpen(true),
       items: financialServicesItems,
     },
     {

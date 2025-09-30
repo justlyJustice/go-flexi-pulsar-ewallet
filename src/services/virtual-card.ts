@@ -96,10 +96,10 @@ function formatDate(dateString: string) {
   }
 }
 
-const userPhoto = `${apiUrl}${user?.profileImage}`;
-const idImage = `${apiUrl}${user?.idCard}`;
-
-export const createCardCustomer = (data: Customer) => {
+export const createCardCustomer = (
+  data: Customer,
+  { idImage, userPhoto }: { idImage: string; userPhoto: string }
+) => {
   const {
     houseNumber,
     dateOfBirth,

@@ -243,19 +243,20 @@ const Profile: React.FC = () => {
                 <span>All Business tier benefits</span>
               </li>
 
-              {/* <li className="flex items-start">
+              <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>USDT receiving capability</span>
-              </li> */}
+              </li>
+
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Monthly limit: ₦500,000</span>
               </li>
 
-              {/* <li className="flex items-start">
+              <li className="flex items-start">
                 <DollarSign className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span>Upgrade fee of $15</span>
-              </li> */}
+              </li>
             </ul>
 
             {currentTier === "business" && (
@@ -317,8 +318,15 @@ const Profile: React.FC = () => {
           {/* Sidebar */}
           <div className="md:w-64 bg-gray-50 p-4 border-r border-gray-200">
             <div className="flex flex-col items-center py-5">
-              <div className="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mb-1">
-                <User size={40} />
+              <div className="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 mb-1 overflow-hidden relative">
+                {user?.profileImage ? (
+                  <img
+                    src={`${user?.profileImage}`}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <User size={40} />
+                )}
               </div>
 
               <h3 className="text-lg font-medium text-gray-900">
@@ -935,8 +943,12 @@ const Profile: React.FC = () => {
                             </p>
 
                             <button
-                              disabled={verificationMethod === "cac"}
-                              onClick={() => setVerificationMethod("cac")}
+                              disabled
+                              // disabled={verificationMethod === "cac"}
+                              onClick={() => {
+                                // if(user)
+                                // setVerificationMethod("cac")
+                              }}
                               className="w-full btn bg-blue-600 text-white"
                             >
                               Get Started

@@ -27,7 +27,9 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
     amount: "5",
     customerEmail: user?.email || "",
   });
-  const [activeTab, setActiveTab] = useState<TabType>("create-customer");
+  const [activeTab, setActiveTab] = useState<TabType>(
+    user?.idNumber ? "virtual-card" : "create-customer"
+  );
   const [action, setAction] = useState<"create" | "fund">("create");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingCardDetails, setLoadingCardDetails] = useState(true);
@@ -338,7 +340,7 @@ const VirtualCard: React.FC<VirtualCardProps> = ({ cardType }) => {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        // disabled={isLoading || !formData.amount}
+                        disabled={isLoading || !formData.amount}
                         // disabled
                         className={`p-1 w-full flex items-center justify-center ${
                           isLoading || !formData.amount

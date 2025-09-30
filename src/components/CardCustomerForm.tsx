@@ -32,8 +32,8 @@ const CardCustomerForm = ({
     React.SetStateAction<"create-customer" | "virtual-card">
   >;
 }) => {
-  const { user, updateUser } = useAuthStore();
-  const [step, setStep] = useState(1);
+  const { user: mainUser, updateUser } = useAuthStore();
+  const [step, setStep] = useState(mainUser?.profileImage ? 2 : 1);
   const [isLoading, setIsLoading] = useState(false);
   const [previews, setPreviews] = useState<{
     idImagePreview: string | null;
@@ -61,6 +61,10 @@ const CardCustomerForm = ({
     idType: "",
   });
 
+  // Uploaded files
+  const [uploadedDocument, setUploadedDocument] = useState("");
+  const [uploadedPhoto, setUploadedPhoto] = useState("");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -85,6 +89,9 @@ const CardCustomerForm = ({
             idNumber: user.idNumber,
             profileImage: user.profileImage,
           });
+
+          setUploadedDocument(user.idCard);
+          setUploadedPhoto(user.profileImage);
           setStep(2);
         }
       } catch (error) {
@@ -95,19 +102,19 @@ const CardCustomerForm = ({
     } else {
       try {
         setIsLoading(true);
-        const res = await createCardCustomer(formData);
+        const res = await createCardCustomer(formData, {
+          userPhoto: uploadedPhoto,
+          idImage: uploadedDocument,
+        });
         setIsLoading(false);
 
         if (!res.ok) {
-          console.log(res.data);
           return toast.error(res.data?.error!);
         }
 
         if (res.ok) {
-          console.log(res.data);
-
-          // setActiveTab("virtual-card");
-          // toast.success(res.data?.message!);
+          setActiveTab("virtual-card");
+          toast.success(res.data?.message!);
         }
       } catch (error) {
         console.log(error);
