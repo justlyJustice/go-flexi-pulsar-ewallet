@@ -14,9 +14,17 @@ const BalanceCard: React.FC<{
   showBalance: boolean;
   displayBalance: string;
   toggleBalanceVisibility: () => void;
-}> = ({ showBalance, displayBalance, toggleBalanceVisibility }) => {
+  currency: "NGN" | "USD";
+  setCurrency: React.Dispatch<React.SetStateAction<"NGN" | "USD">>;
+}> = ({
+  showBalance,
+  displayBalance,
+  toggleBalanceVisibility,
+  currency,
+  setCurrency,
+}) => {
   const { user } = useAuthStore();
-  const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
+
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
 
   const copyToClipboard = (text: string) => {
@@ -106,7 +114,11 @@ const BalanceCard: React.FC<{
             Available Balance
           </p>
           <p className="text-3xl font-bold">
-            {currency === "NGN" ? displayBalance : `$ ${(0).toFixed(2)}`}
+            {/* {currency === "NGN"
+              ? displayBalance
+              : `$ ${user?.usdtBalance!.toFixed(2)}`} */}
+
+            {displayBalance}
           </p>
         </div>
 

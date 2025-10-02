@@ -25,6 +25,7 @@ import { WelcomeModal } from "../components/WelcomeModal";
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
   const [showBalance, setShowBalance] = useState(false);
+  const [currency, setCurrency] = useState<"NGN" | "USD">("NGN");
 
   // Animation variants
   const containerVariants = {
@@ -53,9 +54,17 @@ const Dashboard: React.FC = () => {
   };
 
   // Format balance with asterisks if hidden
-  const displayBalance = showBalance
-    ? formatCurrency(user?.balance || 0)
-    : "******";
+  // const displayBalance = showBalance
+  //   ? formatCurrency(user?.balance!) ||
+  //   : ;
+
+  const displayBalance = (): string => {
+    if (currency == "NGN") {
+      return showBalance ? formatCurrency(user?.balance!) : "******";
+    } else {
+      return showBalance ? `$ ${user?.usdtBalance!.toFixed(2)}` : "******";
+    }
+  };
 
   return (
     <motion.div
@@ -83,9 +92,11 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <motion.div variants={itemVariants} className="md:col-span-2">
           <BalanceCard
-            displayBalance={displayBalance}
+            displayBalance={displayBalance()}
             showBalance={showBalance}
             toggleBalanceVisibility={toggleBalanceVisibility}
+            currency={currency}
+            setCurrency={setCurrency}
           />
         </motion.div>
 
@@ -146,7 +157,7 @@ const Dashboard: React.FC = () => {
                   </p>
 
                   <p className="text-2xl font-bold text-gray-900">
-                    {displayBalance}
+                    {displayBalance()}
                   </p>
                 </div>
 
