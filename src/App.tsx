@@ -24,6 +24,7 @@ import { useAuthStore } from "./stores/authStore";
 // import BulkSMS from "./pages/services/BulkSMS";
 // import USDTFunding from "./pages/services/USDTFunding";
 import VirtualCard from "./pages/services/VirtualCard";
+import useTransactions from "./hooks/useTransactions";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -46,6 +47,7 @@ function App() {
     };
   }, []);
 
+  useTransactions();
   useBalancePolling(user?.id);
 
   return (

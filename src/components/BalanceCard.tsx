@@ -174,22 +174,12 @@ const BalanceCard: React.FC<{
               <p className="text-xs text-white text-opacity-70">
                 USD Wallet Address
               </p>
+
               <div className="flex items-center justify-between">
-                <p className="font-medium truncate">
-                  {/* {"0xf730107CBB97211D3C2276F13f4b893140023597" ||
-                    "Not provided"} */}
-                  0xf730107CBB97211D3C2276F13f4b893140023597
-                </p>
-                {/* {"0xf730107CBB97211D3C2276F13f4b893140023597" && (
-                 
-                )} */}
+                <p className="font-medium truncate">{user?.usdtAddress}</p>
 
                 <button
-                  onClick={() =>
-                    copyToClipboard(
-                      `0xf730107CBB97211D3C2276F13f4b893140023597`
-                    )
-                  }
+                  onClick={() => copyToClipboard(user?.usdtAddress!)}
                   className="p-1 bg-white bg-opacity-20 rounded hover:bg-opacity-30 transition"
                   aria-label="Copy wallet address"
                 >

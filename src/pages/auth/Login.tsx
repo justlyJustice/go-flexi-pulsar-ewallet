@@ -88,6 +88,8 @@ const Login: React.FC = () => {
           lastDailyReset: user.lastDailyReset,
           lastMonthlyReset: user.lastMonthlyReset,
           lastTransferTime: user.lastTransferTime,
+          usdtAddress: user.usdtAddress,
+          usdtBalance: user.usdtBalance,
         },
         data?.token!
       );
@@ -117,6 +119,10 @@ const Login: React.FC = () => {
           content="Welcome to Rulsar. Sign in to your account to access your dashboard."
         />
         <meta property="og:title" content="Rulsar | Login" />
+        <meta
+          property="og:description"
+          content="Welcome to Rulsar. Sign in to your account to access your dashboard."
+        />
       </Helmet>
 
       <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -126,7 +132,8 @@ const Login: React.FC = () => {
               <Wallet className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+
+          <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
             Welcome to Rulsar
           </h2>
 
@@ -137,7 +144,7 @@ const Login: React.FC = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow-card sm:rounded-lg sm:px-10">
-            <form className="space-y-3" onSubmit={handleSubmit}>
+            <form className="space-y-2" onSubmit={handleSubmit}>
               {isError && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">
                   {message}
@@ -178,6 +185,7 @@ const Login: React.FC = () => {
                 >
                   Password
                 </label>
+
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                     <Lock className="h-3 w-2 text-gray-400" />

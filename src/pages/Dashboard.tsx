@@ -20,12 +20,11 @@ import { formatCurrency } from "../utils/formatters";
 // import MonthlyIncome from "../components/MonthlyIncome";
 import { WelcomeModal } from "../components/WelcomeModal";
 
+// import { useTransactionStore } from "../stores/transactionStore";
+
 const Dashboard: React.FC = () => {
   const { user } = useAuthStore();
   const [showBalance, setShowBalance] = useState(false);
-  // const getTransactions = useTransactionStore((state) => state.getTransactions);
-
-  // const transactions = getTransactions();
 
   // Animation variants
   const containerVariants = {
@@ -178,7 +177,7 @@ const Dashboard: React.FC = () => {
             </Link>
           </div>
 
-          <TransactionList limit={5} />
+          <TransactionList />
         </div>
 
         {/* <div className="md:col-span-1">

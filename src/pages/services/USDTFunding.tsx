@@ -45,7 +45,7 @@ const USDTFunding: React.FC = () => {
                 htmlFor="amount"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Amount in USDT
+                Amount in USD
               </label>
 
               <input

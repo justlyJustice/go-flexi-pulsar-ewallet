@@ -8,12 +8,20 @@ import {
   AlertTriangle,
   Wallet,
   ArrowRight,
+  ArrowUpDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
 import { useTransactionStore } from "../stores/transactionStore";
 import { formatCurrency } from "../utils/formatters";
-import { getUpdatedUser } from "../services/add-funds";
+import {
+  fundUsdAccount,
+  getUpdatedUser,
+  getUsdStatus,
+} from "../services/add-funds";
+import { getExchangeRates } from "../services/virtual-card";
+import LoadingOverlay from "../components/LoadingOverlay";
+import toast, { useToasterStore } from "react-hot-toast";
 
 type TabType = "add-naira" | "convert-to-usdt";
 
@@ -22,9 +30,11 @@ const AddFunds: React.FC = () => {
   const { user, updateBalance } = useAuthStore();
   const addTransaction = useTransactionStore((state) => state.addTransaction);
 
-  const [amount, setAmount] = useState("");
+  const [nairaAmount, setNairaAmount] = useState("");
+
   const [activeTab, setActiveTab] = useState<TabType>("add-naira");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGettingExchangeRate, setIsGettingExchangeRate] = useState(false);
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [countdownTime, setCountdownTime] = useState(300);
@@ -35,45 +45,82 @@ const AddFunds: React.FC = () => {
   const [showExtendedWait, setShowExtendedWait] = useState(false);
   const extendedWaitRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [usdtAmount, setUsdtAmount] = useState(0); // New USD amount state
-  const [exchangeRate, setExchangeRate] = useState(0); // New exchange rate state
+  const [usdAmount, setUsdAmount] = useState(0);
+  const [exchangeRate, setExchangeRate] = useState(0);
+  const [exchangeReceivingCurrency, setExchangeReceivingCurrency] = useState<
+    "USD" | "NGN"
+  >("USD");
 
-  // Add this new useEffect for exchange rate calculation
-  // useEffect(() => {
-  //   const fetchExchangeRate = async () => {
-  //     try {
-  //       const rate = await convertNairaToUSDT(1);
-  //       setExchangeRate(rate);
-  //       const amountValue = parseFloat(amount) || 0;
-  //       setUsdtAmount(amountValue * rate);
-  //     } catch (err) {
-  //       console.error("Failed to get exchange rate:", err);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        setIsGettingExchangeRate(true);
+        const res = await getExchangeRates();
+        setIsGettingExchangeRate(false);
 
-  //   if (activeTab === "convert-to-usdt" && amount) {
-  //     fetchExchangeRate();
-  //   }
-  // }, [amount, activeTab]);
+        if (!res.ok) {
+          toast.error("Could not get exchange rate!");
+          setError("Could not get exchange rate!");
+
+          return setTimeout(() => {
+            setError("");
+          }, 3000);
+        }
+
+        const data = res.data?.data;
+
+        setExchangeRate(Math.abs(Number(data?.rate!)));
+      } catch (err) {
+        console.error("Failed to get exchange rate:", err);
+      }
+    };
+
+    if (activeTab === "convert-to-usdt") {
+      fetchExchangeRate();
+    }
+  }, [activeTab]);
 
   const calcNetAmount = (amount: number) => {
     const PERCENTAGE_FEE = 0.025; // 2.5%
     const FIXED_FEE = 100; // ₦100 fixed fee
 
     const percentageFee = amount * PERCENTAGE_FEE;
-    const totalFee = percentageFee + FIXED_FEE;
-    const netAmount = amount - totalFee;
+    let totalFee = percentageFee + FIXED_FEE;
+
+    totalFee = Math.min(2500, totalFee);
+
+    let netAmount = amount - totalFee;
+    netAmount = Math.max(0, netAmount);
 
     return {
       netAmount: Math.max(0, netAmount), // Ensure no negative values
-      // totalFee: totalFee,
+      totalFee: totalFee,
     };
   };
 
-  const { netAmount } = useMemo(() => {
-    const amountValue = parseFloat(amount) || 0;
+  const { netAmount, totalFee } = useMemo(() => {
+    const amountValue = parseFloat(nairaAmount) || 0;
     return calcNetAmount(amountValue);
-  }, [amount]);
+  }, [nairaAmount]);
+
+  const usdReceiveAmount = useMemo(() => {
+    if (exchangeRate) {
+      const amountValue = parseFloat(nairaAmount) || 0;
+
+      const calculatedUsdAmount = Number(
+        (amountValue / exchangeRate).toFixed(2)
+      );
+      setUsdAmount(calculatedUsdAmount);
+
+      return calculatedUsdAmount;
+    }
+  }, [exchangeRate, nairaAmount]);
+
+  useMemo(() => {
+    if (activeTab === "convert-to-usdt" && exchangeRate && usdAmount !== 0) {
+      const newAmount = Number(usdAmount.toFixed(2)) * exchangeRate;
+    }
+  }, [usdAmount, activeTab]);
 
   const formatTime = (secs: number) => {
     const minutes = Math.floor(secs / 60);
@@ -101,7 +148,7 @@ const AddFunds: React.FC = () => {
     // Start extended verification
     const verifyExtended = async () => {
       try {
-        const amountValue = parseFloat(amount);
+        const amountValue = parseFloat(nairaAmount);
         let verified = false;
         const startTime = Date.now();
         const extendedTimeout = 40000; // 40 seconds
@@ -115,12 +162,12 @@ const AddFunds: React.FC = () => {
             updateBalance(verificationResult.newBalance);
 
             // Add transaction record
-            addTransaction({
-              amount: amountValue,
-              type: "deposit",
-              description: `Added funds via bank transfer`,
-              status: "completed",
-            });
+            // addTransaction({
+            //   amount: amountValue,
+            //   type: "deposit",
+            //   description: `Added funds via bank transfer`,
+            //   status: "completed",
+            // });
 
             // Show success page
             setTransactionStatus("completed");
@@ -165,16 +212,19 @@ const AddFunds: React.FC = () => {
     };
   }, []);
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAmountChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    currency: "usd" | "ngn"
+  ) => {
     const value = e.target.value;
-    // Only allow numbers and decimal point
+
     if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
-      setAmount(value);
+      currency === "ngn" ? setNairaAmount(value) : setUsdAmount(Number(value));
     }
   };
 
   const handleContinue = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
+    if (!nairaAmount || parseFloat(nairaAmount) <= 0) {
       setError("Please enter a valid amount");
       return;
     }
@@ -211,7 +261,7 @@ const AddFunds: React.FC = () => {
   const startBalanceVerification = async () => {
     if (!user?.id) return;
 
-    const amountValue = parseFloat(amount);
+    const amountValue = parseFloat(nairaAmount);
     if (isNaN(amountValue) || amountValue <= 0) return;
 
     setIsLoading(true);
@@ -241,12 +291,12 @@ const AddFunds: React.FC = () => {
         updateBalance(verificationResult.newBalance);
 
         // Add transaction record
-        addTransaction({
-          amount: amountValue,
-          type: "deposit",
-          description: `Added funds via bank transfer`,
-          status: "completed",
-        });
+        // addTransaction({
+        //   amount: amountValue,
+        //   type: "deposit",
+        //   description: `Added funds via bank transfer`,
+        //   status: "completed",
+        // });
 
         // Show success page
         setTransactionStatus("completed");
@@ -276,49 +326,68 @@ const AddFunds: React.FC = () => {
   const handleConvertToUSD = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // if (!amount || parseFloat(amount) <= 0) {
-    //   setError("Please enter a valid amount");
-    //   return;
-    // }
+    if (!nairaAmount || parseFloat(nairaAmount) <= 0) {
+      setError("Please enter a valid amount");
+      return;
+    }
 
-    // if (parseFloat(amount) > (user?.balance || 0)) {
-    //   setError("Insufficient Naira balance");
-    //   return;
-    // }
+    if (parseFloat(nairaAmount) > (user?.balance || 0)) {
+      setError("Insufficient Naira balance");
+      return;
+    }
 
-    // setIsLoading(true);
-    // setError("");
+    setIsLoading(true);
+    setError("");
 
-    // try {
-    //   // Simulate API call
-    //   await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const res = await fundUsdAccount(usdAmount);
+      // setIsLoading(false);
 
-    //   const nairaAmount = parseFloat(amount);
-    //   const finalUsdtAmount = nairaAmount * exchangeRate;
+      if (!res.ok) {
+        setError(res.data?.error!);
+        return toast.error(res.data?.error!);
+      }
 
-    //   // Update balances
-    //   if (user) {
-    //     updateBalance(user.balance - nairaAmount);
-    //     updateUSDTBalance((user.usdtBalance || 0) + finalUsdtAmount);
-    //   }
+      if (res.ok) {
+        // toast.success(res.data?.message!);
+        const usdRes = await getUsdStatus(res.data?.reference!);
 
-    //   // Add transaction record
-    //   addTransaction({
-    //     amount: nairaAmount,
-    //     type: "exchange",
-    //     description: `Converted ${formatCurrency(
-    //       nairaAmount
-    //     )} to ${finalUsdtAmount.toFixed(2)} USD`,
-    //     status: "completed",
-    //   });
+        if (!usdRes.ok) {
+          setError(usdRes.data?.error!);
+          toast.error(usdRes.data?.error!);
 
-    //   setStep(3);
-    // } catch (err) {
-    //   setError("Failed to process conversion. Please try again.");
-    //   console.error(err);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+          return setTimeout(() => {
+            setError("");
+          }, 3000);
+        }
+      }
+
+      // const amount = parseFloat(nairaAmount);
+      // const finalUsdtAmount = amount / exchangeRate;
+
+      // // Update balances
+      // if (user) {
+      //   updateBalance(user.balance - nairaAmount);
+      //   updateUSDTBalance((user.usdtBalance || 0) + finalUsdtAmount);
+      // }
+
+      // Add transaction record
+      // addTransaction({
+      //   amount: nairaAmount,
+      //   type: "exchange",
+      //   description: `Converted ${formatCurrency(
+      //     nairaAmount
+      //   )} to ${finalUsdtAmount.toFixed(2)} USD`,
+      //   status: "completed",
+      // });
+
+      // setStep(3);
+    } catch (err) {
+      setError("Failed to process conversion. Please try again.");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoToDashboard = () => {
@@ -353,21 +422,21 @@ const AddFunds: React.FC = () => {
       variants={containerVariants}
       className="max-w-2xl mx-auto"
     >
-      {/* <motion.div variants={itemVariants}>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Add Funds</h1>
-        <p className="text-gray-600 mb-4">Add money to your Rulsar account</p>
-      </motion.div> */}
-
       <motion.div variants={itemVariants}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           {activeTab === "add-naira" ? "Add Funds" : "Fund USD Account"}
         </h1>
+
         <p className="text-gray-600 mb-4">
           {activeTab === "add-naira"
             ? "Add money to your Rulsar account"
             : "Convert Naira to USD"}
         </p>
       </motion.div>
+
+      {activeTab === "convert-to-usdt" && (
+        <LoadingOverlay show={isGettingExchangeRate} />
+      )}
 
       <div className="flex border-b border-gray-200 mb-6">
         <button
@@ -444,8 +513,8 @@ const AddFunds: React.FC = () => {
                       id="amount"
                       className="input pl-8"
                       placeholder="0.00"
-                      value={amount}
-                      onChange={handleAmountChange}
+                      value={nairaAmount}
+                      onChange={(e) => handleAmountChange(e, "ngn")}
                     />
                   </div>
 
@@ -464,14 +533,14 @@ const AddFunds: React.FC = () => {
                     <div className="grid grid-cols-2 gap-2 text-sm">
                       <div className="text-gray-600">Amount to deposit:</div>
                       <div className="text-right font-medium">
-                        {formatCurrency(parseFloat(amount) || 0)}
+                        {formatCurrency(parseFloat(nairaAmount) || 0)}
                       </div>
 
                       <div className="text-gray-600">
                         Percentage fee (2.5%):
                       </div>
                       <div className="text-right font-medium">
-                        -{formatCurrency(parseFloat(amount) * 0.025 || 0)}
+                        -{formatCurrency(totalFee || 0)}
                       </div>
 
                       <div className="text-gray-600">Fixed fee:</div>
@@ -606,7 +675,7 @@ const AddFunds: React.FC = () => {
                     <p className="text-sm text-gray-500">See details below.</p>
                     <div className="text-right">
                       <span className="text-sm font-medium text-primary-600">
-                        Amount: {formatCurrency(parseFloat(amount) || 0)}
+                        Amount: {formatCurrency(parseFloat(nairaAmount) || 0)}
                       </span>
                       <span className="block text-xs text-gray-500">
                         Net deposit: {formatCurrency(netAmount)}
@@ -940,7 +1009,7 @@ const AddFunds: React.FC = () => {
                 <p className="text-gray-600 mb-4">
                   {formatCurrency(netAmount)} has been credited to your wallet
                   <span className="block text-sm text-gray-500 mt-1">
-                    (from {formatCurrency(parseFloat(amount))} after fees)
+                    (from {formatCurrency(parseFloat(nairaAmount))} after fees)
                   </span>
                 </p>
 
@@ -997,60 +1066,110 @@ const AddFunds: React.FC = () => {
                 )}
 
                 <div className="mb-4">
-                  <label
-                    htmlFor="amount"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
-                    Amount (₦)
-                  </label>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="amount"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Naira Amount (₦)
+                    </label>
 
-                  <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                      <span className="text-gray-500 sm:text-sm">₦</span>
+                    <div className="mt-1 relative rounded-md shadow-sm">
+                      <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                        <span className="text-gray-500 sm:text-sm">₦</span>
+                      </div>
+
+                      <input
+                        type="text"
+                        name="amount"
+                        id="amount"
+                        className="input pl-8"
+                        placeholder="0.00"
+                        value={nairaAmount}
+                        onChange={(e) => handleAmountChange(e, "ngn")}
+                      />
                     </div>
-                    <input
-                      type="text"
-                      name="amount"
-                      id="amount"
-                      className="input pl-8"
-                      placeholder="0.00"
-                      value={amount}
-                      onChange={handleAmountChange}
-                    />
-                  </div>
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <p className="text-sm text-gray-500">
-                      Current Naira Balance
-                    </p>
-                    <p className="text-sm font-medium text-gray-900">
-                      {formatCurrency(user?.balance || 0)}
-                    </p>
-                  </div>
-
-                  {amount && parseFloat(amount) > 0 && (
-                    <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                      <h3 className="text-sm font-medium text-blue-800 mb-1">
-                        Conversion Details
-                      </h3>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
-                        <div className="text-gray-600">Amount to convert:</div>
-                        <div className="text-right font-medium">
-                          {formatCurrency(parseFloat(amount))}
-                        </div>
-                        <div className="text-gray-600">Exchange rate:</div>
-                        <div className="text-right font-medium">
-                          1 USD = ₦{exchangeRate.toFixed(2)}
-                        </div>
-                        <div className="text-gray-600 font-semibold">
-                          You'll receive:
-                        </div>
-                        <div className="text-right font-semibold text-blue-600">
-                          {usdtAmount.toFixed(2)} USD
-                        </div>
+                    <div className="my-2 flex justify-center">
+                      <div
+                        className="flex items-center justify-center bg-gray-100 rounded-full p-2 cursor-pointer w-10 h-10"
+                        onClick={() => {
+                          setExchangeReceivingCurrency(
+                            exchangeReceivingCurrency === "NGN" ? "USD" : "NGN"
+                          );
+                        }}
+                      >
+                        <ArrowUpDown className=" text-gray-500 w-5 h-5" />
                       </div>
                     </div>
-                  )}
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm text-gray-500">
+                        Current Naira Balance
+                      </p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {formatCurrency(user?.balance || 0)}
+                      </p>
+                    </div>
+
+                    <label
+                      htmlFor="amount"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      USD Amount ($)
+                    </label>
+
+                    <div className="mt-1 relative rounded-md shadow-sm">
+                      <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                        <span className="text-gray-500 sm:text-sm">$</span>
+                      </div>
+
+                      <input
+                        type="text"
+                        name="amount"
+                        id="amount"
+                        className="input pl-8"
+                        placeholder="0.00"
+                        value={usdAmount}
+                        onChange={(e) => handleAmountChange(e, "usd")}
+                      />
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <p className="text-sm text-gray-500">
+                        Current USD Balance
+                      </p>
+                      <p className="text-sm font-medium text-gray-900">
+                        {formatCurrency(0, "USD")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                    <h3 className="text-sm font-medium text-blue-800 mb-1">
+                      Conversion Details
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="text-gray-600">Amount to convert:</div>
+                      <div className="text-right font-medium">
+                        {formatCurrency(parseFloat(nairaAmount) || 0)}
+                      </div>
+                      <div className="text-gray-600">Exchange rate:</div>
+                      <div className="text-right font-medium">
+                        1 USD = ₦{exchangeRate.toFixed(2)}
+                      </div>
+
+                      <div className="text-gray-600 font-semibold">
+                        You'll receive:
+                      </div>
+
+                      <div className="text-right font-semibold text-blue-600">
+                        {usdReceiveAmount && usdReceiveAmount.toFixed(2)}{" "}
+                        {exchangeReceivingCurrency === "NGN" ? "NGN" : "USD"}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end">
@@ -1059,9 +1178,9 @@ const AddFunds: React.FC = () => {
                     disabled
                     type="button"
                     onClick={() => setStep(2)}
-                    className="btn bg-blue-400 text-white px-4"
+                    className="btn btn-primary text-white px-4"
                   >
-                    Coming Soon
+                    Fund Account
                   </button>
                 </div>
               </motion.div>
@@ -1099,13 +1218,13 @@ const AddFunds: React.FC = () => {
                       <div className="flex items-center justify-between py-3 border-b border-primary-100">
                         <span className="text-gray-600">From:</span>
                         <span className="font-medium">
-                          {formatCurrency(parseFloat(amount))} NGN
+                          {formatCurrency(parseFloat(nairaAmount))} NGN
                         </span>
                       </div>
                       <div className="flex items-center justify-between py-3">
                         <span className="text-gray-600">To:</span>
                         <span className="font-medium">
-                          {usdtAmount.toFixed(2)} USD
+                          {usdAmount.toFixed(2)} USD
                         </span>
                       </div>
                     </div>
@@ -1125,7 +1244,7 @@ const AddFunds: React.FC = () => {
                         </span>
                         <span className="text-sm font-medium">
                           {formatCurrency(
-                            (user?.balance || 0) - parseFloat(amount)
+                            (user?.balance || 0) - parseFloat(nairaAmount)
                           )}
                         </span>
                       </div>
@@ -1135,7 +1254,7 @@ const AddFunds: React.FC = () => {
                         </span>
 
                         <span className="text-sm font-medium">
-                          {(0 + usdtAmount).toFixed(2)} USD
+                          {(0 + usdAmount).toFixed(2)} USD
                         </span>
                       </div>
                     </div>
@@ -1149,6 +1268,7 @@ const AddFunds: React.FC = () => {
                     >
                       Back
                     </button>
+
                     <button
                       type="submit"
                       disabled={isLoading}
@@ -1177,9 +1297,9 @@ const AddFunds: React.FC = () => {
                   Conversion Successful!
                 </h2>
                 <p className="text-gray-600 mb-4">
-                  You've received {usdtAmount.toFixed(2)} USD
+                  You've received {usdAmount.toFixed(2)} USD
                   <span className="block text-sm text-gray-500 mt-1">
-                    (from {formatCurrency(parseFloat(amount))} NGN)
+                    (from {formatCurrency(parseFloat(nairaAmount))} NGN)
                   </span>
                 </p>
                 <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mb-4 inline-block">

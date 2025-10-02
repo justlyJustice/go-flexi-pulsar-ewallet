@@ -1,7 +1,6 @@
 import client from "./client";
 
 import { getUser } from "../stores/authStore";
-import { apiUrl } from "../utils/apiUrl";
 
 const user = getUser();
 
@@ -58,7 +57,9 @@ export const fundVirtualCard = (
   );
 
 export const getExchangeRates = () =>
-  client.post("/virtual-card/exchange-rate");
+  client.get<{ success: boolean; data: { rate: string } }>(
+    "/virtual-card/exchange-rate"
+  );
 
 type Customer = {
   houseNumber: string;

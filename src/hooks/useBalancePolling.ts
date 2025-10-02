@@ -36,10 +36,10 @@ export const useBalancePolling = (userId: string | undefined) => {
             const amount = newBalance - oldBalance;
 
             addTransaction({
-              amount,
+              amount: String(amount),
               type: "deposit",
               description: "Received - Balance Topup",
-              status: "completed",
+              // status: "completed",
             });
             toast.success("Top up received");
           }

@@ -43,6 +43,8 @@ export interface User {
   lastDailyReset?: Date;
   lastMonthlyReset?: Date;
   lastTransferTime?: Date;
+  usdtAddress: string;
+  usdtBalance: number;
 }
 
 interface AuthState {
