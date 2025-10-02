@@ -4,16 +4,18 @@ import { toast } from "react-hot-toast";
 import { useAuthStore } from "../stores/authStore";
 
 import { getUserTransactions } from "../services/transactions";
+import { useTransactionStore } from "../stores/transactionStore";
 
 const useTransactions = () => {
-  const { user, updateUser } = useAuthStore();
+  const { setTransactions } = useTransactionStore();
+  const { user } = useAuthStore();
 
   const handleGetUserTransactions = async () => {
     try {
       const res = await getUserTransactions(user?.id!);
 
       if (res.ok) {
-        updateUser({ transactions: res.data?.transactions! });
+        setTransactions(res.data?.transactions!);
       } else {
         return toast.error("Could not get user transaction");
       }
@@ -24,8 +26,10 @@ const useTransactions = () => {
   };
 
   useEffect(() => {
-    handleGetUserTransactions();
-  }, []);
+    if (user !== null) {
+      handleGetUserTransactions();
+    }
+  }, [user]);
 };
 
 export default useTransactions;

@@ -31,6 +31,7 @@ interface TransactionState {
   transactions: Transaction[];
   addTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => void;
   getTransactions: () => Transaction[];
+  setTransactions: (transactions: Transaction[]) => void;
 }
 
 // For demo purposes, we'll use a local store
@@ -38,6 +39,11 @@ interface TransactionState {
 export const useTransactionStore = create<TransactionState>()(
   persist(
     (set, get) => ({
+      setTransactions: (transactions) => {
+        set(() => ({
+          transactions: transactions,
+        }));
+      },
       transactions: getTransactions(),
       addTransaction: (transaction) => {
         const newTransaction = {
@@ -53,7 +59,6 @@ export const useTransactionStore = create<TransactionState>()(
         return transaction;
       },
       getTransactions: () => {
-        // Sort transactions by date (newest first)
         return [...get().transactions];
       },
     }),

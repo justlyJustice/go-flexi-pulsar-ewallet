@@ -24,8 +24,6 @@ const TransactionList: React.FC<TransactionListProps> = ({
   const transactions = useTransactionStore((state) => state.getTransactions());
   const [searchTerm, setSearchTerm] = useState("");
 
-  // const transactions = getTransactions();
-
   // const filteredTransactions = transactions
   //   .filter(transaction =>
   //     transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -135,12 +133,12 @@ const TransactionList: React.FC<TransactionListProps> = ({
                       )}
                     </p>
 
-                    {/* <div className="flex items-center mt-0.5">
-                      {getStatusIcon(transaction.status)}
+                    <div className="flex items-center mt-0.5">
+                      {getStatusIcon("completed")}
                       <span className="text-xs text-gray-500 ml-1 capitalize">
-                        {transaction.status}
+                        completed
                       </span>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </li>
