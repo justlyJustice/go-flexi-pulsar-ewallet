@@ -115,6 +115,21 @@ const Sidebar: React.FC = () => {
     // },
   ];
 
+  const addFundsItems = [
+    {
+      path: "/add-funds/naira",
+      icon: <CreditCard size={22} />,
+      label: "Fund Naira",
+      isActive: location.pathname === "/add-funds/naira",
+    },
+    {
+      path: "/add-funds/usd",
+      icon: <CreditCard size={22} />,
+      label: "Convert USD",
+      isActive: location.pathname === "/add-funds/usd",
+    },
+  ]
+
   const navItems = [
     {
       path: "/dashboard",
@@ -122,12 +137,23 @@ const Sidebar: React.FC = () => {
       label: "Dashboard",
       isActive: location.pathname === "/dashboard",
     },
+
     {
-      path: "/add-funds",
-      icon: <Wallet size={20} />,
+      type: "dropdown",
+      name: "addFunds",
       label: "Add Funds",
-      isActive: location.pathname === "/add-funds",
+      icon: <Wallet size={30} />,
+      isOpen:openDropdown === "addFunds",
+      toggle:() => toggleDropdown("addFunds"),
+      items: addFundsItems,
     },
+
+    // {
+    //   path: "/add-funds",
+    //   icon: <Wallet size={20} />,
+    //   label: "Add Funds",
+    //   isActive: location.pathname === "/add-funds",
+    // },
     {
       path: user?.isKYC === "verified" ? "/transfer" : "#",
       // path: "/transfer",

@@ -1175,7 +1175,7 @@ const AddFunds: React.FC = () => {
                 <div className="flex justify-end">
                   <button
                     // disabled={!amount || parseFloat(amount) <= 0}
-                    disabled
+                    // disabled
                     type="button"
                     onClick={() => setStep(2)}
                     className="btn btn-primary text-white px-4"

@@ -17,6 +17,7 @@ import { useAuthStore } from "../stores/authStore";
 import { formatCurrency, formatDate } from "../utils/formatters";
 import KYCMethod from "../components/KYCMethod";
 import VerificationStatus from "../components/KYCStatus";
+import toast from "react-hot-toast";
 
 const Profile: React.FC = () => {
   const { user, updateUser, logout } = useAuthStore();
@@ -943,11 +944,15 @@ const Profile: React.FC = () => {
                             </p>
 
                             <button
-                              disabled
+                              // disabled
                               // disabled={verificationMethod === "cac"}
                               onClick={() => {
-                                // if(user)
-                                // setVerificationMethod("cac")
+                                if (user.usdtBalance < 15) {
+                                  return toast.error(
+                                    "USD balance must have a minimum of $15 before"
+                                  );
+                                }
+                                setVerificationMethod("cac");
                               }}
                               className="w-full btn bg-blue-600 text-white"
                             >
@@ -971,7 +976,7 @@ const Profile: React.FC = () => {
                       )}
                     </>
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
                       <div className="border border-gray-200 rounded-lg overflow-hidden">
                         <div className="p-3 bg-gray-50 border-b border-gray-200">
                           <h3 className="text-lg font-medium text-gray-900">
@@ -992,9 +997,9 @@ const Profile: React.FC = () => {
                             // disabled
                             disabled={verificationMethod === "nin"}
                             onClick={() => {
-                              if (user?.ninVerified) {
-                                setVerificationMethod("cac");
-                              }
+                              // if (user?.ninVerified) {
+                              //   setVerificationMethod("cac");
+                              // }
 
                               setVerificationMethod("nin");
                             }}

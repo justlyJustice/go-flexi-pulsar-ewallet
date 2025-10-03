@@ -8,6 +8,7 @@ import {
   ArrowRightCircle,
   Wallet,
   Send,
+  DollarSign,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
@@ -103,13 +104,34 @@ const Dashboard: React.FC = () => {
         <motion.div variants={itemVariants} className="md:col-span-1">
           <div className="bg-white rounded-card shadow-card h-full p-6 flex flex-col justify-between">
             <div>
-              <h3 className="font-semibold text-gray-900 mb-4">
+              <h3 className="font-semibold text-gray-900 mb-2">
                 Quick Actions
               </h3>
 
               <div className="space-y-3">
                 <Link
-                  to="/add-funds"
+                  to="/add-funds/usd"
+                  className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  <div className="w-20 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                    <DollarSign className="h-3 w-2" />
+                  </div>
+
+                  <div className="ml-2">
+                    <p className="text-sm font-medium text-gray-900">
+                      Convert USD
+                    </p>
+
+                    <p className="text-xs text-gray-500">
+                      Convert naria to usd
+                    </p>
+                  </div>
+
+                  <ArrowRightCircle className="ml-auto h-5 w-5 text-gray-400" />
+                </Link>
+
+                <Link
+                  to="/add-funds/naira"
                   className="flex items-center p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                 >
                   <div className="w-20 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">

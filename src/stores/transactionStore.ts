@@ -17,7 +17,7 @@ type TransactionType = "transfer" | "deposit";
 // }
 
 type Transaction = {
-  id: string;
+  _id: string;
   description?: string;
   createdAt: string;
   type: TransactionType;
@@ -29,7 +29,7 @@ export type Transactions = Transaction[];
 
 interface TransactionState {
   transactions: Transaction[];
-  addTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => void;
+  addTransaction: (transaction: Omit<Transaction, "_id" | "createdAt">) => void;
   getTransactions: () => Transaction[];
   setTransactions: (transactions: Transaction[]) => void;
 }
@@ -48,7 +48,7 @@ export const useTransactionStore = create<TransactionState>()(
       addTransaction: (transaction) => {
         const newTransaction = {
           ...transaction,
-          id: Math.random().toString(36).substring(2, 11),
+          _id: Math.random().toString(36).substring(2, 11),
           createdAt: new Date().toISOString(),
         };
 

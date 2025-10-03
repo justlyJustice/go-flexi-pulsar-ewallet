@@ -25,6 +25,8 @@ import { useAuthStore } from "./stores/authStore";
 // import USDTFunding from "./pages/services/USDTFunding";
 import VirtualCard from "./pages/services/VirtualCard";
 import useTransactions from "./hooks/useTransactions";
+import ConvertUSD from "./pages/ConvertUSD";
+import FundNaira from "./pages/FundNaira";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -98,7 +100,8 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/add-funds" element={<AddFunds />} />
+            <Route path="/add-funds/naira" element={<FundNaira />} />
+            <Route path="/add-funds/usd" element={<ConvertUSD />} />
             <Route path="/profile" element={<Profile />} />
 
             {/* Bill Payments */}

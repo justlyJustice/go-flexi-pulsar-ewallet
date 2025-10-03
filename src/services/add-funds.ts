@@ -9,9 +9,12 @@ export const fundUsdAccount = (amount: number) =>
     success: boolean;
     message: string;
     reference: string;
-  }>(`/users/send-usdt?amount=${amount}&mode=sandbox`);
+  }>(`/users/send-usdt?amount=${amount}`);
 
 export const getUsdStatus = (reference: string) =>
-  client.get<{ success: boolean; message: string; error: string }>(
-    `/users/user/usdt-status?reference=${reference}`
-  );
+  client.get<{
+    success: boolean;
+    message: string;
+    error: string;
+    status: string;
+  }>(`/users/user/usdt-status?reference=${reference}`);
