@@ -13,18 +13,12 @@ import { useBankStore } from "../../stores/banksStore";
 import { verifyAccountName } from "../../services/transfer";
 
 interface CorporateFormData {
-  // business_name: string;
-  // account_number: string;
-  // bank_name: string;
-  // name_enquiry_reference: string;
-  // image?: string;
-
   number: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
   phoneNumber: string;
-  verificationCode: string;
+  // verificationCode: string;
   trx: string;
   email: string;
   rcNumber: string;
@@ -39,6 +33,10 @@ interface CorporateFormData {
   image: string;
   business_name: string;
   name_enquiry_reference: string;
+  isMember: boolean;
+  corporativeName: string;
+  profileNumber: string;
+  verificationCode: string;
 }
 
 interface CorporateProps {
@@ -120,14 +118,10 @@ const CorporateKYCForm = ({
       }
 
       if (!res.ok) {
-        toast.error(
-          res.originalError.code + ": " + res.originalError.message ||
-            res?.data!.error
-        );
-        setError(
-          res.originalError.code + ": " + res.originalError.message ||
-            res?.data!.error
-        );
+        // const error = res.data?.error;
+
+        toast.error(res?.data!.error);
+        setError(res?.data!.error);
 
         return setTimeout(() => {
           setError("");
@@ -355,6 +349,83 @@ const CorporateKYCForm = ({
               />
             </label>
           </div>
+        )}
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex gap-1">
+          <input
+            type="checkbox"
+            className="checkbox"
+            onChange={(e) => {
+              const checked = e.target.checked;
+
+              setFormData((prev) => ({ ...prev, isMember: checked }));
+            }}
+          />
+          <span className="text-gray-500 text-sm">
+            Are you a Corporative Member?
+          </span>
+        </div>
+
+        {formData.isMember && (
+          <>
+            <div className="flex border-b border-gray-200 mb-6"></div>
+
+            <div className="relative">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Corporative Name
+              </label>
+
+              {/* <div className="absolute inset-y-0 left-0 top-1 pl-1 flex items-center pointer-events-none">
+          <User className="h-4 w-3 text-gray-400" />
+        </div> */}
+
+              <input
+                type="text"
+                name="corporativeName"
+                value={formData.corporativeName}
+                onChange={handleInputChange}
+                className="input"
+                placeholder="Corporate Name"
+                required={formData.isMember}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Verification Code
+                </label>
+
+                <input
+                  type="text"
+                  name="verificationCode"
+                  value={formData.verificationCode}
+                  onChange={handleInputChange}
+                  className="input"
+                  placeholder="Verification Code"
+                  required={formData.isMember}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Profile Number
+                </label>
+
+                <input
+                  type="text"
+                  name="profileNumber"
+                  value={formData.profileNumber}
+                  onChange={handleInputChange}
+                  className="input"
+                  placeholder="Profile Number"
+                  required={formData.isMember}
+                />
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

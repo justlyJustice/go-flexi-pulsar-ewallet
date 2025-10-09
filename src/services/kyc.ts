@@ -115,6 +115,11 @@ type CorporateKyc = {
   business_name: string;
   image: File;
   bank_name: string;
+  isMember: boolean;
+  corporativeName: string;
+  verificationCode: string;
+  profileNumber: string;
+  accountName: string;
 };
 
 export const verifyCorporateKYC = (data: CorporateKyc) => {
@@ -124,6 +129,11 @@ export const verifyCorporateKYC = (data: CorporateKyc) => {
   formData.append("business_name", data.business_name);
   formData.append("image", data.image);
   formData.append("bank_name", data.bank_name);
+  formData.append("profileNumber", data.profileNumber);
+  formData.append("corporativeName", data.corporativeName);
+  formData.append("isMember", JSON.stringify(data.isMember));
+  formData.append("verificationCode", data.verificationCode);
+  formData.append("accountName", data.accountName);
 
   return client.post<{ error: string; data: any; user: any }>(
     "/kyc/verify-corporate-business",

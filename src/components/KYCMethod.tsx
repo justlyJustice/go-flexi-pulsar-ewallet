@@ -34,7 +34,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   method,
   onCancel,
   onComplete,
-  setMethod,
+  // setMethod,
 }) => {
   const { user, updateUser } = useAuthStore();
   const [step, setStep] = useState<number>(method === "cac" ? 2 : 1);
@@ -63,6 +63,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     image: "",
     business_name: "",
     name_enquiry_reference: "",
+    isMember: false,
+    corporativeName: "",
+    profileNumber: "",
   });
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState<"cac" | "corporate">("cac");
@@ -287,9 +290,15 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
           console.log("An error occured!");
         }
       } else {
+        if (
+          formData.name_enquiry_reference.toLowerCase() !==
+          formData.business_name.toLowerCase()
+        ) {
+          return toast.error("Business name must match account name");
+        }
+
         if (!certificateFile) {
-          toast.error("Please upload your certificate");
-          return;
+          return toast.error("Please upload your certificate");
         }
 
         try {
@@ -299,6 +308,11 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             business_name: formData.business_name,
             image: certificateFile,
             bank_name: formData.bank_name,
+            corporativeName: formData.corporativeName,
+            isMember: formData.isMember,
+            profileNumber: formData.profileNumber,
+            verificationCode: formData.verificationCode,
+            accountName: formData.name_enquiry_reference,
           });
           setLoading(false);
 
@@ -314,7 +328,9 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             });
             toast.success("Success");
             onComplete();
-          } else {
+          }
+
+          if (!res.ok) {
             toast.error(resData?.error || "Something went wrong!");
           }
         } catch (error) {

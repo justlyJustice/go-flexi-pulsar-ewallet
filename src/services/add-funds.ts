@@ -8,8 +8,11 @@ export const fundUsdAccount = (amount: number) =>
     error: string;
     success: boolean;
     message: string;
-    reference: string;
-  }>(`/users/send-usdt?amount=${amount}`);
+    data: {
+      amount: number;
+    };
+    // reference: string;
+  }>(`/users/deposit-usd?amount=${amount}`);
 
 export const getUsdStatus = (reference: string) =>
   client.get<{
@@ -17,4 +20,5 @@ export const getUsdStatus = (reference: string) =>
     message: string;
     error: string;
     status: string;
+    balance: number;
   }>(`/users/user/usdt-status?reference=${reference}`);

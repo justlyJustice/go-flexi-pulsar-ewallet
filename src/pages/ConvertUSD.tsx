@@ -12,13 +12,13 @@ import {
   Clock,
   AlertCircle,
 } from "lucide-react";
+import toast from "react-hot-toast";
+
 import { useAuthStore } from "../stores/authStore";
 import { formatCurrency } from "../utils/formatters";
 import { fundUsdAccount, getUsdStatus } from "../services/add-funds";
 import { getExchangeRates } from "../services/virtual-card";
 import LoadingOverlay from "../components/LoadingOverlay";
-import toast from "react-hot-toast";
-import { toNamespacedPath } from "path";
 
 type ConversionDirection = "NGN_TO_USD" | "USD_TO_NGN";
 type FundingStatus = "pending" | "successful" | "failed" | "idle";
@@ -27,11 +27,11 @@ type FundingStatus = "pending" | "successful" | "failed" | "idle";
 const USDT_DEPOSIT_FEE = 0.5; // Fixed fee in USD
 const PERCENT_DEPOSIT_FEE = 1.9; // Percentage fee (1.9%)
 
-const PENDING_CONVERSION_KEY = "pending_usd_conversion";
+// const PENDING_CONVERSION_KEY = "pending_usd_conversion";
 
 const ConvertUSD: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { updateUser, user } = useAuthStore();
 
   const [sourceAmount, setSourceAmount] = useState("");
   const [targetAmount, setTargetAmount] = useState(0);
@@ -43,9 +43,9 @@ const ConvertUSD: React.FC = () => {
   const [conversionDirection, setConversionDirection] =
     useState<ConversionDirection>("NGN_TO_USD");
   const [fundingStatus, setFundingStatus] = useState<FundingStatus>("idle");
-  const [conversionReference, setConversionReference] = useState<string>("");
-  const [checkingInterval, setCheckingInterval] =
-    useState<NodeJS.Timeout | null>(null);
+  // const [conversionReference, setConversionReference] = useState<string>("");
+  // const [checkingInterval, setCheckingInterval] =
+  //   useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchExchangeRate = async () => {
@@ -72,42 +72,49 @@ const ConvertUSD: React.FC = () => {
     fetchExchangeRate();
   }, []);
 
-  useEffect(() => {
-    const checkPendingConversion = async () => {
-      const pending = getPendingConversion();
-      if (pending) {
-        setConversionReference(pending.reference);
-        setSourceAmount(pending.sourceAmount);
-        setTargetAmount(pending.netAmount);
-        setConversionDirection(pending.direction);
-        setFundingStatus("pending");
-        setStep(3);
+  // useEffect(() => {
+  //   const checkPendingConversion = async () => {
+  //     const pending = getPendingConversion();
+  //     if (pending) {
+  //       setConversionReference(pending.reference);
+  //       setSourceAmount(pending.sourceAmount);
+  //       setTargetAmount(pending.netAmount);
+  //       setConversionDirection(pending.direction);
+  //       setFundingStatus("pending");
+  //       setStep(3);
 
-        // Start checking status
-        startStatusChecking(pending.reference);
-      }
-    };
+  //       // Start checking status
+  //       startStatusChecking(pending.reference);
+  //     }
+  //   };
 
-    checkPendingConversion();
+  //   checkPendingConversion();
 
-    // Cleanup interval on unmount
-    return () => {
-      if (checkingInterval) {
-        clearInterval(checkingInterval);
-      }
-    };
-  }, []);
+  //   // Cleanup interval on unmount
+  //   return () => {
+  //     if (checkingInterval) {
+  //       clearInterval(checkingInterval);
+  //     }
+  //   };
+  // }, []);
 
-  interface PendingConversion {
-    reference: string;
-    sourceAmount: string;
-    netAmount: number;
-    direction: ConversionDirection;
-    timestamp: number;
-  }
+  // interface PendingConversion {
+  //   reference: string;
+  //   sourceAmount: string;
+  //   netAmount: number;
+  //   direction: ConversionDirection;
+  //   timestamp: number;
+  // }
 
   // Calculate fees and net amount
   const { netAmount, usdAmountBeforeFees, fees } = useMemo(() => {
+    if (!exchangeRate)
+      return {
+        netAmount: 0,
+        usdAmountBeforeFees: 0,
+        fees: { fixedFee: 0, percentageFee: 0, totalFee: 0 },
+      };
+
     const amountValue = parseFloat(sourceAmount) || 0;
 
     if (conversionDirection === "NGN_TO_USD") {
@@ -184,10 +191,7 @@ const ConvertUSD: React.FC = () => {
   const getStatusDescription = () => {
     switch (fundingStatus) {
       case "successful":
-        return `You've received ${formatCurrency(
-          netAmount,
-          getTargetCurrency()
-        )}`;
+        return;
       case "pending":
         return "Your conversion is being processed. This may take a few moments...";
       case "failed":
@@ -212,17 +216,17 @@ const ConvertUSD: React.FC = () => {
   // Get target balance based on conversion direction
   const getTargetBalance = () => {
     if (conversionDirection === "NGN_TO_USD") {
-      return user?.usdtBalance || 0; // USD balance
+      return Number(user?.usdtBalance) || 0; // USD balance
     } else {
-      return user?.balance || 0; // NGN balance
+      return Number(user?.balance) || 0; // NGN balance
     }
   };
 
-  const handleRetryConversion = () => {
-    setFundingStatus("idle");
-    setError("");
-    setStep(1);
-  };
+  // const handleRetryConversion = () => {
+  //   setFundingStatus("idle");
+  //   setError("");
+  //   setStep(1);
+  // };
 
   const handleSourceAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -289,80 +293,84 @@ const ConvertUSD: React.FC = () => {
     return true;
   };
 
-  const getPendingConversion = (): PendingConversion | null => {
-    try {
-      const pending = localStorage.getItem(PENDING_CONVERSION_KEY);
-      return pending ? JSON.parse(pending) : null;
-    } catch (error) {
-      console.error("Error reading pending conversion:", error);
-      return null;
-    }
-  };
+  // const getPendingConversion = (): PendingConversion | null => {
+  //   try {
+  //     const pending = localStorage.getItem(PENDING_CONVERSION_KEY);
 
-  const setPendingConversion = (conversion: PendingConversion) => {
-    try {
-      localStorage.setItem(PENDING_CONVERSION_KEY, JSON.stringify(conversion));
-    } catch (error) {
-      console.error("Error saving pending conversion:", error);
-    }
-  };
+  //     return pending ? JSON.parse(pending) : null;
+  //   } catch (error) {
+  //     console.error("Error reading pending conversion:", error);
+  //     return null;
+  //   }
+  // };
 
-  const clearPendingConversion = () => {
-    try {
-      localStorage.removeItem(PENDING_CONVERSION_KEY);
-    } catch (error) {
-      console.error("Error clearing pending conversion:", error);
-    }
-  };
+  // const setPendingConversion = (conversion: PendingConversion) => {
+  //   try {
+  //     localStorage.setItem(PENDING_CONVERSION_KEY, JSON.stringify(conversion));
+  //   } catch (error) {
+  //     console.error("Error saving pending conversion:", error);
+  //   }
+  // };
 
-  const startStatusChecking = (reference: string) => {
-    // Clear any existing interval
-    if (checkingInterval) {
-      clearInterval(checkingInterval);
-    }
+  // const clearPendingConversion = () => {
+  //   try {
+  //     localStorage.removeItem(PENDING_CONVERSION_KEY);
+  //   } catch (error) {
+  //     console.error("Error clearing pending conversion:", error);
+  //   }
+  // };
 
-    const interval = setInterval(async () => {
-      await checkFundingStatus(reference);
-    }, 5000); // Check every 5 seconds
+  // const startStatusChecking = (reference: string) => {
+  //   if (checkingInterval) {
+  //     clearInterval(checkingInterval);
+  //   }
 
-    setCheckingInterval(interval);
-  };
+  //   const interval = setInterval(async () => {
+  //     await checkFundingStatus(reference);
+  //   }, 5000); // Check every 5 seconds
 
-  const stopStatusChecking = () => {
-    if (checkingInterval) {
-      clearInterval(checkingInterval);
-      setCheckingInterval(null);
-    }
-  };
+  //   setCheckingInterval(interval);
+  // };
 
-  const checkFundingStatus = async (reference: string) => {
-    try {
-      const usdRes = await getUsdStatus(reference);
+  // const stopStatusChecking = () => {
+  //   if (checkingInterval) {
+  //     clearInterval(checkingInterval);
+  //     setCheckingInterval(null);
+  //   }
+  // };
 
-      if (usdRes.ok) {
-        const status = usdRes.data?.status?.toLowerCase();
+  // const checkFundingStatus = async (reference: string) => {
+  //   try {
+  //     const res = await getUsdStatus(reference);
 
-        if (status === "successful" || status === "completed") {
-          setFundingStatus("successful");
-          stopStatusChecking();
-          clearPendingConversion();
+  //     if (res.ok) {
+  //       const status = res.data?.status?.toLowerCase();
 
-          // Update user balance if needed
-          // You might want to refresh user data here
-          toast.success("USD funding completed successfully!");
-        } else if (status === "failed" || status === "rejected") {
-          setFundingStatus("failed");
-          stopStatusChecking();
-          clearPendingConversion();
-          setError("USD funding failed. Please try again.");
-        }
-      } else {
-        console.error("Error checking funding status:", usdRes.data?.error);
-      }
-    } catch (err) {
-      console.error("Failed to check funding status:", err);
-    }
-  };
+  //       if (status === "successful" || status === "completed") {
+  //         setFundingStatus("successful");
+  //         stopStatusChecking();
+  //         clearPendingConversion();
+
+  //         const newBalance = res.data?.balance!;
+  //         updateUser({
+  //           usdtBalance: newBalance,
+  //           balance: getCurrentBalance() - parseFloat(sourceAmount),
+  //         });
+
+  //         toast.success("USD funding completed successfully!");
+  //       } else if (status === "failed" || status === "rejected") {
+  //         setFundingStatus("failed");
+  //         stopStatusChecking();
+  //         clearPendingConversion();
+  //         setError("USD funding failed. Please try again.");
+  //       }
+  //     } else {
+  //       console.error("Error checking funding status:", res.data?.error);
+  //     }
+  //   } catch (err) {
+  //     console.error("Failed to check funding status:", err);
+  //   }
+  // };
 
   const handleGoToDashboard = () => {
     navigate("/dashboard");
@@ -400,6 +408,7 @@ const ConvertUSD: React.FC = () => {
   };
 
   const handleConvert = async (e: React.FormEvent) => {
+    const usdBalance = user?.usdtBalance;
     e.preventDefault();
 
     if (!validateConversion()) {
@@ -413,7 +422,7 @@ const ConvertUSD: React.FC = () => {
     try {
       if (conversionDirection === "NGN_TO_USD") {
         // NGN to USD conversion
-        const res = await fundUsdAccount(netAmount);
+        const res = await fundUsdAccount(usdAmountBeforeFees!);
 
         if (!res.ok) {
           setError(res.data?.error!);
@@ -427,29 +436,38 @@ const ConvertUSD: React.FC = () => {
         }
 
         if (res.ok) {
-          const reference = res.data?.reference;
-          if (reference) {
-            setConversionReference(reference);
+          toast.success(res.data?.message!);
 
-            // Store in local storage
-            const pendingConversion: PendingConversion = {
-              reference,
-              sourceAmount,
-              netAmount,
-              direction: conversionDirection,
-              timestamp: Date.now(),
-            };
-            setPendingConversion(pendingConversion);
+          setFundingStatus("successful");
+          updateUser({
+            usdtBalance: usdBalance! + Number(res.data?.data.amount!),
+          });
 
-            // Start checking status
-            startStatusChecking(reference);
+          setStep(3);
+          // const reference = res.data?.reference;
+          // if (reference) {
+          //   setConversionReference(reference);
 
-            setStep(3);
-          } else {
-            setError("No reference received from server");
-            setFundingStatus("failed");
-          }
+          //   // Store in local storage
+          //   const pendingConversion: PendingConversion = {
+          //     reference,
+          //     sourceAmount,
+          //     netAmount,
+          //     direction: conversionDirection,
+          //     timestamp: Date.now(),
+          //   };
+          //   setPendingConversion(pendingConversion);
+
+          //   // Start checking status
+          //   startStatusChecking(reference);
+
+          // setStep(3);
         }
+        // else {
+        //   setError("No reference received from server");
+        //   setFundingStatus("failed");
+        // }
+        // }
       }
     } catch (err) {
       setError("Failed to process conversion. Please try again.");
@@ -547,7 +565,7 @@ const ConvertUSD: React.FC = () => {
                 <div className="flex justify-center">
                   <button
                     type="button"
-                    onClick={toggleConversionDirection}
+                    // onClick={toggleConversionDirection}
                     className="flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full p-3 cursor-pointer transition-colors"
                     title={`Switch to ${
                       conversionDirection === "NGN_TO_USD"
@@ -555,7 +573,7 @@ const ConvertUSD: React.FC = () => {
                         : "NGN to USD"
                     }`}
                   >
-                    <ArrowUpDown className="text-gray-600 w-3 h-3" />
+                    <ArrowUpDown className="text-gray-600 w-2 h-2" />
                   </button>
                 </div>
 
@@ -567,12 +585,14 @@ const ConvertUSD: React.FC = () => {
                   >
                     {getTargetCurrency()} Amount ({getTargetCurrencySymbol()})
                   </label>
+
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
                       <span className="text-gray-500 sm:text-sm">
                         {getTargetCurrencySymbol()}
                       </span>
                     </div>
+
                     <input
                       type="text"
                       name="targetAmount"
@@ -583,10 +603,12 @@ const ConvertUSD: React.FC = () => {
                       onChange={handleTargetAmountChange}
                     />
                   </div>
+
                   <div className="mt-2 flex items-center justify-between">
                     <p className="text-sm text-gray-500">
                       Current {getTargetCurrency()} Balance
                     </p>
+
                     <p className="text-sm font-medium text-gray-900">
                       {formatCurrency(getTargetBalance(), getTargetCurrency())}
                     </p>
@@ -646,6 +668,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="text-gray-600 font-semibold">
                         You'll receive:
                       </span>
+
                       <span className="font-semibold text-blue-600">
                         {formatCurrency(netAmount, getTargetCurrency())}
                       </span>
@@ -666,7 +689,10 @@ const ConvertUSD: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  if (conversionDirection === "NGN_TO_USD" && netAmount < 3) {
+                  if (
+                    conversionDirection === "NGN_TO_USD" &&
+                    usdAmountBeforeFees! < 3
+                  ) {
                     return toast.error(
                       "USD Amount after charges must be $3 and above"
                     );
@@ -717,7 +743,8 @@ const ConvertUSD: React.FC = () => {
                   <h3 className="font-medium text-primary-800 mb-2">
                     Conversion Summary
                   </h3>
-                  <div className="space-y-3">
+
+                  <div className="">
                     <div className="flex items-center justify-between py-2 border-b border-primary-100">
                       <span className="text-gray-600">From:</span>
                       <span className="font-medium">
@@ -753,6 +780,7 @@ const ConvertUSD: React.FC = () => {
                     <span className="text-sm text-gray-500">
                       After Conversion:
                     </span>
+
                     <span className="text-sm font-medium">
                       {formatCurrency(
                         getCurrentBalance() - parseFloat(sourceAmount),
@@ -808,42 +836,23 @@ const ConvertUSD: React.FC = () => {
             </div>
 
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {getStatusMessage()}
+              {/* {getStatusMessage()} */}
+              Conversion Successful
             </h2>
 
             <p className="text-gray-600 mb-4">
-              {getStatusDescription()}
-              {fundingStatus === "successful" && (
-                <span className="block text-sm text-gray-500 mt-1">
-                  (from{" "}
-                  {formatCurrency(
-                    parseFloat(sourceAmount),
-                    getSourceCurrency()
-                  )}
-                  )
-                </span>
-              )}
-            </p>
+              {/* {getStatusDescription()} */}
 
-            {fundingStatus === "pending" && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-sm text-blue-700">
-                  We're processing your conversion. You can safely leave this
-                  page and we'll notify you when it's complete.
-                </p>
-                <p className="text-xs text-blue-600 mt-1">
-                  Reference: {conversionReference}
-                </p>
-              </div>
-            )}
+              {`You've received ${formatCurrency(
+                netAmount,
+                getTargetCurrency()
+              )}`}
 
-            {fundingStatus === "failed" && error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-sm text-red-700">{error}</p>
-              </div>
-            )}
+              <span className="block text-sm text-gray-500 mt-1">
+                (from{" "}
+                {formatCurrency(parseFloat(sourceAmount), getSourceCurrency())})
+              </span>
 
-            {fundingStatus === "successful" && (
               <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg mb-4 inline-block">
                 <div className="flex items-center justify-center">
                   <Wallet className="h-5 w-5 text-primary-600 mr-2" />
@@ -856,10 +865,59 @@ const ConvertUSD: React.FC = () => {
                   </span>
                 </div>
               </div>
-            )}
+
+              {/* {fundingStatus === "successful" && (
+                
+              )} */}
+            </p>
+
+            {/* {fundingStatus === "pending" && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  We're processing your conversion. You can safely leave this
+                  page and we'll notify you when it's complete.
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  Reference: {conversionReference}
+                </p>
+              </div>
+            )} */}
+
+            {/* {fundingStatus === "failed" && error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )} */}
+
+            {/* {fundingStatus === "successful" && (
+             
+            )} */}
 
             <div className="flex justify-center gap-3">
-              {fundingStatus === "failed" ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStep(1);
+                    setSourceAmount("");
+                    setTargetAmount(0);
+                    setFundingStatus("idle");
+                  }}
+                  className="btn btn-outline"
+                >
+                  Convert More
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGoToDashboard}
+                  className="btn btn-primary px-6"
+                >
+                  Go to Dashboard
+                </button>
+              </>
+
+              {/* {fundingStatus === "failed" ? (
                 <>
                   <button
                     type="button"
@@ -868,6 +926,7 @@ const ConvertUSD: React.FC = () => {
                   >
                     Try Again
                   </button>
+
                   <button
                     type="button"
                     onClick={handleGoToDashboard}
@@ -877,27 +936,7 @@ const ConvertUSD: React.FC = () => {
                   </button>
                 </>
               ) : fundingStatus === "successful" ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep(1);
-                      setSourceAmount("");
-                      setTargetAmount(0);
-                      setFundingStatus("idle");
-                    }}
-                    className="btn btn-outline"
-                  >
-                    Convert More
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleGoToDashboard}
-                    className="btn btn-primary px-6"
-                  >
-                    Go to Dashboard
-                  </button>
-                </>
+              
               ) : (
                 // Pending state
                 <>
@@ -922,7 +961,7 @@ const ConvertUSD: React.FC = () => {
                     {isLoading ? "Checking..." : "Check Status"}
                   </button>
                 </>
-              )}
+              )} */}
             </div>
           </motion.div>
         )}
