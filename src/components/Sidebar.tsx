@@ -128,7 +128,7 @@ const Sidebar: React.FC = () => {
       label: "Convert USD",
       isActive: location.pathname === "/add-funds/usd",
     },
-  ]
+  ];
 
   const navItems = [
     {
@@ -143,8 +143,8 @@ const Sidebar: React.FC = () => {
       name: "addFunds",
       label: "Add Funds",
       icon: <Wallet size={30} />,
-      isOpen:openDropdown === "addFunds",
-      toggle:() => toggleDropdown("addFunds"),
+      isOpen: openDropdown === "addFunds",
+      toggle: () => toggleDropdown("addFunds"),
       items: addFundsItems,
     },
 
@@ -155,11 +155,17 @@ const Sidebar: React.FC = () => {
     //   isActive: location.pathname === "/add-funds",
     // },
     {
-      path: user?.isKYC === "verified" ? "/transfer" : "#",
+      path:
+        user?.isKYC === "verified" || user?.tier === "business"
+          ? "/transfer"
+          : "#",
       // path: "/transfer",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
-      onClick: user?.isKYC === "verified" ? () => {} : () => setIsOpen(true),
+      onClick:
+        user?.isKYC === "verified" || user?.tier === "business"
+          ? () => {}
+          : () => setIsOpen(true),
       isActive: location.pathname === "/transfer",
     },
     {
@@ -177,9 +183,10 @@ const Sidebar: React.FC = () => {
       label: "Financial Services",
       icon: <BadgeDollarSign size={30} />,
       isOpen:
-        user?.isKYC === "verified" && openDropdown === "financialServices",
+        user?.isKYC === "verified" ||
+        (user?.tier === "business" && openDropdown === "financialServices"),
       toggle:
-        user?.isKYC === "verified"
+        user?.isKYC === "verified" || user?.tier === "business"
           ? () => toggleDropdown("financialServices")
           : () => setIsOpen(true),
       items: financialServicesItems,

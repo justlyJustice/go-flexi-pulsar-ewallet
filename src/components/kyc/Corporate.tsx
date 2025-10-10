@@ -182,90 +182,96 @@ const CorporateKYCForm = ({
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-2">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Account Number
-          </label>
+      {!formData.isMember && (
+        <>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Account Number
+              </label>
 
-          <div className="relative rounded-md shadow-sm">
-            <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-              <CreditCard size={16} className="text-gray-400" />
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                  <CreditCard size={16} className="text-gray-400" />
+                </div>
+
+                <input
+                  type="text"
+                  name="account_number"
+                  value={formData.account_number}
+                  onChange={handleInputChange}
+                  className="input pl-10"
+                  placeholder="Account Number"
+                  required
+                />
+              </div>
             </div>
 
-            <input
-              type="text"
-              name="account_number"
-              value={formData.account_number}
-              onChange={handleInputChange}
-              className="input pl-10"
-              placeholder="Account Number"
-              required
-            />
-          </div>
-        </div>
+            <div className="relative rounded-md shadow-sm">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Bank Name
+              </label>
 
-        <div className="relative rounded-md shadow-sm">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Bank Name
-          </label>
-
-          {/* <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
+              {/* <div className="absolute inset-y-0 left-0 pl-1 flex items-center pointer-events-none">
             <Landmark size={16} className="text-gray-400" />
           </div> */}
 
-          <select
-            disabled={formData.account_number.length <= 5}
-            className="input"
-            name="bank_name"
-            id="bank-select"
-            value={bankName}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-              const { value } = e.target;
-              setBankName(value);
+              <select
+                disabled={formData.account_number.length <= 5}
+                className="input"
+                name="bank_name"
+                id="bank-select"
+                value={bankName}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const { value } = e.target;
+                  setBankName(value);
 
-              const selectedBank = banks.filter(
-                (bank) => bank.name === value
-              )[0];
+                  const selectedBank = banks.filter(
+                    (bank) => bank.name === value
+                  )[0];
 
-              setFormData((prevValues) => ({
-                ...prevValues,
-                bank_name: selectedBank.name,
-                bank_code: selectedBank.code,
-              }));
-            }}
-          >
-            <option value="">Select Bank</option>
+                  setFormData((prevValues) => ({
+                    ...prevValues,
+                    bank_name: selectedBank.name,
+                    bank_code: selectedBank.code,
+                  }));
+                }}
+              >
+                <option value="">Select Bank</option>
 
-            {banks.map((bank, i) => (
-              <option className="ml-2" key={i} value={bank.name}>
-                {bank.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+                {banks.map((bank, i) => (
+                  <option className="ml-2" key={i} value={bank.name}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-      <div className="relative">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Account Name
-        </label>
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Account Name
+            </label>
 
-        {/* <div className="absolute inset-y-0 left-0 top-1 pl-1 flex items-center pointer-events-none">
+            {/* <div className="absolute inset-y-0 left-0 top-1 pl-1 flex items-center pointer-events-none">
           <User className="h-4 w-3 text-gray-400" />
         </div> */}
 
-        <input
-          disabled
-          type="text"
-          name="account_name"
-          value={loading ? "Validating..." : formData.name_enquiry_reference}
-          onChange={handleInputChange}
-          className="input"
-          placeholder="Account Name"
-          required
-        />
-      </div>
+            <input
+              disabled
+              type="text"
+              name="account_name"
+              value={
+                loading ? "Validating..." : formData.name_enquiry_reference
+              }
+              onChange={handleInputChange}
+              className="input"
+              placeholder="Account Name"
+              required
+            />
+          </div>
+        </>
+      )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -283,74 +289,76 @@ const CorporateKYCForm = ({
         />
       </div>
 
-      <div className="space-y-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          CAC Certificate
-          <span className="text-xs text-gray-500 ml-1">
-            (JPEG, or PNG, max 500MB)
-          </span>
-        </label>
+      {!formData.isMember && (
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            CAC Certificate
+            <span className="text-xs text-gray-500 ml-1">
+              (JPEG, or PNG, max 500MB)
+            </span>
+          </label>
 
-        {certificatePreview ? (
-          <div className="border border-gray-200 rounded-lg p-3 relative">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                {certificateFile?.type.startsWith("image/") ? (
-                  <img
-                    src={certificatePreview}
-                    alt="Certificate preview"
-                    className="h-16 w-16 object-contain mr-3"
-                  />
-                ) : (
-                  <FileText className="h-16 w-16 text-gray-400 mr-3" />
-                )}
-                <div>
-                  <p className="text-sm font-medium text-gray-900 truncate max-w-64">
-                    {certificateFile?.name}
+          {certificatePreview ? (
+            <div className="border border-gray-200 rounded-lg p-3 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  {certificateFile?.type.startsWith("image/") ? (
+                    <img
+                      src={certificatePreview}
+                      alt="Certificate preview"
+                      className="h-16 w-16 object-contain mr-3"
+                    />
+                  ) : (
+                    <FileText className="h-16 w-16 text-gray-400 mr-3" />
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 truncate max-w-64">
+                      {certificateFile?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {Math.ceil((certificateFile?.size || 0) / 1024)} KB
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRemoveFile}
+                  className="text-red-500 hover:text-red-700"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center w-full">
+              <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <UploadCloud className="w-8 h-8 mb-1 text-gray-400" />
+
+                  <p className="mb-2 text-sm text-gray-500">
+                    <span className="font-semibold">
+                      Click to select and upload file
+                    </span>
                   </p>
                   <p className="text-xs text-gray-500">
-                    {Math.ceil((certificateFile?.size || 0) / 1024)} KB
+                    JPG, or PNG (MAX. 500MB)
                   </p>
                 </div>
-              </div>
 
-              <button
-                type="button"
-                onClick={handleRemoveFile}
-                className="text-red-500 hover:text-red-700"
-              >
-                <Trash2 size={18} />
-              </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".jpg,.jpeg,.png"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  required
+                />
+              </label>
             </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center w-full">
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <UploadCloud className="w-8 h-8 mb-1 text-gray-400" />
-
-                <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">
-                    Click to select and upload file
-                  </span>
-                </p>
-                <p className="text-xs text-gray-500">
-                  JPG, or PNG (MAX. 500MB)
-                </p>
-              </div>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".jpg,.jpeg,.png"
-                onChange={handleFileChange}
-                className="hidden"
-                required
-              />
-            </label>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       <div className="space-y-2">
         <div className="flex gap-1">

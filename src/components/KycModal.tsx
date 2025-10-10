@@ -1,6 +1,7 @@
 import React from "react";
-import { Modal } from "./Modal";
 import { useNavigate } from "react-router-dom";
+
+import { Modal } from "./Modal";
 
 export const KycModal = ({
   setIsOpen,

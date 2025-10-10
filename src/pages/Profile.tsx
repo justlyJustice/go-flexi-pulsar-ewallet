@@ -1033,7 +1033,6 @@ const Profile: React.FC = () => {
                         setMethod={setVerificationMethod}
                         onComplete={() => {
                           setVerificationMethod(null);
-                          // Handle successful verification
                         }}
                       />
                     )}
