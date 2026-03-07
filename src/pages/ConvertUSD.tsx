@@ -891,7 +891,7 @@ const ConvertUSD: React.FC = () => {
                   <span className="font-medium text-gray-900">
                     New {getTargetCurrency()} Balance:{" "}
                     {formatCurrency(
-                      getTargetBalance() + usdAmountBeforeFees!,
+                      usdAmountBeforeFees!,
                       getTargetCurrency()
                     )}
                   </span>

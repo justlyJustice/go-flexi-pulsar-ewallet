@@ -90,7 +90,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -241,7 +241,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
 
                 ${data?.warnings!}
                 `,
-                { removeDelay: 5000 }
+                { removeDelay: 5000 },
               );
               return;
             } else {
@@ -250,6 +250,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
               const user = resData?.data!;
 
               updateUser({
+                balance: user.accountBalance,
                 ninVerified: user.ninVerified,
                 isKYC: user.isKYC,
                 tier: user.tier,
@@ -405,8 +406,8 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
             step === 2
               ? "bg-primary-600 text-white"
               : step > 2
-              ? "bg-gray-200 text-gray-600"
-              : "bg-gray-200 text-gray-600"
+                ? "bg-gray-200 text-gray-600"
+                : "bg-gray-200 text-gray-600"
           }`}
         >
           {step <= 2 ? "2" : <Check size={16} />}
