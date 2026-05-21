@@ -302,12 +302,12 @@ const Profile: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Rulsar | Profile</title>
-        <meta name="description" content="Manage your rulsar profile" />
-        <meta property="og:title" content="Rulsar | Profile" />
+        <title>Go Flexi | Profile</title>
+        <meta name="description" content="Manage your Go Flexi profile" />
+        <meta property="og:title" content="Go Flexi | Profile" />
         <meta
           property="og:description"
-          content="Welcome to Rulsar. Sign in to your account to access your dashboard."
+          content="Welcome to Go Flexi. Sign in to your account to access your dashboard."
         />
       </Helmet>
 
@@ -974,7 +974,7 @@ const Profile: React.FC = () => {
                                 onClick={() => {
                                   if (user.usdtBalance < 15) {
                                     return toast.error(
-                                      "USD balance must have a minimum of $15 before"
+                                      "USD balance must have a minimum of $15 before",
                                     );
                                   }
                                   setVerificationMethod("cac");

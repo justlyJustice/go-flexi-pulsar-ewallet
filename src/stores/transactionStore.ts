@@ -64,6 +64,6 @@ export const useTransactionStore = create<TransactionState>()(
     }),
     {
       name: "transaction-storage",
-    }
-  )
+    },
+  ),
 );

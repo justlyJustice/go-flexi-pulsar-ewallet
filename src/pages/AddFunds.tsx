@@ -108,7 +108,7 @@ const AddFunds: React.FC = () => {
       const amountValue = parseFloat(nairaAmount) || 0;
 
       const calculatedUsdAmount = Number(
-        (amountValue / exchangeRate).toFixed(2)
+        (amountValue / exchangeRate).toFixed(2),
       );
       setUsdAmount(calculatedUsdAmount);
 
@@ -184,7 +184,7 @@ const AddFunds: React.FC = () => {
         setTransactionStatus("failed");
         setError(
           "We couldn't verify your payment. Please check your bank account. " +
-            "If the payment was made, it may still process shortly."
+            "If the payment was made, it may still process shortly.",
         );
       } catch (error) {
         setShowExtendedWait(false);
@@ -214,7 +214,7 @@ const AddFunds: React.FC = () => {
 
   const handleAmountChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    currency: "usd" | "ngn"
+    currency: "usd" | "ngn",
   ) => {
     const value = e.target.value;
 
@@ -429,7 +429,7 @@ const AddFunds: React.FC = () => {
 
         <p className="text-gray-600 mb-4">
           {activeTab === "add-naira"
-            ? "Add money to your Rulsar account"
+            ? "Add money to your Go Flexi account"
             : "Convert Naira to USD"}
         </p>
       </motion.div>
@@ -1095,7 +1095,7 @@ const AddFunds: React.FC = () => {
                         className="flex items-center justify-center bg-gray-100 rounded-full p-2 cursor-pointer w-10 h-10"
                         onClick={() => {
                           setExchangeReceivingCurrency(
-                            exchangeReceivingCurrency === "NGN" ? "USD" : "NGN"
+                            exchangeReceivingCurrency === "NGN" ? "USD" : "NGN",
                           );
                         }}
                       >
@@ -1244,7 +1244,7 @@ const AddFunds: React.FC = () => {
                         </span>
                         <span className="text-sm font-medium">
                           {formatCurrency(
-                            (user?.balance || 0) - parseFloat(nairaAmount)
+                            (user?.balance || 0) - parseFloat(nairaAmount),
                           )}
                         </span>
                       </div>

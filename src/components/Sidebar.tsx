@@ -11,17 +11,15 @@ import {
   ChevronDown,
   ChevronUp,
   Smartphone,
-  // Tv,
-  // Zap,
-  // Book,
-  // Gift,
   Wifi,
   CreditCard,
-  // Repeat,
-  // Bitcoin,
-  // MessageSquare,
   FolderKanban,
   BadgeDollarSign,
+  Code2,
+  Key,
+  FileText,
+  Webhook,
+  Settings,
 } from "lucide-react";
 import { useAuthStore } from "../stores/authStore";
 import { KycModal } from "./KycModal";
@@ -55,64 +53,15 @@ const Sidebar: React.FC = () => {
       label: "Data",
       isActive: location.pathname === "/bill-payment/data",
     },
-    // {
-    //   path: "/bill-payment/recharge-card",
-    //   icon: <Gift size={18} />,
-    //   label: "Recharge Card",
-    //   isActive: location.pathname === "/bill-payment/recharge-card",
-    // },
-    // {
-    //   path: "/bill-payment/cable-tv",
-    //   icon: <Tv size={18} />,
-    //   label: "Cable TV",
-    //   isActive: location.pathname === "/bill-payment/cable-tv",
-    // },
-    // {
-    //   path: "/bill-payment/electricity",
-    //   icon: <Zap size={18} />,
-    //   label: "Electricity",
-    //   isActive: location.pathname === "/bill-payment/electricity",
-    // },
-    // {
-    //   path: "/bill-payment/education-pin",
-    //   icon: <Book size={18} />,
-    //   label: "Education PIN",
-    //   isActive: location.pathname === "/bill-payment/education-pin",
-    // },
   ];
 
   const financialServicesItems = [
-    // {
-    //   path: "/services/virtual-naira-card",
-    //   icon: <CreditCard size={22} />,
-    //   label: "Naira Virtual Card",
-    //   isActive: location.pathname === "/services/virtual-naira-card",
-    //   // onClick: () => user?.isKYC === 'unverified' /
-    // },
     {
       path: "/services/virtual-usd-card",
       icon: <CreditCard size={22} />,
       label: "USD Virtual Card",
       isActive: location.pathname === "/services/virtual-usd-card",
     },
-    // {
-    //   path: "/services/currency-exchange",
-    //   icon: <Repeat size={22} />,
-    //   label: "Currency Exchange",
-    //   isActive: location.pathname === "/services/currency-exchange",
-    // },
-    // {
-    //   path: "/services/usdt-funding",
-    //   icon: <Bitcoin size={22} />,
-    //   label: "USDT Funding",
-    //   isActive: location.pathname === "/services/usdt-funding",
-    // },
-    // {
-    //   path: "/services/bulk-sms",
-    //   icon: <MessageSquare size={22} />,
-    //   label: "Bulk SMS",
-    //   isActive: location.pathname === "/services/bulk-sms",
-    // },
   ];
 
   const addFundsItems = [
@@ -127,6 +76,35 @@ const Sidebar: React.FC = () => {
       icon: <CreditCard size={22} />,
       label: "Convert USD",
       isActive: location.pathname === "/add-funds/usd",
+    },
+  ];
+
+  // Developers dropdown items
+  const developersItems = [
+    {
+      path: "/developers/api-keys",
+      icon: <Key size={18} />,
+      label: "API Keys",
+      isActive: location.pathname === "/developers/api-keys",
+    },
+    {
+      path: "https://rulsardocs.vercel.app",
+      icon: <FileText size={18} />,
+      label: "Documentation",
+      isActive: location.pathname === "/developers/documentation",
+      external: true,
+    },
+    {
+      path: "/developers/webhooks",
+      icon: <Webhook size={18} />,
+      label: "Webhooks",
+      isActive: location.pathname === "/developers/webhooks",
+    },
+    {
+      path: "/developers/settings",
+      icon: <Settings size={18} />,
+      label: "Developer Settings",
+      isActive: location.pathname === "/developers/settings",
     },
   ];
 
@@ -148,18 +126,11 @@ const Sidebar: React.FC = () => {
       items: addFundsItems,
     },
 
-    // {
-    //   path: "/add-funds",
-    //   icon: <Wallet size={20} />,
-    //   label: "Add Funds",
-    //   isActive: location.pathname === "/add-funds",
-    // },
     {
       path:
         user?.isKYC === "verified" || user?.tier === "business"
           ? "/transfer"
           : "#",
-      // path: "/transfer",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
       onClick:
@@ -192,6 +163,15 @@ const Sidebar: React.FC = () => {
       items: financialServicesItems,
     },
     {
+      type: "dropdown",
+      name: "developers",
+      label: "Developers",
+      icon: <Code2 size={20} />,
+      isOpen: openDropdown === "developers",
+      toggle: () => toggleDropdown("developers"),
+      items: developersItems,
+    },
+    {
       path: "/profile",
       icon: <User size={20} />,
       label: "Profile",
@@ -220,23 +200,42 @@ const Sidebar: React.FC = () => {
 
       {item.isOpen && (
         <div className={isMobile ? "ml-8 space-y-1" : "ml-8 space-y-1"}>
-          {item.items.map((subItem: any, j: number) => (
-            <NavLink
-              key={j}
-              to={subItem.path}
-              onClick={isMobile ? closeMobileMenu : undefined}
-              className={`flex items-center ${
-                isMobile ? "p-2" : "px-3 py-1"
-              } rounded-lg transition-colors ${
-                subItem.isActive
-                  ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-            >
-              {subItem.icon}
-              <span className="ml-3">{subItem.label}</span>
-            </NavLink>
-          ))}
+          {item.items.map((subItem: any, j: number) =>
+            subItem.external ? (
+              <a
+                key={j}
+                href={subItem.path}
+                onClick={isMobile ? closeMobileMenu : undefined}
+                target="_blank"
+                className={`flex items-center ${
+                  isMobile ? "p-2" : "px-3 py-1"
+                } rounded-lg transition-colors ${
+                  subItem.isActive
+                    ? "bg-primary-50 text-primary-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {subItem.icon}
+                <span className="ml-3">{subItem.label}</span>
+              </a>
+            ) : (
+              <NavLink
+                key={j}
+                to={subItem.path}
+                onClick={isMobile ? closeMobileMenu : undefined}
+                className={`flex items-center ${
+                  isMobile ? "p-2" : "px-3 py-1"
+                } rounded-lg transition-colors ${
+                  subItem.isActive
+                    ? "bg-primary-50 text-primary-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
+              >
+                {subItem.icon}
+                <span className="ml-3">{subItem.label}</span>
+              </NavLink>
+            ),
+          )}
         </div>
       )}
     </div>
@@ -271,19 +270,6 @@ const Sidebar: React.FC = () => {
 
         <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
           <div className="p-4">
-            {/* <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center">
-                <Wallet className="h-8 w-8 text-primary-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">
-                  Rulsar
-                </span>
-              </div>
-
-              <button onClick={closeMobileMenu} className="lg:hidden">
-                <X size={24} className="text-gray-500" />
-              </button>
-            </div> */}
-
             <nav className="mt-5">
               {navItems.map((item, i) => {
                 if (item.type === "dropdown") {
@@ -334,9 +320,8 @@ const Sidebar: React.FC = () => {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4 mb-5">
                 <Wallet className="h-8 w-8 text-primary-600" />
-
                 <span className="ml-2 text-xl font-bold text-gray-900">
-                  Rulsar
+                  Go Flexi
                 </span>
               </div>
 

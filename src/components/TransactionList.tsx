@@ -37,7 +37,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     TransferTransaction | DepositTransaction | null
   >(null);
   const [transationType, setTransationType] = useState<TransactionType>(
-    "" as TransactionType
+    "" as TransactionType,
   );
 
   // const filteredTransactions = transactions
@@ -66,7 +66,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
 
   const getTransactionDetails = async (
     transactionId: string,
-    type: TransactionType
+    type: TransactionType,
   ) => {
     setTransationType(type);
 
@@ -149,8 +149,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
                       <div className="ml-4 truncate">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {transaction.type === "deposit"
-                            ? "Rulsar Deposit"
-                            : "Rulsar Transfer"}
+                            ? "Go Flexi Deposit"
+                            : "Go Flexi Transfer"}
                         </p>
 
                         <div className="flex items-center text-xs text-gray-500 mt-0.5">
@@ -159,7 +159,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
                             {formatDate(
                               (transaction.createdAt &&
                                 transaction.createdAt) ||
-                                new Date(Date.now()).toDateString()
+                                new Date(Date.now()).toDateString(),
                             )}
                           </span>
                           {/* {transaction.recipient && (
@@ -190,8 +190,8 @@ const TransactionList: React.FC<TransactionListProps> = ({
                           Number(
                             transaction.type === "transfer"
                               ? transaction.amount
-                              : transaction.netAmount
-                          )
+                              : transaction.netAmount,
+                          ),
                         )}
                       </p>
 

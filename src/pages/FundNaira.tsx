@@ -93,7 +93,7 @@ const FundNaira: React.FC = () => {
         setTransactionStatus("failed");
         setError(
           "We couldn't verify your payment. Please check your bank account. " +
-            "If the payment was made, it may still process shortly."
+            "If the payment was made, it may still process shortly.",
         );
       } catch (error) {
         setShowExtendedWait(false);
@@ -236,7 +236,7 @@ const FundNaira: React.FC = () => {
       <motion.div variants={itemVariants}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Add Funds</h1>
 
-        <p className="text-gray-600 mb-4">Add money to your Rulsar account</p>
+        <p className="text-gray-600 mb-4">Add money to your Go Flexi account</p>
       </motion.div>
 
       <div className="bg-white rounded-card shadow-card p-6">

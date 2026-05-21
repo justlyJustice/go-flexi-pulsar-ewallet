@@ -78,8 +78,8 @@ const Dashboard: React.FC = () => {
       className="space-y-6"
     >
       <Helmet>
-        <title>Rulsar | Dashboard</title>
-        <meta name="description" content="Your rulsar user dashboard." />
+        <title>Go Flexi | Dashboard</title>
+        <meta name="description" content="Your Go Flexi user dashboard." />
       </Helmet>
 
       <WelcomeModal />

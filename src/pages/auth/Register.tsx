@@ -32,7 +32,7 @@ const Register: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -97,7 +97,7 @@ const Register: React.FC = () => {
           Create your account
         </h2>
         <p className="mt-1 text-center text-sm text-gray-600">
-          Join Rulsar Wallet and manage your finances
+          Join Go Flexi Wallet and manage your finances
         </p>
       </div>
 

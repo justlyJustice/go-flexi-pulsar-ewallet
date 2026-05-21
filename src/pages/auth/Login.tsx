@@ -23,7 +23,7 @@ const Login: React.FC = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
 
       if (user.isBlocked) {
         return toast.error(
-          "Your account has been blocked. Please contact admin."
+          "Your account has been blocked. Please contact admin.",
         );
       }
 
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
           usdtBalance: user.usdtBalance,
           corporateBiz: user.corporateBiz,
         },
-        data?.token!
+        data?.token!,
       );
 
       toast.success("Login Successful!");
@@ -116,15 +116,15 @@ const Login: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Rulsar | Login</title>
+        <title>Go Flexi | Login</title>
         <meta
           name="description"
-          content="Welcome to Rulsar. Sign in to your account to access your dashboard."
+          content="Welcome to Go Flexi. Sign in to your account to access your dashboard."
         />
-        <meta property="og:title" content="Rulsar | Login" />
+        <meta property="og:title" content="Go Flexi | Login" />
         <meta
           property="og:description"
-          content="Welcome to Rulsar. Sign in to your account to access your dashboard."
+          content="Welcome to Go Flexi. Sign in to your account to access your dashboard."
         />
       </Helmet>
 
@@ -137,7 +137,7 @@ const Login: React.FC = () => {
           </div>
 
           <h2 className="mt-2 text-center text-3xl font-bold tracking-tight text-gray-900">
-            Welcome to Rulsar
+            Welcome to Go Flexi
           </h2>
 
           <p className="mt-2 text-center text-sm text-gray-600">

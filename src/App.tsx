@@ -28,6 +28,11 @@ import useTransactions from "./hooks/useTransactions";
 import ConvertUSD from "./pages/ConvertUSD";
 import FundNaira from "./pages/FundNaira";
 
+import APIKeys from "./pages/developers/APIKeys";
+import Documentation from "./pages/developers/Documentation";
+import Webhooks from "./pages/developers/WebHooks";
+import DeveloperSettings from "./pages/developers/Settings";
+
 function App() {
   const { isAuthenticated, user } = useAuthStore();
 
@@ -38,13 +43,13 @@ function App() {
 
     window.addEventListener(
       "beforeunload",
-      import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+      import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload,
     );
 
     return () => {
       window.removeEventListener(
         "beforeunload",
-        import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+        import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload,
       );
     };
   }, []);
@@ -118,6 +123,13 @@ function App() {
                 />
               }
             />
+
+            <Route path="/developers">
+              <Route path="api-keys" element={<APIKeys />} />
+              <Route path="documentation" element={<Documentation />} />
+              <Route path="webhooks" element={<Webhooks />} />
+              <Route path="settings" element={<DeveloperSettings />} />
+            </Route>
 
             {/* <Route
               path="/bill-payment/recharge-card"

@@ -27,7 +27,7 @@ const VerifyAuthOTP: React.FC = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -80,7 +80,7 @@ const VerifyAuthOTP: React.FC = () => {
           lastMonthlyReset: user.lastMonthlyReset,
           lastTransferTime: user.lastTransferTime,
         },
-        data?.token!
+        data?.token!,
       );
 
       toast.success("Login Successful!");
@@ -100,7 +100,7 @@ const VerifyAuthOTP: React.FC = () => {
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-          Welcome to Rulsar
+          Welcome to Go Flexi
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           A verification code has been sent to{" "}
