@@ -4,7 +4,8 @@ import { getToken } from "../stores/authStore";
 import { apiUrl } from "../utils/apiUrl";
 
 const apiClient = create({
-  baseURL: apiUrl,
+  // baseURL: apiUrl,
+  baseURL: "",
 });
 
 apiClient.addAsyncRequestTransform(async (req) => {

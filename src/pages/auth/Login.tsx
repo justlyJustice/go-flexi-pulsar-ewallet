@@ -33,80 +33,80 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { email, password } = values;
+    // const { email, password } = values;
 
-    if (!email || !password) {
-      // setError("Please fill in all fields");
-      return;
-    }
+    // if (!email || !password) {
+    //   // setError("Please fill in all fields");
+    //   return;
+    // }
 
-    const res = await submit(values);
-    if (!res) return;
+    // const res = await submit(values);
+    // if (!res) return;
 
-    if (res.ok) {
-      const data = res.data?.data;
-      const user = data?.user;
+    // if (res.ok) {
+    //   const data = res.data?.data;
+    //   const user = data?.user;
 
-      if (user.isBlocked) {
-        return toast.error(
-          "Your account has been blocked. Please contact admin.",
-        );
-      }
+    //   if (user.isBlocked) {
+    //     return toast.error(
+    //       "Your account has been blocked. Please contact admin.",
+    //     );
+    //   }
 
-      login(
-        {
-          beneficiaries: user.beneficiaries,
-          balance: user.accountBalance,
-          bankInformation: {
-            accountName: user.accountName,
-            accountNumber: user.accountNumber,
-            bankName: user.bankName,
-          },
-          cacNumber: user.cacNumber,
-          ninNumber: user.ninNumber,
-          idNumber: user.idNumber,
-          idCardType: user.idCardType,
-          idCard: user.idCard,
-          currency: user.currency,
-          email: user.email,
-          fullName: user.fullName,
-          id: user._id,
-          joinDate: user.createdAt,
-          phoneNumber: user.phoneNumber,
-          profileImage: user.profileImage,
-          transactions: user.transactions,
-          bvnVerified: user.bvnVerified,
-          isKYC: user.isKYC,
-          isBlocked: user.isBlocked,
-          cacVerified: user.cacVerified,
-          ninVerified: user.ninVerified,
-          vusd_card: user.vusd_card,
-          tier: user.tier,
-          dailyTransferAmount: user.dailyTransferAmount,
-          dailyTransferLimit: user.dailyTransferLimit,
-          merchantVerificationCode: user.merchantVerificationCode,
-          monthlyTransferAmount: user.monthlyTransferAmount,
-          monthlyTransferLimit: user.monthlyTransferLimit,
-          lastDailyReset: user.lastDailyReset,
-          lastMonthlyReset: user.lastMonthlyReset,
-          lastTransferTime: user.lastTransferTime,
-          // usdtAddress: user.usdtAddress,/
-          usdtBalance: user.usdtBalance,
-          corporateBiz: user.corporateBiz,
-        },
-        data?.token!,
-      );
+    //   login(
+    //     {
+    //       beneficiaries: user.beneficiaries,
+    //       balance: user.accountBalance,
+    //       bankInformation: {
+    //         accountName: user.accountName,
+    //         accountNumber: user.accountNumber,
+    //         bankName: user.bankName,
+    //       },
+    //       cacNumber: user.cacNumber,
+    //       ninNumber: user.ninNumber,
+    //       idNumber: user.idNumber,
+    //       idCardType: user.idCardType,
+    //       idCard: user.idCard,
+    //       currency: user.currency,
+    //       email: user.email,
+    //       fullName: user.fullName,
+    //       id: user._id,
+    //       joinDate: user.createdAt,
+    //       phoneNumber: user.phoneNumber,
+    //       profileImage: user.profileImage,
+    //       transactions: user.transactions,
+    //       bvnVerified: user.bvnVerified,
+    //       isKYC: user.isKYC,
+    //       isBlocked: user.isBlocked,
+    //       cacVerified: user.cacVerified,
+    //       ninVerified: user.ninVerified,
+    //       vusd_card: user.vusd_card,
+    //       tier: user.tier,
+    //       dailyTransferAmount: user.dailyTransferAmount,
+    //       dailyTransferLimit: user.dailyTransferLimit,
+    //       merchantVerificationCode: user.merchantVerificationCode,
+    //       monthlyTransferAmount: user.monthlyTransferAmount,
+    //       monthlyTransferLimit: user.monthlyTransferLimit,
+    //       lastDailyReset: user.lastDailyReset,
+    //       lastMonthlyReset: user.lastMonthlyReset,
+    //       lastTransferTime: user.lastTransferTime,
+    //       // usdtAddress: user.usdtAddress,/
+    //       usdtBalance: user.usdtBalance,
+    //       corporateBiz: user.corporateBiz,
+    //     },
+    //     data?.token!,
+    //   );
 
-      toast.success("Login Successful!");
+    //   toast.success("Login Successful!");
 
-      setTimeout(() => {
-        navigate("/dashboard");
-        // location.state = {};
-      }, 1000);
+    //   setTimeout(() => {
+    //     navigate("/dashboard");
+    //     // location.state = {};
+    //   }, 1000);
 
-      // toast.success(res.data?.data.message);
-      // navigate("/auth/verify", { state: { email } });
-    }
+    // toast.success(res.data?.data.message);
+    // navigate("/auth/verify", { state: { email } });
+    // }
   };
 
   const togglePasswordVisibility = () => {
@@ -172,6 +172,7 @@ const Login: React.FC = () => {
                     name="email"
                     type="email"
                     autoComplete="email"
+                    disabled
                     required
                     value={values.email}
                     onChange={handleChange}
@@ -194,6 +195,7 @@ const Login: React.FC = () => {
                     <Lock className="h-3 w-2 text-gray-400" />
                   </div>
                   <input
+                    disabled
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
@@ -225,7 +227,7 @@ const Login: React.FC = () => {
               <div>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled
                   className="w-full btn btn-primary flex justify-center items-center text-base py-2.5"
                 >
                   {isSubmitting ? (
@@ -253,17 +255,19 @@ const Login: React.FC = () => {
                       <span>Signing in...</span>
                     </span>
                   ) : (
-                    <span className="flex items-center">
-                      Sign in
-                      <ArrowRight className="ml-1 h-3 w-2" />
-                    </span>
+                    <span>Coming soon</span>
+                    // <span className="flex items-center">
+                    //   Sign in
+                    //   <ArrowRight className="ml-1 h-3 w-2" />
+                    // </span>
                   )}
                 </button>
               </div>
 
               <div className="flex justify-end text-sm mt-1">
                 <Link
-                  to="/recovery/forgot-password"
+                  // to="/recovery/forgot-password"
+                  to="#"
                   className="font-medium text-primary-600 hover:text-primary-500"
                 >
                   Forgot password?
@@ -285,7 +289,7 @@ const Login: React.FC = () => {
 
               <div className="mt-4">
                 <Link
-                  to="/register"
+                  to="#"
                   className="w-full flex justify-center py-2.5 px-4 border border-primary-300 rounded-md shadow-sm text-sm font-medium text-primary-700 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
                   Create an account
