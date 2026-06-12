@@ -25,7 +25,7 @@ const Register: React.FC = () => {
     password: "",
     phoneNumber: "",
     gender: "",
-    country: "",
+    country: "nigeria",
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
