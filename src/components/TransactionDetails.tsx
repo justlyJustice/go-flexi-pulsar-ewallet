@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import html2canvas from "html2canvas";
 
+import { formatCurrency, formatDate } from "../utils/formatters";
+
 import { TransactionType } from "../stores/transactionStore";
 
 export type TransferTransaction = {
@@ -62,24 +64,6 @@ export const TransactionDetailsModal: React.FC<
   TransactionDetailsModalProps
 > = ({ isOpen, onClose, transaction, type }) => {
   const [isDownloading, setIsDownloading] = useState(false);
-
-  const formatAmount = (amount: string) => {
-    return `₦${parseFloat(amount).toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
-  };
 
   const getStatusIcon = (status?: string) => {
     switch (status) {
@@ -171,10 +155,10 @@ export const TransactionDetailsModal: React.FC<
             }
             
             <div class="text-2xl font-bold text-gray-900 text-center my-4">
-              ${formatAmount(
+              ${formatCurrency(
                 isTransfer
-                  ? transferTransaction.amount
-                  : depositTransaction.transactionAmount,
+                  ? Number(transferTransaction.amount)
+                  : Number(depositTransaction.transactionAmount),
               )}
             </div>
           </div>
@@ -185,10 +169,10 @@ export const TransactionDetailsModal: React.FC<
               <div class="flex justify-between">
                 <span class="text-gray-600">Amount</span>
                 <span class="font-medium text-gray-900">
-                  ${formatAmount(
+                  ${formatCurrency(
                     isTransfer
-                      ? transferTransaction.amount
-                      : depositTransaction.transactionAmount,
+                      ? Number(transferTransaction.amount)
+                      : Number(depositTransaction.transactionAmount),
                   )}
                 </span>
               </div>
@@ -198,10 +182,10 @@ export const TransactionDetailsModal: React.FC<
                   ${
                     isTransfer
                       ? transferTransaction.fee
-                        ? formatAmount(transferTransaction.fee)
+                        ? formatCurrency(Number(transferTransaction.fee))
                         : "₦0.00"
                       : depositTransaction.feeAmount
-                        ? formatAmount(depositTransaction.feeAmount)
+                        ? formatCurrency(Number(depositTransaction.feeAmount))
                         : "₦0.00"
                   }
                 </span>
@@ -209,10 +193,10 @@ export const TransactionDetailsModal: React.FC<
               <div class="flex justify-between border-t border-gray-200 pt-2">
                 <span class="font-semibold text-gray-900">Amount Paid</span>
                 <span class="font-semibold text-gray-900">
-                  ${formatAmount(
+                  ${formatCurrency(
                     isTransfer
-                      ? transferTransaction.amount
-                      : depositTransaction.settledAmount,
+                      ? Number(transferTransaction.amount)
+                      : Number(depositTransaction.settledAmount),
                   )}
                 </span>
               </div>
@@ -418,10 +402,10 @@ export const TransactionDetailsModal: React.FC<
                       )}
 
                       <div className="text-2xl font-bold text-gray-900 my-3">
-                        {formatAmount(
+                        {formatCurrency(
                           isTransfer
-                            ? transferTransaction.amount
-                            : depositTransaction.transactionAmount,
+                            ? Number(transferTransaction.amount)
+                            : Number(depositTransaction.transactionAmount),
                         )}
                       </div>
 
@@ -443,10 +427,10 @@ export const TransactionDetailsModal: React.FC<
                         <div className="flex justify-between">
                           <span className="text-gray-600">Amount</span>
                           <span className="font-medium text-gray-900">
-                            {formatAmount(
+                            {formatCurrency(
                               isTransfer
-                                ? transferTransaction.amount
-                                : depositTransaction.transactionAmount,
+                                ? Number(transferTransaction.amount)
+                                : Number(depositTransaction.transactionAmount),
                             )}
                           </span>
                         </div>
@@ -455,10 +439,14 @@ export const TransactionDetailsModal: React.FC<
                           <span className="font-medium text-gray-900">
                             {isTransfer
                               ? transferTransaction.fee
-                                ? formatAmount(transferTransaction.fee)
+                                ? formatCurrency(
+                                    Number(transferTransaction.fee),
+                                  )
                                 : "₦0.00"
                               : depositTransaction.feeAmount
-                                ? formatAmount(depositTransaction.feeAmount)
+                                ? formatCurrency(
+                                    Number(depositTransaction.feeAmount),
+                                  )
                                 : "₦0.00"}
                           </span>
                         </div>
@@ -467,10 +455,10 @@ export const TransactionDetailsModal: React.FC<
                             Amount Paid
                           </span>
                           <span className="font-semibold text-gray-900">
-                            {formatAmount(
+                            {formatCurrency(
                               isTransfer
-                                ? transferTransaction.amount
-                                : depositTransaction.settledAmount,
+                                ? Number(transferTransaction.amount)
+                                : Number(depositTransaction.settledAmount),
                             )}
                           </span>
                         </div>
@@ -552,11 +540,11 @@ export const TransactionDetailsModal: React.FC<
                             Transaction Date
                           </span>
                           <span className="font-medium text-gray-900">
-                            {formatDate(
+                            {/* {formatDate(
                               isTransfer
                                 ? transferTransaction.createdAt
                                 : depositTransaction.tranDateTime,
-                            )}
+                            )} */}
                           </span>
                         </div>
                       </div>

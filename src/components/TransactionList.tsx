@@ -133,9 +133,13 @@ const TransactionList: React.FC<TransactionListProps> = ({
                   <li
                     key={transaction.id}
                     className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                    onClick={() =>
-                      getTransactionDetails(transaction.id, transaction.type)
-                    }
+                    // onClick={() => {
+                    //   setShowModal(true);
+                    //   setTransationType(transaction.type);
+                    //   setTransactionDetails(
+                    //     transaction as TransferTransaction | DepositTransaction,
+                    //   );
+                    // }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center min-w-0">

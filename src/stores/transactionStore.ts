@@ -20,7 +20,7 @@ export type TransactionType =
 //   status: "completed" | "pending" | "failed";
 // }
 
-type Transaction = {
+export type Transaction = {
   id: string;
   currency?: "USD" | "NGN";
   description?: string;
