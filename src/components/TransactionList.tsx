@@ -127,6 +127,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
                 const isTransfer = transaction.type === "transfer";
                 const isDeposit = transaction.type === "deposit";
                 const isCredit = transaction.type === "credit";
+                const isDebitTransaction = transaction.type === "debit";
                 const isUSDTransaction = transaction.type === "usd_transaction";
 
                 return (
@@ -150,13 +151,17 @@ const TransactionList: React.FC<TransactionListProps> = ({
                               : "bg-accent-100 text-accent-600"
                           }`}
                         >
-                          {isTransfer && <ArrowUpRight size={20} />}
+                          {(isTransfer || isDebitTransaction) && (
+                            <ArrowUpRight size={20} />
+                          )}
 
-                          {isDeposit && <ArrowDownLeft size={20} />}
+                          {(isDeposit || isCredit) && (
+                            <ArrowDownLeft size={20} />
+                          )}
 
                           {isUSDTransaction && <DollarSign size={20} />}
 
-                          {isCredit && <Coins size={20} />}
+                          {/* {isCredit && <Coins size={20} />} */}
                         </div>
 
                         <div className="ml-4 truncate">
@@ -199,12 +204,13 @@ const TransactionList: React.FC<TransactionListProps> = ({
                             ? "+"
                             : "-"}
 
-                          {isCredit && `${transaction.amount} credits`}
-
                           {isUSDTransaction &&
                             `${formatCurrency(Number(transaction.amount), "USD")}`}
 
-                          {isDeposit &&
+                          {(isDeposit || isCredit) &&
+                            `${formatCurrency(Number(transaction.amount))}`}
+
+                          {(isDebitTransaction || isTransfer) &&
                             `${formatCurrency(Number(transaction.amount))}`}
                         </p>
 

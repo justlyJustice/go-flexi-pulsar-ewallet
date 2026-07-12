@@ -6,7 +6,8 @@ export type TransactionType =
   | "transfer"
   | "deposit"
   | "credit"
-  | "usd_transaction";
+  | "usd_transaction"
+  | "debit";
 // "deposit" | "transfer-in" | "transfer-out";
 
 // interface Transaction {
