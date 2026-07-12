@@ -7,18 +7,20 @@ import {
   Check,
   Clock,
   AlertCircle,
+  DollarSign,
+  Coins,
 } from "lucide-react";
-// import { useTransactionStore } from "../stores/transactionStore";
+import toast from "react-hot-toast";
+
 import { formatCurrency, formatDate } from "../utils/formatters";
 import { useTransactionStore } from "../stores/transactionStore";
 import {
   TransferTransaction,
   DepositTransaction,
-  TransactionType,
   TransactionDetailsModal,
 } from "./TransactionDetails";
 import { getTransationDetails } from "../services/transactions";
-import toast from "react-hot-toast";
+import { type TransactionType } from "../stores/transactionStore";
 
 interface TransactionListProps {
   limit?: number;
@@ -37,7 +39,7 @@ const TransactionList: React.FC<TransactionListProps> = ({
     TransferTransaction | DepositTransaction | null
   >(null);
   const [transationType, setTransationType] = useState<TransactionType>(
-    "" as TransactionType
+    "" as TransactionType,
   );
 
   // const filteredTransactions = transactions
@@ -62,11 +64,11 @@ const TransactionList: React.FC<TransactionListProps> = ({
     }
   };
 
-  const filteredTransactions: any[] = [];
+  // const filteredTransactions: any[] = [];
 
   const getTransactionDetails = async (
     transactionId: string,
-    type: TransactionType
+    type: TransactionType,
   ) => {
     setTransationType(type);
 
@@ -121,48 +123,53 @@ const TransactionList: React.FC<TransactionListProps> = ({
         <div className="overflow-hidden">
           <ul className="divide-y divide-gray-200">
             {transactions.length > 0 ? (
-              transactions.map((transaction) => (
-                <li
-                  key={transaction._id}
-                  className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                  onClick={() =>
-                    getTransactionDetails(transaction._id, transaction.type)
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center min-w-0">
-                      <div
-                        className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
-                          transaction.type === "deposit"
-                            ? "bg-secondary-100 text-secondary-600"
-                            : "bg-accent-100 text-accent-600"
-                        }`}
-                      >
-                        {transaction.type === "transfer" && (
-                          <ArrowUpRight size={20} />
-                        )}
-                        {transaction.type === "deposit" && (
-                          <ArrowDownLeft size={20} />
-                        )}
-                      </div>
+              transactions.map((transaction) => {
+                const isTransfer = transaction.type === "transfer";
+                const isDeposit = transaction.type === "deposit";
+                const isCredit = transaction.type === "credit";
+                const isUSDTransaction = transaction.type === "usd_transaction";
 
-                      <div className="ml-4 truncate">
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {transaction.type === "deposit"
-                            ? "Rulsar Deposit"
-                            : "Rulsar Transfer"}
-                        </p>
+                return (
+                  <li
+                    key={transaction.id}
+                    className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                    onClick={() =>
+                      getTransactionDetails(transaction.id, transaction.type)
+                    }
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center min-w-0">
+                        <div
+                          className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${
+                            isDeposit || isCredit || isUSDTransaction
+                              ? "bg-secondary-100 text-secondary-600"
+                              : "bg-accent-100 text-accent-600"
+                          }`}
+                        >
+                          {isTransfer && <ArrowUpRight size={20} />}
 
-                        <div className="flex items-center text-xs text-gray-500 mt-0.5">
-                          <Calendar size={12} className="mr-1" />
-                          <span>
-                            {formatDate(
-                              (transaction.createdAt &&
-                                transaction.createdAt) ||
-                                new Date(Date.now()).toDateString()
-                            )}
-                          </span>
-                          {/* {transaction.recipient && (
+                          {isDeposit && <ArrowDownLeft size={20} />}
+
+                          {isUSDTransaction && <DollarSign size={20} />}
+
+                          {isCredit && <Coins size={20} />}
+                        </div>
+
+                        <div className="ml-4 truncate">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {transaction.description || "Rulsar Transaction"}
+                          </p>
+
+                          <div className="flex items-center text-xs text-gray-500 mt-0.5">
+                            <Calendar size={12} className="mr-1" />
+                            <span>
+                              {formatDate(
+                                (transaction.createdAt &&
+                                  transaction.createdAt) ||
+                                  new Date(Date.now()).toDateString(),
+                              )}
+                            </span>
+                            {/* {transaction.recipient && (
                           <span className="ml-2">
                             To: {transaction.recipient}
                           </span>
@@ -172,39 +179,42 @@ const TransactionList: React.FC<TransactionListProps> = ({
                             From: {transaction.sender}
                           </span>
                         )} */}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="ml-2 flex flex-col items-end">
+                        <p
+                          className={`text-sm font-medium ${
+                            isDeposit || isUSDTransaction || isCredit
+                              ? "text-secondary-600"
+                              : "text-accent-600"
+                          }`}
+                        >
+                          {isDeposit || isUSDTransaction || isCredit
+                            ? "+"
+                            : "-"}
+
+                          {isCredit && `${transaction.amount} credits`}
+
+                          {isUSDTransaction &&
+                            `${formatCurrency(Number(transaction.amount), "USD")}`}
+
+                          {isDeposit &&
+                            `${formatCurrency(Number(transaction.amount))}`}
+                        </p>
+
+                        <div className="flex items-center mt-0.5">
+                          {getStatusIcon("completed")}
+                          <span className="text-xs text-gray-500 ml-1 capitalize">
+                            completed
+                          </span>
                         </div>
                       </div>
                     </div>
-
-                    <div className="ml-2 flex flex-col items-end">
-                      <p
-                        className={`text-sm font-medium ${
-                          transaction.type === "deposit"
-                            ? "text-secondary-600"
-                            : "text-accent-600"
-                        }`}
-                      >
-                        {transaction.type === "deposit" ? "+" : "-"}
-
-                        {formatCurrency(
-                          Number(
-                            transaction.type === "transfer"
-                              ? transaction.amount
-                              : transaction.netAmount
-                          )
-                        )}
-                      </p>
-
-                      <div className="flex items-center mt-0.5">
-                        {getStatusIcon("completed")}
-                        <span className="text-xs text-gray-500 ml-1 capitalize">
-                          completed
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              ))
+                  </li>
+                );
+              })
             ) : (
               <li className="px-4 py-6 text-center text-gray-500">
                 No transactions found

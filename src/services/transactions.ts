@@ -4,13 +4,14 @@ import {
   DepositTransaction,
   TransferTransaction,
 } from "../components/TransactionDetails";
+import { TransactionType } from "../stores/transactionStore";
 
-export const getUserTransactions = (id: string) =>
-  apiClient.get<{ transactions: [] }>(`/users/${id}/transactions`);
+export const getUserTransactions = (userId: string) =>
+  apiClient.get<{ data: [] }>(`/transactions/${userId}`);
 
 export const getTransationDetails = (
   transactionId: string,
-  type: "transfer" | "deposit"
+  type: TransactionType,
 ) =>
   apiClient.get<{
     transaction: DepositTransaction | TransferTransaction;

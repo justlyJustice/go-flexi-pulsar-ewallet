@@ -1,8 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getTransactions } from "./authStore";
+import { getTransactions as getUserTransactions } from "./authStore";
 
-type TransactionType = "transfer" | "deposit";
+export type TransactionType =
+  | "transfer"
+  | "deposit"
+  | "credit"
+  | "usd_transaction";
 // "deposit" | "transfer-in" | "transfer-out";
 
 // interface Transaction {
@@ -17,7 +21,8 @@ type TransactionType = "transfer" | "deposit";
 // }
 
 type Transaction = {
-  _id: string;
+  id: string;
+  currency?: "USD" | "NGN";
   description?: string;
   createdAt: string;
   type: TransactionType;
@@ -34,17 +39,15 @@ interface TransactionState {
   setTransactions: (transactions: Transaction[]) => void;
 }
 
-// For demo purposes, we'll use a local store
-// In a real app, you would fetch from a backend API
 export const useTransactionStore = create<TransactionState>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       setTransactions: (transactions) => {
         set(() => ({
           transactions: transactions,
         }));
       },
-      transactions: getTransactions(),
+      transactions: getUserTransactions() || [],
       addTransaction: (transaction) => {
         const newTransaction = {
           ...transaction,
@@ -59,11 +62,11 @@ export const useTransactionStore = create<TransactionState>()(
         return transaction;
       },
       getTransactions: () => {
-        return [...get().transactions];
+        return _get().transactions;
       },
     }),
     {
       name: "transaction-storage",
-    }
-  )
+    },
+  ),
 );

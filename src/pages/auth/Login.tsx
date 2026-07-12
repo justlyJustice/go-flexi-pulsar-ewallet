@@ -23,7 +23,7 @@ const Login: React.FC = () => {
   });
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
 
       if (user.isBlocked) {
         return toast.error(
-          "Your account has been blocked. Please contact admin."
+          "Your account has been blocked. Please contact admin.",
         );
       }
 
@@ -94,7 +94,7 @@ const Login: React.FC = () => {
           usdtBalance: user.usdtBalance,
           corporateBiz: user.corporateBiz,
         },
-        data?.token!
+        data?.token!,
       );
 
       toast.success("Login Successful!");

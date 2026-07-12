@@ -91,8 +91,8 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: "auth-storage",
-    }
-  )
+    },
+  ),
 );
 
 // Export a direct way to access the token without hooks

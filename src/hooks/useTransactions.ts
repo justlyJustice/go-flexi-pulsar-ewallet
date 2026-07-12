@@ -15,7 +15,8 @@ const useTransactions = () => {
       const res = await getUserTransactions(user?.id!);
 
       if (res.ok) {
-        setTransactions(res.data?.transactions!);
+        console.log(res.data);
+        setTransactions(res.data?.data!);
       } else {
         return toast.error("Could not get user transaction");
       }

@@ -149,7 +149,7 @@ const ConvertUSD: React.FC = () => {
   // Update target amount when net amount changes
   useEffect(() => {
     setTargetAmount(
-      conversionDirection === "NGN_TO_USD" ? usdAmountBeforeFees! : netAmount
+      conversionDirection === "NGN_TO_USD" ? usdAmountBeforeFees! : netAmount,
     );
   }, [netAmount]);
 
@@ -194,7 +194,7 @@ const ConvertUSD: React.FC = () => {
       default:
         return `You've received ${formatCurrency(
           netAmount,
-          getTargetCurrency()
+          getTargetCurrency(),
         )}`;
     }
   };
@@ -244,7 +244,7 @@ const ConvertUSD: React.FC = () => {
         const requiredUsdBeforeFees =
           (amountValue + USDT_DEPOSIT_FEE) / (1 - PERCENT_DEPOSIT_FEE / 100);
         const calculatedSource = Number(
-          (requiredUsdBeforeFees * exchangeRate).toFixed(2)
+          (requiredUsdBeforeFees * exchangeRate).toFixed(2),
         );
         setSourceAmount(calculatedSource.toString());
       }
@@ -253,7 +253,7 @@ const ConvertUSD: React.FC = () => {
 
   const toggleConversionDirection = () => {
     setConversionDirection((prev) =>
-      prev === "NGN_TO_USD" ? "USD_TO_NGN" : "NGN_TO_USD"
+      prev === "NGN_TO_USD" ? "USD_TO_NGN" : "NGN_TO_USD",
     );
     // Reset amounts when toggling direction
     setSourceAmount("");
@@ -273,7 +273,7 @@ const ConvertUSD: React.FC = () => {
       setError(
         `Insufficient ${
           conversionDirection === "NGN_TO_USD" ? "Naira" : "USD"
-        } balance`
+        } balance`,
       );
 
       return false;
@@ -639,7 +639,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="font-medium">
                         {formatCurrency(
                           parseFloat(sourceAmount),
-                          getSourceCurrency()
+                          getSourceCurrency(),
                         )}
                       </span>
                     </div>
@@ -682,7 +682,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="font-semibold text-blue-600">
                         {formatCurrency(
                           usdAmountBeforeFees!,
-                          getTargetCurrency()
+                          getTargetCurrency(),
                         )}
                       </span>
                     </div>
@@ -707,7 +707,7 @@ const ConvertUSD: React.FC = () => {
                     usdAmountBeforeFees! < 3
                   ) {
                     return toast.error(
-                      "USD Amount after charges must be $3 and above"
+                      "USD Amount after charges must be $3 and above",
                     );
                   }
 
@@ -763,7 +763,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="font-medium">
                         {formatCurrency(
                           parseFloat(sourceAmount),
-                          getSourceCurrency()
+                          getSourceCurrency(),
                         )}
                       </span>
                     </div>
@@ -773,7 +773,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="font-medium">
                         {formatCurrency(
                           user?.usdtBalance!,
-                          getTargetCurrency()
+                          getTargetCurrency(),
                         )}
                       </span>
                     </div>
@@ -783,7 +783,7 @@ const ConvertUSD: React.FC = () => {
                       <span className="font-medium">
                         {formatCurrency(
                           Number(usdAmountBeforeFees),
-                          getTargetCurrency()
+                          getTargetCurrency(),
                         )}
                       </span>
                     </div>
@@ -814,7 +814,7 @@ const ConvertUSD: React.FC = () => {
                     <span className="text-sm font-medium">
                       {formatCurrency(
                         getCurrentBalance() - Number(sourceAmount),
-                        getSourceCurrency()
+                        getSourceCurrency(),
                       )}
                     </span>
                   </div>
@@ -826,7 +826,7 @@ const ConvertUSD: React.FC = () => {
                     <span className="text-sm font-medium">
                       {formatCurrency(
                         getTargetBalance() + Number(usdAmountBeforeFees),
-                        getTargetCurrency()
+                        getTargetCurrency(),
                       )}
                     </span>
                   </div>
@@ -877,7 +877,7 @@ const ConvertUSD: React.FC = () => {
 
               {`You've received ${formatCurrency(
                 Number(usdAmountBeforeFees),
-                getTargetCurrency()
+                getTargetCurrency(),
               )}`}
 
               <span className="block text-sm text-gray-500 mt-1">
@@ -891,8 +891,8 @@ const ConvertUSD: React.FC = () => {
                   <span className="font-medium text-gray-900">
                     New {getTargetCurrency()} Balance:{" "}
                     {formatCurrency(
-                      usdAmountBeforeFees!,
-                      getTargetCurrency()
+                      user?.usdtBalance! + usdAmountBeforeFees!,
+                      getTargetCurrency(),
                     )}
                   </span>
                 </div>
