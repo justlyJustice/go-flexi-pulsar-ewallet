@@ -7,28 +7,41 @@ interface CorporateProps {
   setFormData: React.Dispatch<React.SetStateAction<CorporateFormData>>;
   certificateFile: File | null;
   setCertificateFile: React.Dispatch<React.SetStateAction<File | null>>;
+  action: "upgrade" | "add";
 }
 
-const corporateTypes = [
-  {
-    name: "SMEDAN",
-    key: "smedan",
-  },
-  {
-    name: "COOPERATIVE OWNER",
-    key: "cooperative-owner",
-  },
-  {
-    name: "COOPERATIVE MEMBER",
-    key: "cooperative-member",
-  },
-  {
-    name: "SOLO COOPERATIVE",
-    key: "solo-cooperative",
-  },
-];
+const CorporateKYCForm = ({
+  action,
+  formData,
+  setFormData,
+}: CorporateProps) => {
+  const busSmedanType =
+    action === "add"
+      ? { name: "BUSINESS", key: "business" }
+      : {
+          name: "SMEDAN",
+          key: "smedan",
+        };
+  const soloType =
+    action === "add"
+      ? { name: "" }
+      : {
+          name: "SOLO COOPERATIVE",
+          key: "solo-cooperative",
+        };
+  const corporateTypes = [
+    busSmedanType,
+    {
+      name: "COOPERATIVE OWNER",
+      key: "cooperative-owner",
+    },
+    {
+      name: "COOPERATIVE MEMBER",
+      key: "cooperative-member",
+    },
+    soloType,
+  ];
 
-const CorporateKYCForm = ({ formData, setFormData }: CorporateProps) => {
   // const banks = useBankStore((state) => state.banks);
   // const [bankName, setBankName] = useState("");
   // const [loading, setLoading] = useState(false);
@@ -166,11 +179,13 @@ const CorporateKYCForm = ({ formData, setFormData }: CorporateProps) => {
         onChange={handleInputChange}
         value={formData.cooperativeType}
       >
-        {corporateTypes.map((cType, i) => (
-          <option key={i} value={cType.key}>
-            {cType.name}
-          </option>
-        ))}
+        {corporateTypes
+          .filter((type) => type.name !== "")
+          .map((cType, i) => (
+            <option key={i} value={cType.key}>
+              {cType.name}
+            </option>
+          ))}
       </select>
 
       <div>

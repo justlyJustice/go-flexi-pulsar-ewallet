@@ -198,7 +198,7 @@ const Profile: React.FC = () => {
   };
 
   const renderCorporateSection = () => {
-    if (user?.tier !== "merchant") return null;
+    // if (user?.tier !== "merchant") return null;
 
     return (
       <div className="mt-6 border-t border-gray-200 pt-6">
@@ -235,6 +235,7 @@ const Profile: React.FC = () => {
 
               <div className="p-6">
                 <CorporateKYCForm
+                  action="add"
                   formData={corporateFormData}
                   setFormData={setCorporateFormData}
                   certificateFile={certificateFile}

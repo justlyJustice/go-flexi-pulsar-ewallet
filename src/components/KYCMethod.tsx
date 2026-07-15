@@ -832,6 +832,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
 
             {activeTab === "corporate" && (
               <CorporateKYCForm
+                action="upgrade"
                 formData={formData}
                 setFormData={setFormData}
                 certificateFile={certificateFile}
