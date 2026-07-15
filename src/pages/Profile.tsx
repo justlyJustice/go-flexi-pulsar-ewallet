@@ -198,7 +198,7 @@ const Profile: React.FC = () => {
   };
 
   const renderCorporateSection = () => {
-    // if (user?.tier !== "individual") return null;
+    if (user?.tier !== "merchant") return null;
 
     return (
       <div className="mt-6 border-t border-gray-200 pt-6">
