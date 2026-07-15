@@ -39,7 +39,7 @@ export const verifyKYC = (type: string, data: any) => {
       success: boolean;
       error?: string;
     }>(
-      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}`
+      `/kyc/verify-bvn?number=${number}&firstName=${firstName.toUpperCase()}&lastName=${lastName.toUpperCase()}&phoneNumber=${phoneNumber}&dateOfBirth=${reversedDate}`,
     );
   } else {
     const { number, firstName, lastName, dateOfBirth, phoneNumber } = data;
@@ -59,7 +59,7 @@ export const verifyKYC = (type: string, data: any) => {
       success: boolean;
       error?: string;
     }>(
-      `/kyc/verify-nin?number_nin=${number}&surname=${lastName}&firstname=${firstName}&birthdate=${reversedDate}&telephoneno=${phoneNumber}`
+      `/kyc/verify-nin?number_nin=${number}&surname=${lastName}&firstname=${firstName}&birthdate=${reversedDate}&telephoneno=${phoneNumber}`,
     );
   }
 };
@@ -68,7 +68,7 @@ export const confirmKYC = (data: any) => {
   const { trx, verificationCode } = data;
 
   return client.post<{ error?: string; user: any; success: boolean }>(
-    `/kyc/confirm-bvn?trx=${trx}&otp=${verificationCode}`
+    `/kyc/confirm-bvn?trx=${trx}&otp=${verificationCode}`,
   );
 };
 
@@ -107,11 +107,11 @@ export const verifyCAC = (data: CACData) => {
     success: boolean;
     error?: string;
   }>(
-    `/kyc/verify-cac?rc_number=${rc_number}&company_name=${company_name}&company_type=${company_type}&entity_type=${entity_type}&email=${email}&firstname=${firstname}&surname=${surname}&gender=${gender}&occupation=${occupation}&city=${city}&phoneNumber=${phoneNumber}`
+    `/kyc/verify-cac?rc_number=${rc_number}&company_name=${company_name}&company_type=${company_type}&entity_type=${entity_type}&email=${email}&firstname=${firstname}&surname=${surname}&gender=${gender}&occupation=${occupation}&city=${city}&phoneNumber=${phoneNumber}`,
   );
 };
 
-interface CorporateKyc extends CorporateFormData {
+export interface CorporateKyc extends CorporateFormData {
   account_number: string;
   business_name: string;
   bank_name: string;
@@ -148,6 +148,6 @@ export const verifyCorporateKYC = (data: CorporateKyc) => {
 
   return client.post<{ error: string; data: any; user: any }>(
     "/kyc/verify-corporate-business",
-    formData
+    formData,
   );
 };

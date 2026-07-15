@@ -28,12 +28,7 @@ const corporateTypes = [
   },
 ];
 
-const CorporateKYCForm = ({
-  formData,
-  setFormData,
-}: // certificateFile,
-// setCertificateFile,
-CorporateProps) => {
+const CorporateKYCForm = ({ formData, setFormData }: CorporateProps) => {
   // const banks = useBankStore((state) => state.banks);
   // const [bankName, setBankName] = useState("");
   // const [loading, setLoading] = useState(false);
@@ -138,7 +133,7 @@ CorporateProps) => {
   // }, [formData.account_number]);
 
   function handleInputChange(
-    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ): void {
     const { name, value } = event.target;
 

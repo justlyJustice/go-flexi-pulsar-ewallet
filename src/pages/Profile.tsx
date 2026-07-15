@@ -12,6 +12,8 @@ import {
   LogOut,
   Clock,
   DollarSign,
+  Plus,
+  Building2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
@@ -19,11 +21,13 @@ import { formatCurrency, formatDate } from "../utils/formatters";
 import KYCMethod from "../components/KYCMethod";
 import VerificationStatus from "../components/KYCStatus";
 import toast from "react-hot-toast";
+import CorporateKYCForm from "../components/kyc/Corporate";
+import { CorporateFormData } from "../components/kyc/type";
+import { addCorporative } from "../services/corporative";
 
 const Profile: React.FC = () => {
   const { user, updateUser, logout } = useAuthStore();
   const [activeTab, setActiveTab] = useState("personal");
-
   const [verificationMethod, setVerificationMethod] = useState<
     "bvn" | "nin" | "cac" | null
   >(null);
@@ -34,6 +38,56 @@ const Profile: React.FC = () => {
     phone: user?.phoneNumber || "",
   });
   const [successMessage, setSuccessMessage] = useState("");
+  const [isAddingCorporative, setIsAddingCorporative] = useState(false);
+  const [showCorporateForm, setShowCorporateForm] = useState(false);
+  const [corporateFormData, setCorporateFormData] = useState<CorporateFormData>(
+    {
+      number: "",
+      firstName: "",
+      lastName: "",
+      dateOfBirth: "",
+      phoneNumber: "",
+      verificationCode: "",
+      trx: "",
+
+      // CAC specific fields
+      email: "",
+      rcNumber: "",
+      companyType: "RC" as "RC" | "BN",
+      entityType: "RC" as "RC" | "BN",
+      companyName: "",
+      city: "",
+      occupation: "",
+      gender: "MALE" as "MALE" | "FEMALE",
+
+      // Corporate specific fields
+      account_number: "",
+      bank_name: "",
+      // image: "",
+      business_name: "",
+      name_enquiry_reference: "",
+      cooperativeName: "",
+      profileNumber: "",
+      cooperativeType: "smedan",
+      certificateNumber: "",
+      memberNumber: "",
+      chairmanName: "",
+      secretaryName: "",
+      // chairmanDetails: {
+      //   memberNumber: "",
+      //   name: "",
+      //   profileNumber: "",
+      //   verificationCode: "",
+      // },
+      // secretaryDetails: {
+      //   memberNumber: "",
+      //   name: "",
+      //   profileNumber: "",
+      //   verificationCode: "",
+      // },
+    },
+  );
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,20 +99,43 @@ const Profile: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Update user information
     updateUser({
       fullName: formData.fullName,
       email: formData.email,
     });
-
     setIsEditing(false);
     setSuccessMessage("Profile updated successfully");
-
-    // Hide success message after 3 seconds
     setTimeout(() => {
       setSuccessMessage("");
     }, 3000);
+  };
+
+  const handleAddCorporate = async () => {
+    setIsAddingCorporative(true);
+    try {
+      const res = await addCorporative({
+        ...corporateFormData,
+        accountName: user?.bankInformation.accountName!,
+        account_number: user?.bankInformation.accountNumber!,
+        bank_name: user?.bankInformation.bankName!,
+      });
+
+      if (res.ok) {
+        toast.success("Added corporative successfully!");
+        setShowCorporateForm(false);
+      }
+    } catch (error) {
+      console.log(error);
+      console.log("An error occured!");
+    } finally {
+      setIsAddingCorporative(false);
+    }
+  };
+
+  const handleCancelCorporate = () => {
+    setShowCorporateForm(false);
+    // setCorporateFormData(initialCorporateFormData);
+    // setCertificateFile(null);
   };
 
   const containerVariants = {
@@ -93,6 +170,101 @@ const Profile: React.FC = () => {
       default:
         return "Normal";
     }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "verified":
+        return (
+          <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+            Verified
+          </span>
+        );
+      case "pending":
+        return (
+          <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+            Pending
+          </span>
+        );
+      case "rejected":
+        return (
+          <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+            Rejected
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderCorporateSection = () => {
+    // if (user?.tier !== "individual") return null;
+
+    return (
+      <div className="mt-6 border-t border-gray-200 pt-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Add Another Corporative
+            </h3>
+            <p className="text-sm text-gray-500">Add new corporate/business.</p>
+          </div>
+          <button
+            onClick={() => setShowCorporateForm(true)}
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <Plus size={18} />
+            Add Corporate
+          </button>
+        </div>
+
+        {showCorporateForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Add Corporate Entity
+                </h3>
+                <button
+                  onClick={handleCancelCorporate}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="p-6">
+                <CorporateKYCForm
+                  formData={corporateFormData}
+                  setFormData={setCorporateFormData}
+                  certificateFile={certificateFile}
+                  setCertificateFile={setCertificateFile}
+                />
+
+                <div className="mt-6 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCancelCorporate}
+                    className="btn btn-outline"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    disabled={isAddingCorporative}
+                    type="button"
+                    onClick={handleAddCorporate}
+                    className="btn btn-primary"
+                  >
+                    {isAddingCorporative ? "Submitting" : "Submit Corporative"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderTierRequirements = () => {
@@ -167,19 +339,6 @@ const Profile: React.FC = () => {
                 )}
                 <span>NIN verification required</span>
               </li>
-
-              {/* <li className="flex items-start">
-                {currentTier === "business" ? (
-                  <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                ) : (
-                  <Clock className="h-3 w-3 text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
-                )}
-
-                <span>
-                  CAC Registration/ <br /> Legal Search and Verification
-                  required
-                </span>
-              </li> */}
 
               <li className="flex items-start">
                 <Check className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
@@ -366,7 +525,6 @@ const Profile: React.FC = () => {
 
                 <button
                   onClick={() => {
-                    // alert("Coming Soon");
                     setActiveTab("kyc");
                   }}
                   className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
@@ -380,7 +538,6 @@ const Profile: React.FC = () => {
                 </button>
 
                 <button
-                  // onClick={() => setActiveTab("security")}
                   className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                     activeTab === "security"
                       ? "bg-primary-50 text-primary-700"
@@ -392,7 +549,6 @@ const Profile: React.FC = () => {
                 </button>
 
                 <button
-                  // onClick={() => setActiveTab("notifications")}
                   className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                     activeTab === "notifications"
                       ? "bg-primary-50 text-primary-700"
@@ -404,7 +560,6 @@ const Profile: React.FC = () => {
                 </button>
 
                 <button
-                  // onClick={() => setActiveTab("payment")}
                   className={`w-full text-left px-3 py-2 rounded-lg flex items-center text-sm font-medium ${
                     activeTab === "payment"
                       ? "bg-primary-50 text-primary-700"
@@ -441,14 +596,6 @@ const Profile: React.FC = () => {
                     <h2 className="text-lg font-semibold text-gray-900">
                       Personal Information
                     </h2>
-                    {/* {!isEditing && (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-                    >
-                      Edit Information
-                    </button>
-                  )} */}
                   </div>
 
                   {isEditing ? (
@@ -601,6 +748,9 @@ const Profile: React.FC = () => {
                   )}
 
                   {renderTierRequirements()}
+
+                  {/* Corporate Section - Only for Merchant tier */}
+                  {renderCorporateSection()}
                 </div>
               )}
 
@@ -626,7 +776,6 @@ const Profile: React.FC = () => {
                             </p>
                             <p className="text-xs text-gray-500">
                               Change your password
-                              {/* Last changed 3 months ago */}
                             </p>
                           </div>
                         </div>
@@ -661,40 +810,6 @@ const Profile: React.FC = () => {
                         </button>
                       </div>
                     </div>
-
-                    {/* <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <div className="p-2 bg-primary-100 rounded-full">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-3 w-3 text-primary-600"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                            />
-                          </svg>
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-sm font-medium text-gray-900">
-                            Login Sessions
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            Manage your active sessions
-                          </p>
-                        </div>
-                      </div>
-                      <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
-                        View
-                      </button>
-                    </div>
-                  </div> */}
                   </div>
                 </div>
               )}
@@ -969,12 +1084,11 @@ const Profile: React.FC = () => {
                               </p>
 
                               <button
-                                // disabled
                                 disabled={verificationMethod === "cac"}
                                 onClick={() => {
                                   if (user.usdtBalance < 15) {
                                     return toast.error(
-                                      "USD balance must have a minimum of $15 before"
+                                      "USD balance must have a minimum of $15 before",
                                     );
                                   }
                                   setVerificationMethod("cac");
@@ -1005,7 +1119,6 @@ const Profile: React.FC = () => {
                         <div className="border border-gray-200 rounded-lg overflow-hidden">
                           <div className="p-3 bg-gray-50 border-b border-gray-200">
                             <h3 className="text-lg font-medium text-gray-900">
-                              {/* NIN and CAC Verification */}
                               NIN Verification
                             </h3>
                           </div>
@@ -1019,20 +1132,13 @@ const Profile: React.FC = () => {
                             </p>
 
                             <button
-                              // disabled
                               disabled={verificationMethod === "nin"}
                               onClick={() => {
-                                // if (user?.ninVerified) {
-                                //   setVerificationMethod("cac");
-                                // }
-
                                 setVerificationMethod("nin");
                               }}
                               className="w-full btn btn-primary"
                             >
                               Start NIN Verification
-                              {/* Start NIN & CAC Verification */}
-                              {/* Coming Soon */}
                             </button>
                           </div>
                         </div>

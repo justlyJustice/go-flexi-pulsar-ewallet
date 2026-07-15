@@ -358,6 +358,8 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
         } catch (error) {
           console.log(error);
           console.log("An error occured!");
+        } finally {
+          setLoading(false);
         }
       }
     }
