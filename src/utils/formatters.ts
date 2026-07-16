@@ -25,3 +25,12 @@ export const formatDateTime = (dateString: string): string => {
     minute: "2-digit",
   }).format(date);
 };
+
+export const formatSubmitLabel = (label: string) => {
+  switch (label) {
+    case "business":
+      return "Business";
+    default:
+      return "Cooperative";
+  }
+};

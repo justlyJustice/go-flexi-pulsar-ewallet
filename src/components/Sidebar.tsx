@@ -11,15 +11,8 @@ import {
   ChevronDown,
   ChevronUp,
   Smartphone,
-  // Tv,
-  // Zap,
-  // Book,
-  // Gift,
   Wifi,
   CreditCard,
-  // Repeat,
-  // Bitcoin,
-  // MessageSquare,
   FolderKanban,
   BadgeDollarSign,
 } from "lucide-react";
@@ -55,64 +48,15 @@ const Sidebar: React.FC = () => {
       label: "Data",
       isActive: location.pathname === "/bill-payment/data",
     },
-    // {
-    //   path: "/bill-payment/recharge-card",
-    //   icon: <Gift size={18} />,
-    //   label: "Recharge Card",
-    //   isActive: location.pathname === "/bill-payment/recharge-card",
-    // },
-    // {
-    //   path: "/bill-payment/cable-tv",
-    //   icon: <Tv size={18} />,
-    //   label: "Cable TV",
-    //   isActive: location.pathname === "/bill-payment/cable-tv",
-    // },
-    // {
-    //   path: "/bill-payment/electricity",
-    //   icon: <Zap size={18} />,
-    //   label: "Electricity",
-    //   isActive: location.pathname === "/bill-payment/electricity",
-    // },
-    // {
-    //   path: "/bill-payment/education-pin",
-    //   icon: <Book size={18} />,
-    //   label: "Education PIN",
-    //   isActive: location.pathname === "/bill-payment/education-pin",
-    // },
   ];
 
   const financialServicesItems = [
-    // {
-    //   path: "/services/virtual-naira-card",
-    //   icon: <CreditCard size={22} />,
-    //   label: "Naira Virtual Card",
-    //   isActive: location.pathname === "/services/virtual-naira-card",
-    //   // onClick: () => user?.isKYC === 'unverified' /
-    // },
     {
       path: "/services/virtual-usd-card",
       icon: <CreditCard size={22} />,
       label: "USD Virtual Card",
       isActive: location.pathname === "/services/virtual-usd-card",
     },
-    // {
-    //   path: "/services/currency-exchange",
-    //   icon: <Repeat size={22} />,
-    //   label: "Currency Exchange",
-    //   isActive: location.pathname === "/services/currency-exchange",
-    // },
-    // {
-    //   path: "/services/usdt-funding",
-    //   icon: <Bitcoin size={22} />,
-    //   label: "USDT Funding",
-    //   isActive: location.pathname === "/services/usdt-funding",
-    // },
-    // {
-    //   path: "/services/bulk-sms",
-    //   icon: <MessageSquare size={22} />,
-    //   label: "Bulk SMS",
-    //   isActive: location.pathname === "/services/bulk-sms",
-    // },
   ];
 
   const addFundsItems = [
@@ -148,18 +92,11 @@ const Sidebar: React.FC = () => {
       items: addFundsItems,
     },
 
-    // {
-    //   path: "/add-funds",
-    //   icon: <Wallet size={20} />,
-    //   label: "Add Funds",
-    //   isActive: location.pathname === "/add-funds",
-    // },
     {
       path:
         user?.isKYC === "verified" || user?.tier === "business"
           ? "/transfer"
           : "#",
-      // path: "/transfer",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
       onClick:
@@ -188,7 +125,7 @@ const Sidebar: React.FC = () => {
       toggle:
         user?.isKYC === "verified" || user?.tier === "business"
           ? () => toggleDropdown("financialServices")
-          : () => setIsOpen(true),
+          : () => {},
       items: financialServicesItems,
     },
     {
@@ -213,7 +150,11 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex items-center">
           {item.icon}
-          <span className={isMobile ? "ml-2" : "ml-3"}>{item.label}</span>
+          <span
+            className={`${isMobile ? "ml-2" : "ml-3"} text-sm whitespace-nowrap`}
+          >
+            {item.label}
+          </span>
         </div>
         {item.isOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
       </button>
@@ -234,7 +175,11 @@ const Sidebar: React.FC = () => {
               }`}
             >
               {subItem.icon}
-              <span className="ml-3">{subItem.label}</span>
+              <span
+                className={`${isMobile ? "ml-2" : "ml-3"} text-sm whitespace-nowrap`}
+              >
+                {subItem.label}
+              </span>
             </NavLink>
           ))}
         </div>
@@ -271,19 +216,6 @@ const Sidebar: React.FC = () => {
 
         <div className="absolute inset-y-0 left-0 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out">
           <div className="p-4">
-            {/* <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center">
-                <Wallet className="h-8 w-8 text-primary-600" />
-                <span className="ml-2 text-xl font-bold text-gray-900">
-                  Rulsar
-                </span>
-              </div>
-
-              <button onClick={closeMobileMenu} className="lg:hidden">
-                <X size={24} className="text-gray-500" />
-              </button>
-            </div> */}
-
             <nav className="mt-5">
               {navItems.map((item, i) => {
                 if (item.type === "dropdown") {
@@ -307,7 +239,9 @@ const Sidebar: React.FC = () => {
                     }
                   >
                     {item.icon}
-                    <span className="ml-3">{item.label}</span>
+                    <span className="ml-3 text-sm whitespace-nowrap">
+                      {item.label}
+                    </span>
                   </NavLink>
                 );
               })}
@@ -320,7 +254,7 @@ const Sidebar: React.FC = () => {
                 className="flex items-center w-full p-3 rounded-lg text-red-700 hover:bg-red-100 transition-colors mt-2"
               >
                 <LogOut size={20} />
-                <span className="ml-3">Logout</span>
+                <span className="ml-3 text-sm whitespace-nowrap">Logout</span>
               </button>
             </nav>
           </div>
@@ -334,7 +268,6 @@ const Sidebar: React.FC = () => {
             <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
               <div className="flex items-center flex-shrink-0 px-4 mb-5">
                 <Wallet className="h-8 w-8 text-primary-600" />
-
                 <span className="ml-2 text-xl font-bold text-gray-900">
                   Rulsar
                 </span>
@@ -360,7 +293,9 @@ const Sidebar: React.FC = () => {
                       }
                     >
                       {item.icon}
-                      <span className="ml-3">{item.label}</span>
+                      <span className="ml-3 text-sm whitespace-nowrap">
+                        {item.label}
+                      </span>
                     </NavLink>
                   );
                 })}
@@ -373,7 +308,7 @@ const Sidebar: React.FC = () => {
                 className="flex items-center w-full px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
               >
                 <LogOut size={20} />
-                <span className="ml-2">Logout</span>
+                <span className="ml-2 text-sm whitespace-nowrap">Logout</span>
               </button>
             </div>
           </div>

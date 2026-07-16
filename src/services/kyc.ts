@@ -131,18 +131,9 @@ export const verifyCorporateKYC = (data: CorporateKyc) => {
     verificationCode: data.verificationCode,
     memberNumber: data.memberNumber,
     accountName: data.accountName,
-    chairmanDetails: {
-      name: data.chairmanName,
-      profileNumber: data.chairmanName ? data.profileNumber : "",
-      verificationCode: data.chairmanName ? data.verificationCode : "",
-      memberNumber: data.chairmanName ? data.memberNumber : "",
-    },
-    secretaryDetails: {
-      name: data.secretaryName,
-      profileNumber: data.secretaryName ? data.profileNumber : "",
-      verificationCode: data.secretaryName ? data.verificationCode : "",
-      memberNumber: data.secretaryName ? data.memberNumber : "",
-    },
+    directorDetails: data.directorDetails,
+    secretaryDetails: data.secretaryDetails,
+    treasurerDetails: data.treasurerDetails,
     cooperativeType: data.cooperativeType,
   };
 

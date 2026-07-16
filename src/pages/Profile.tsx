@@ -13,11 +13,15 @@ import {
   Clock,
   DollarSign,
   Plus,
-  Building2,
+  // Building2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
-import { formatCurrency, formatDate } from "../utils/formatters";
+import {
+  formatCurrency,
+  formatDate,
+  formatSubmitLabel,
+} from "../utils/formatters";
 import KYCMethod from "../components/KYCMethod";
 import VerificationStatus from "../components/KYCStatus";
 import toast from "react-hot-toast";
@@ -71,20 +75,24 @@ const Profile: React.FC = () => {
       cooperativeType: "smedan",
       certificateNumber: "",
       memberNumber: "",
-      chairmanName: "",
-      secretaryName: "",
-      // chairmanDetails: {
-      //   memberNumber: "",
-      //   name: "",
-      //   profileNumber: "",
-      //   verificationCode: "",
-      // },
-      // secretaryDetails: {
-      //   memberNumber: "",
-      //   name: "",
-      //   profileNumber: "",
-      //   verificationCode: "",
-      // },
+      directorDetails: {
+        memberNumber: "",
+        name: "",
+        profileNumber: "",
+        verificationCode: "",
+      },
+      secretaryDetails: {
+        memberNumber: "",
+        name: "",
+        profileNumber: "",
+        verificationCode: "",
+      },
+      treasurerDetails: {
+        memberNumber: "",
+        name: "",
+        profileNumber: "",
+        verificationCode: "",
+      },
     },
   );
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
@@ -172,33 +180,33 @@ const Profile: React.FC = () => {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "verified":
-        return (
-          <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
-            Verified
-          </span>
-        );
-      case "pending":
-        return (
-          <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
-            Pending
-          </span>
-        );
-      case "rejected":
-        return (
-          <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
-            Rejected
-          </span>
-        );
-      default:
-        return null;
-    }
-  };
+  // const getStatusBadge = (status: string) => {
+  //   switch (status) {
+  //     case "verified":
+  //       return (
+  //         <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+  //           Verified
+  //         </span>
+  //       );
+  //     case "pending":
+  //       return (
+  //         <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+  //           Pending
+  //         </span>
+  //       );
+  //     case "rejected":
+  //       return (
+  //         <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-700 rounded-full">
+  //           Rejected
+  //         </span>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   const renderCorporateSection = () => {
-    // if (user?.tier !== "merchant") return null;
+    if (user?.tier !== "merchant") return null;
 
     return (
       <div className="mt-6 border-t border-gray-200 pt-6">
@@ -257,7 +265,9 @@ const Profile: React.FC = () => {
                     onClick={handleAddCorporate}
                     className="btn btn-primary"
                   >
-                    {isAddingCorporative ? "Submitting" : "Submit Corporative"}
+                    {isAddingCorporative
+                      ? "Submitting"
+                      : `Submit ${formatSubmitLabel(corporateFormData.cooperativeType)}`}
                   </button>
                 </div>
               </div>

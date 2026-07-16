@@ -23,12 +23,13 @@ const CorporateKYCForm = ({
           key: "smedan",
         };
   const soloType =
-    action === "add"
-      ? { name: "" }
-      : {
-          name: "SOLO COOPERATIVE",
-          key: "solo-cooperative",
-        };
+    // action === "add"
+    //   ? { name: "" }
+    // :
+    {
+      name: "COOPERATIVE MEMBER",
+      key: "cooperative-member",
+    };
   const corporateTypes = [
     busSmedanType,
     {
@@ -36,10 +37,10 @@ const CorporateKYCForm = ({
       key: "cooperative-owner",
     },
     {
-      name: "COOPERATIVE MEMBER",
-      key: "cooperative-member",
+      name: "SOLO COOPERATIVE",
+      key: "solo-cooperative",
     },
-    soloType,
+    // soloType,
   ];
 
   // const banks = useBankStore((state) => state.banks);
@@ -156,6 +157,48 @@ const CorporateKYCForm = ({
     }));
   }
 
+  const handleDirectorFieldsChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
+    const { name, value } = event.target;
+
+    setFormData((prevData: CorporateFormData) => ({
+      ...prevData,
+      directorDetails: {
+        ...prevData.directorDetails,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleTreasurerFieldsChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
+    const { name, value } = event.target;
+
+    setFormData((prevData: CorporateFormData) => ({
+      ...prevData,
+      treasurerDetails: {
+        ...prevData.treasurerDetails,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleSecretaryFieldsChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void => {
+    const { name, value } = event.target;
+
+    setFormData((prevData: CorporateFormData) => ({
+      ...prevData,
+      secretaryDetails: {
+        ...prevData.secretaryDetails,
+        [name]: value,
+      },
+    }));
+  };
+
   // const handleRemoveFile = () => {
   //   setCertificateFile(null);
   //   setCertificatePreview(null);
@@ -188,21 +231,23 @@ const CorporateKYCForm = ({
           ))}
       </select>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Business Name
-        </label>
+      {formData.cooperativeType === "business" && (
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Business Name
+          </label>
 
-        <input
-          type="text"
-          name="business_name"
-          value={formData.business_name}
-          onChange={handleInputChange}
-          className="input"
-          placeholder="Business Name"
-          required
-        />
-      </div>
+          <input
+            type="text"
+            name="business_name"
+            value={formData.business_name}
+            onChange={handleInputChange}
+            className="input"
+            placeholder="Business Name"
+            required
+          />
+        </div>
+      )}
 
       {/* {!formData.isMember && (
         <div className="space-y-2">
@@ -278,7 +323,8 @@ const CorporateKYCForm = ({
       <div className="flex border-b border-gray-200 mb-6"></div>
 
       {(formData.cooperativeType === "cooperative-owner" ||
-        formData.cooperativeType === "cooperative-member") && (
+        formData.cooperativeType === "cooperative-member" ||
+        formData.cooperativeType === "solo-cooperative") && (
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Cooperative Name
@@ -301,7 +347,8 @@ const CorporateKYCForm = ({
 
       {(formData.cooperativeType === "smedan" ||
         formData.cooperativeType === "cooperative-owner" ||
-        formData.cooperativeType === "solo-cooperative") && (
+        formData.cooperativeType === "solo-cooperative" ||
+        formData.cooperativeType === "business") && (
         <>
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -327,44 +374,213 @@ const CorporateKYCForm = ({
 
       {formData.cooperativeType === "cooperative-owner" && (
         <>
+          {/* Director Fields */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Chairman Name
+              <b>Director Name</b>
             </label>
 
             <input
               type="text"
-              name="chairmanName"
-              value={formData.chairmanName}
-              onChange={handleInputChange}
+              name="name"
+              value={formData.directorDetails.name}
+              onChange={handleDirectorFieldsChange}
               className="input"
-              placeholder="Chairman Name"
+              placeholder="Director Name"
               required={formData.cooperativeType === "cooperative-owner"}
             />
           </div>
 
+          <div className="grid grid-cols-3 gap-2 max-sm:grid-cols-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Member Number
+              </label>
+
+              <input
+                type="text"
+                name="memberNumber"
+                value={formData.directorDetails.memberNumber}
+                onChange={handleDirectorFieldsChange}
+                className="input"
+                placeholder="Member Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Verification Code
+              </label>
+
+              <input
+                type="text"
+                name="verificationCode"
+                value={formData.directorDetails.verificationCode}
+                onChange={handleDirectorFieldsChange}
+                className="input"
+                placeholder="Verification Code"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Profile Number
+              </label>
+
+              <input
+                type="text"
+                name="profileNumber"
+                value={formData.directorDetails.profileNumber}
+                onChange={handleDirectorFieldsChange}
+                className="input"
+                placeholder="Profile Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+          </div>
+
+          <div className="flex border-b border-gray-200 mb-6"></div>
+
+          {/* Secretary Fields */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Secretary Name
+              <b>Secretary Name</b>
             </label>
 
             <input
               type="text"
-              name="secretaryName"
-              value={formData.secretaryName}
-              onChange={handleInputChange}
+              name="name"
+              value={formData.secretaryDetails.name}
+              onChange={handleSecretaryFieldsChange}
               className="input"
               placeholder="Secretary Name"
               required={formData.cooperativeType === "cooperative-owner"}
             />
           </div>
+
+          <div className="grid grid-cols-3 gap-2 max-sm:grid-cols-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Member Number
+              </label>
+
+              <input
+                type="text"
+                name="memberNumber"
+                value={formData.secretaryDetails.memberNumber}
+                onChange={handleSecretaryFieldsChange}
+                className="input"
+                placeholder="Member Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Verification Code
+              </label>
+
+              <input
+                type="text"
+                name="verificationCode"
+                value={formData.secretaryDetails.verificationCode}
+                onChange={handleSecretaryFieldsChange}
+                className="input"
+                placeholder="Verification Code"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Profile Number
+              </label>
+
+              <input
+                type="text"
+                name="profileNumber"
+                value={formData.secretaryDetails.profileNumber}
+                onChange={handleSecretaryFieldsChange}
+                className="input"
+                placeholder="Profile Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+          </div>
+
+          <div className="flex border-b border-gray-200 mb-6"></div>
+
+          <div className="relative">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <b>Treasurer Name</b>
+            </label>
+
+            <input
+              type="text"
+              name="name"
+              value={formData.treasurerDetails.name}
+              onChange={handleTreasurerFieldsChange}
+              className="input"
+              placeholder="Treasurer Name"
+              required={formData.cooperativeType === "cooperative-owner"}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 max-sm:grid-cols-1">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Member Number
+              </label>
+
+              <input
+                type="text"
+                name="memberNumber"
+                value={formData.treasurerDetails.memberNumber}
+                onChange={handleTreasurerFieldsChange}
+                className="input"
+                placeholder="Member Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Verification Code
+              </label>
+
+              <input
+                type="text"
+                name="verificationCode"
+                value={formData.treasurerDetails.verificationCode}
+                onChange={handleTreasurerFieldsChange}
+                className="input"
+                placeholder="Verification Code"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Profile Number
+              </label>
+
+              <input
+                type="text"
+                name="profileNumber"
+                value={formData.treasurerDetails.profileNumber}
+                onChange={handleTreasurerFieldsChange}
+                className="input"
+                placeholder="Profile Number"
+                required={formData.cooperativeType === "cooperative-owner"}
+              />
+            </div>
+          </div>
         </>
       )}
 
       {(formData.cooperativeType === "smedan" ||
-        formData.cooperativeType === "cooperative-owner" ||
         formData.cooperativeType == "cooperative-member" ||
-        formData.cooperativeType === "solo-cooperative") && (
+        formData.cooperativeType === "solo-cooperative" ||
+        formData.cooperativeType === "business") && (
         <div className="relative">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Member Number
@@ -379,7 +595,6 @@ const CorporateKYCForm = ({
             placeholder="Member Number"
             required={
               formData.cooperativeType === "smedan" ||
-              formData.cooperativeType === "cooperative-owner" ||
               formData.cooperativeType == "cooperative-member" ||
               formData.cooperativeType === "solo-cooperative"
             }
@@ -388,8 +603,9 @@ const CorporateKYCForm = ({
       )}
 
       {(formData.cooperativeType === "smedan" ||
-        formData.cooperativeType === "cooperative-owner" ||
-        formData.cooperativeType === "cooperative-member") && (
+        formData.cooperativeType === "cooperative-member" ||
+        formData.cooperativeType === "solo-cooperative" ||
+        formData.cooperativeType === "business") && (
         <div className="grid grid-cols-2 gap-2 max-sm:grid-cols-1">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -405,7 +621,6 @@ const CorporateKYCForm = ({
               placeholder="Verification Code"
               required={
                 formData.cooperativeType === "smedan" ||
-                formData.cooperativeType === "cooperative-owner" ||
                 formData.cooperativeType === "cooperative-member"
               }
             />
@@ -425,7 +640,6 @@ const CorporateKYCForm = ({
               placeholder="Profile Number"
               required={
                 formData.cooperativeType === "smedan" ||
-                formData.cooperativeType === "cooperative-owner" ||
                 formData.cooperativeType === "cooperative-member"
               }
             />

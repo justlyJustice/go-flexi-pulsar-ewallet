@@ -12,18 +12,9 @@ export const addCorporative = (data: CorporateKyc) => {
     verificationCode: data.verificationCode,
     memberNumber: data.memberNumber,
     accountName: data.accountName,
-    chairmanDetails: {
-      name: data.chairmanName,
-      profileNumber: data.profileNumber,
-      verificationCode: data.verificationCode,
-      memberNumber: data.memberNumber,
-    },
-    secretaryDetails: {
-      name: data.secretaryName,
-      profileNumber: data.profileNumber,
-      verificationCode: data.verificationCode,
-      memberNumber: data.memberNumber,
-    },
+    directorDetails: data.directorDetails,
+    secretaryDetails: data.secretaryDetails,
+    treasurerDetails: data.treasurerDetails,
     cooperativeType: data.cooperativeType,
   };
 

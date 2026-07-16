@@ -38,7 +38,7 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
   // setMethod,
 }) => {
   const { user, updateUser } = useAuthStore();
-  const [step, setStep] = useState<number>(method === "cac" ? 2 : 1);
+  const [step, _setStep] = useState<number>(method === "cac" ? 2 : 1);
   const [formData, setFormData] = useState<CorporateFormData>({
     number: "",
     firstName: "",
@@ -69,20 +69,24 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     cooperativeType: "smedan",
     certificateNumber: "",
     memberNumber: "",
-    chairmanName: "",
-    secretaryName: "",
-    // chairmanDetails: {
-    //   memberNumber: "",
-    //   name: "",
-    //   profileNumber: "",
-    //   verificationCode: "",
-    // },
-    // secretaryDetails: {
-    //   memberNumber: "",
-    //   name: "",
-    //   profileNumber: "",
-    //   verificationCode: "",
-    // },
+    directorDetails: {
+      memberNumber: "",
+      name: "",
+      profileNumber: "",
+      verificationCode: "",
+    },
+    secretaryDetails: {
+      memberNumber: "",
+      name: "",
+      profileNumber: "",
+      verificationCode: "",
+    },
+    treasurerDetails: {
+      memberNumber: "",
+      name: "",
+      profileNumber: "",
+      verificationCode: "",
+    },
   });
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState<"cac" | "corporate">("cac");
@@ -207,15 +211,15 @@ const KYCMethod: React.FC<KYCMethodProps> = ({
     }
 
     if (method === "nin") {
-      // if (user?.balance! < 1000) {
-      //   return toast.error("Insufficient Balance");
-      // }
+      if (user?.balance! < 1000) {
+        return toast.error("Insufficient Balance");
+      }
 
-      // if (balanceAfterDeduction < leastExpectedBalance) {
-      //   return toast.error(
-      //     "User balance must hold at least N5,000 after kyc. Cannot upgrade to Business Tier."
-      //   );
-      // }
+      if (balanceAfterDeduction < leastExpectedBalance) {
+        return toast.error(
+          "User balance must hold at least N5,000 after kyc. Cannot upgrade to Business Tier.",
+        );
+      }
 
       if (step === 1) {
         try {

@@ -1,8 +1,16 @@
 type CooperativeType =
+  | "business"
   | "smedan"
   | "cooperative-owner"
   | "cooperative-member"
   | "solo-cooperative";
+
+type PersonalDetails = {
+  name: string;
+  profileNumber: string;
+  verificationCode: string;
+  memberNumber: string;
+};
 
 export interface CorporateFormData {
   number: string;
@@ -31,9 +39,8 @@ export interface CorporateFormData {
   certificateNumber: string;
 
   // New Properties
-  chairmanName: string;
-  secretaryName: string;
 
-  // chairmanDetails: PersonalDetails;
-  // secretaryDetails: PersonalDetails;
+  directorDetails: PersonalDetails;
+  secretaryDetails: PersonalDetails;
+  treasurerDetails: PersonalDetails;
 }
