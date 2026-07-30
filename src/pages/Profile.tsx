@@ -213,16 +213,18 @@ const Profile: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
-              Add Another Corporative
+              Add Another Cooperative
             </h3>
-            <p className="text-sm text-gray-500">Add new corporate/business.</p>
+            <p className="text-sm text-gray-500">
+              Add new cooperative/business.
+            </p>
           </div>
           <button
             onClick={() => setShowCorporateForm(true)}
             className="btn btn-primary flex items-center gap-2"
           >
             <Plus size={18} />
-            Add Corporate
+            Add Cooperative
           </button>
         </div>
 
@@ -231,7 +233,7 @@ const Profile: React.FC = () => {
             <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between z-10">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Add Corporate Entity
+                  Add Another Cooperative
                 </h3>
                 <button
                   onClick={handleCancelCorporate}
@@ -427,7 +429,7 @@ const Profile: React.FC = () => {
 
               <li className="flex items-start">
                 <DollarSign className="h-3 w-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                <span>Upgrade fee of $15</span>
+                <span>Upgrade fee of $8</span>
               </li>
             </ul>
 
@@ -1097,9 +1099,9 @@ const Profile: React.FC = () => {
                               <button
                                 disabled={verificationMethod === "cac"}
                                 onClick={() => {
-                                  if (user.usdtBalance < 15) {
+                                  if (user.usdtBalance < 8) {
                                     return toast.error(
-                                      "USD balance must have a minimum of $15 before",
+                                      "USD balance must have a minimum of $8 before",
                                     );
                                   }
                                   setVerificationMethod("cac");
