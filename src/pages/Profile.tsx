@@ -1071,6 +1071,10 @@ const Profile: React.FC = () => {
                           <VerificationStatus state={user?.isKYC} type="nin" />
                         )}
 
+                        {user?.tier === "individual" && (
+                          <VerificationStatus state={user?.isKYC} type="nin" />
+                        )}
+
                         {user?.tier === "merchant" &&
                           (user?.cacVerified ||
                             (user.corporateBiz &&

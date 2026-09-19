@@ -55,8 +55,19 @@ export interface User {
   lastDailyReset?: Date;
   lastMonthlyReset?: Date;
   lastTransferTime?: Date;
-  // usdtAddress: string;
   usdtBalance: number;
+  upgradeType?: "BUSINESS_COOPERATIVE" | "SMEDAN_CAC";
+  applicationStatus?:
+    | null
+    | "not_submitted"
+    | "pending"
+    | "approved"
+    | "rejected";
+  rejectionReason?: string;
+  usdAccountNumber?: string;
+  isOnApprovedList?: boolean;
+  approvedAt?: string;
+  claimEnabled?: boolean;
 }
 
 interface AuthState {

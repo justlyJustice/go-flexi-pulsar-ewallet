@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import {
-  // BarChart3,
-  // TrendingUp,
+  Building2,
+  CornerDownRight,
   CreditCard,
   ArrowRightCircle,
   Wallet,
   Send,
   DollarSign,
+  CornerDownLeft,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuthStore } from "../stores/authStore";
@@ -96,7 +97,10 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <motion.div variants={itemVariants} className="md:col-span-2">
+        <motion.div
+          variants={itemVariants}
+          className="md:col-span-2 flex flex-col gap-3"
+        >
           <BalanceCard
             displayBalance={displayBalance()}
             showBalance={showBalance}
@@ -104,6 +108,27 @@ const Dashboard: React.FC = () => {
             currency={currency}
             setCurrency={setCurrency}
           />
+
+          {user?.tier === "merchant" && user?.merchantVerificationCode && (
+            <Link
+              to="/verification/merchant"
+              className="flex items-center p-3 transition-colors bg-white rounded-card shadow-card h-40"
+            >
+              <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                <Building2 className="h-8 w-8" />
+              </div>
+
+              <div className="ml-2">
+                <h1 className="text-xl text-gray-900">Merchant Verification</h1>
+
+                <p className="text-sm text-gray-500">
+                  Verify your merchant details
+                </p>
+              </div>
+
+              <CornerDownLeft className="ml-auto h-5 w-5 text-gray-400" />
+            </Link>
+          )}
         </motion.div>
 
         <motion.div variants={itemVariants} className="md:col-span-1">

@@ -27,6 +27,7 @@ import VirtualCard from "./pages/services/VirtualCard";
 import useTransactions from "./hooks/useTransactions";
 import ConvertUSD from "./pages/ConvertUSD";
 import FundNaira from "./pages/FundNaira";
+import MerchantVerification from "./components/MerchantVerification";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -38,13 +39,13 @@ function App() {
 
     window.addEventListener(
       "beforeunload",
-      import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+      import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload,
     );
 
     return () => {
       window.removeEventListener(
         "beforeunload",
-        import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload
+        import.meta.env.MODE === "development" ? () => {} : handleBeforeUnload,
       );
     };
   }, []);
@@ -103,6 +104,10 @@ function App() {
             <Route path="/add-funds/naira" element={<FundNaira />} />
             <Route path="/add-funds/usd" element={<ConvertUSD />} />
             <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/verification/merchant"
+              element={<MerchantVerification />}
+            />
 
             {/* Bill Payments */}
 

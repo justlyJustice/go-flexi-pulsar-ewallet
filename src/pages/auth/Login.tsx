@@ -55,6 +55,12 @@ const Login: React.FC = () => {
 
       login(
         {
+          applicationStatus: user.applicationStatus,
+          rejectionReason: user.rejectionReason,
+          usdAccountNumber: user.usdAccountNumber,
+          isOnApprovedList: user.isOnApprovedList,
+          approvedAt: user.approvedAt,
+          claimEnabled: user.claimEnabled,
           beneficiaries: user.beneficiaries,
           balance: user.accountBalance,
           bankInformation: {
@@ -90,8 +96,8 @@ const Login: React.FC = () => {
           lastDailyReset: user.lastDailyReset,
           lastMonthlyReset: user.lastMonthlyReset,
           lastTransferTime: user.lastTransferTime,
-          // usdtAddress: user.usdtAddress,/
           usdtBalance: user.usdtBalance,
+          upgradeType: user.upgradeType,
           corporateBiz: user.corporateBiz,
         },
         data?.token!,
