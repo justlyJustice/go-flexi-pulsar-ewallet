@@ -126,28 +126,28 @@ const BillPayment: React.FC = () => {
       switch (billPaymentData.service_id) {
         case "mtn-data":
           const mtnDPlans = MTN.dataPlans.filter(
-            (data) => data.planType === dataPlanType
+            (data) => data.planType === dataPlanType,
           );
           setDataPlans(mtnDPlans);
           setBillPaymentData((prev) => ({ ...prev, amount: "" }));
           break;
         case "airtel-data":
           const airtelDPlans = AIRTEL.dataPlans.filter(
-            (data) => data.planType === dataPlanType
+            (data) => data.planType === dataPlanType,
           );
           setDataPlans(airtelDPlans);
           setBillPaymentData((prev) => ({ ...prev, amount: "" }));
           break;
         case "glo-data":
           const gloDPlans = GLO.dataPlans.filter(
-            (data) => data.planType === dataPlanType
+            (data) => data.planType === dataPlanType,
           );
           setDataPlans(gloDPlans);
           setBillPaymentData((prev) => ({ ...prev, amount: "" }));
           break;
         case "etisalat-data":
           const etisalatDataPlans = NINE_MOBILE.dataPlans.filter(
-            (data) => data.planType === dataPlanType
+            (data) => data.planType === dataPlanType,
           );
           setDataPlans(etisalatDataPlans);
           setBillPaymentData((prev) => ({ ...prev, amount: "" }));
@@ -160,7 +160,7 @@ const BillPayment: React.FC = () => {
     if (billPaymentData.variation_code !== "") {
       if (billType === "data") {
         const currentDataPlan = dataPlans.filter(
-          (dplan) => dplan.variation_code === billPaymentData.variation_code
+          (dplan) => dplan.variation_code === billPaymentData.variation_code,
         )[0];
         setBillPaymentData((prev) => ({
           ...prev,
@@ -172,7 +172,7 @@ const BillPayment: React.FC = () => {
       if (billType === "cable-tv") {
         const currentCablePlan = variations.filter(
           (variation) =>
-            variation.variation_code === billPaymentData.variation_code
+            variation.variation_code === billPaymentData.variation_code,
         )[0];
 
         setBillPaymentData((prev) => ({
@@ -232,7 +232,7 @@ const BillPayment: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
 

@@ -1,16 +1,25 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore, UserTier } from "../stores/authStore";
 
-const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated } = useAuthStore();
+type ProtectedRouteProps = {
+  children: React.ReactNode;
+  tier?: UserTier | UserTier[];
+};
+
+const ProtectedRoute = ({ children, tier }: ProtectedRouteProps) => {
+  const { isAuthenticated, user } = useAuthStore();
 
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
-  return <Outlet />;
+  if (tier && !tier.includes(user?.tier!)) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

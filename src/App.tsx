@@ -27,7 +27,8 @@ import VirtualCard from "./pages/services/VirtualCard";
 import useTransactions from "./hooks/useTransactions";
 import ConvertUSD from "./pages/ConvertUSD";
 import FundNaira from "./pages/FundNaira";
-import MerchantVerification from "./components/MerchantVerification";
+import MerchantVerification from "./pages/MerchantVerification";
+import MerchantClaim from "./pages/MerchantClaim";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -98,45 +99,107 @@ function App() {
           }
         />
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/add-funds/naira" element={<FundNaira />} />
-            <Route path="/add-funds/usd" element={<ConvertUSD />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route
-              path="/verification/merchant"
-              element={<MerchantVerification />}
-            />
+        {/* <Route element={<ProtectedRoute />}> */}
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Bill Payments */}
+          <Route
+            path="/add-funds/naira"
+            element={
+              <ProtectedRoute>
+                <FundNaira />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route path="/bill-payment/airtime" element={<BillPayment />} />
-            <Route path="/bill-payment/data" element={<BillPayment />} />
+          <Route
+            path="/add-funds/usd"
+            element={
+              <ProtectedRoute>
+                <ConvertUSD />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/services/virtual-usd-card"
-              element={
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/merchant/verification"
+            element={
+              <ProtectedRoute tier="merchant">
+                <MerchantVerification />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/merchant/claim"
+            element={
+              <ProtectedRoute tier="merchant">
+                <MerchantClaim />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Bill Payments */}
+
+          <Route
+            path="/bill-payment/airtime"
+            element={
+              <ProtectedRoute>
+                <BillPayment />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/bill-payment/data"
+            element={
+              <ProtectedRoute>
+                <BillPayment />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/services/virtual-usd-card"
+            element={
+              <ProtectedRoute tier={["business", "merchant"]}>
                 <VirtualCard
                   cardType="usd"
                   // walletBalance={500}
                 />
-              }
-            />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* <Route
+          {/* <Route
               path="/bill-payment/recharge-card"
               element={<BillPayment />}
             /> */}
-            {/* <Route path="/bill-payment/cable-tv" element={<BillPayment />} />
+          {/* <Route path="/bill-payment/cable-tv" element={<BillPayment />} />
             <Route path="/bill-payment/electricity" element={<BillPayment />} /> */}
-            {/* <Route
+          {/* <Route
               path="/bill-payment/education-pin"
               element={<BillPayment />}
             /> */}
 
-            {/* Financial Services */}
-            {/* <Route
+          {/* Financial Services */}
+          {/* <Route
               path="/services/virtual-naira-card"
               element={
                 <VirtualCard
@@ -147,16 +210,23 @@ function App() {
             />
 
              */}
-            {/* <Route
+          {/* <Route
               path="/services/currency-exchange"
               element={<CurrencyExchange />}
             /> */}
-            {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
+          {/* <Route path="/services/usdt-funding" element={<USDTFunding />} />
             <Route path="/services/bulk-sms" element={<BulkSMS />} /> */}
-            {/* <Route path="/profile" element={<Profile />} /> */}
-            <Route path="/transfer" element={<Transfer />} />
-          </Route>
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          <Route
+            path="/transfer"
+            element={
+              <ProtectedRoute tier={["business", "merchant"]}>
+                <Transfer />
+              </ProtectedRoute>
+            }
+          />
         </Route>
+        {/* </Route> */}
 
         <Route
           path="/"

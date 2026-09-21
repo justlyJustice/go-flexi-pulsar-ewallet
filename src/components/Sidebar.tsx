@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
+  BaggageClaim,
+  DollarSign,
+  Currency,
   LayoutDashboard,
   Wallet,
   SendHorizonal,
@@ -15,9 +18,34 @@ import {
   CreditCard,
   FolderKanban,
   BadgeDollarSign,
+  Users,
+  Shield,
+  ShieldCheck,
 } from "lucide-react";
-import { useAuthStore } from "../stores/authStore";
+import { KYCStatus, useAuthStore, UserTier } from "../stores/authStore";
 import { KycModal } from "./KycModal";
+
+type NavSubItem = {
+  path: string;
+  icon: JSX.Element;
+  label: string;
+  isActive: boolean;
+};
+
+type SidebarNavItem = {
+  path?: string | undefined;
+  icon: JSX.Element;
+  label: string;
+  isActive?: boolean;
+  type?: string | "dropdown";
+  name?: string;
+  isOpen?: boolean;
+  toggle?: () => void;
+  subItems?: NavSubItem[];
+  onClick?: () => void;
+  tier?: UserTier | UserTier[];
+  requiredKYC?: KYCStatus;
+};
 
 const Sidebar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,13 +66,13 @@ const Sidebar: React.FC = () => {
   const billPaymentItems = [
     {
       path: "/bill-payment/airtime",
-      icon: <Smartphone size={18} />,
+      icon: <Smartphone size={15} />,
       label: "Airtime",
       isActive: location.pathname === "/bill-payment/airtime",
     },
     {
       path: "/bill-payment/data",
-      icon: <Wifi size={18} />,
+      icon: <Wifi size={15} />,
       label: "Data",
       isActive: location.pathname === "/bill-payment/data",
     },
@@ -53,7 +81,7 @@ const Sidebar: React.FC = () => {
   const financialServicesItems = [
     {
       path: "/services/virtual-usd-card",
-      icon: <CreditCard size={22} />,
+      icon: <CreditCard size={15} />,
       label: "USD Virtual Card",
       isActive: location.pathname === "/services/virtual-usd-card",
     },
@@ -62,48 +90,41 @@ const Sidebar: React.FC = () => {
   const addFundsItems = [
     {
       path: "/add-funds/naira",
-      icon: <CreditCard size={22} />,
+      icon: <Currency size={15} />,
       label: "Fund Naira",
       isActive: location.pathname === "/add-funds/naira",
     },
     {
       path: "/add-funds/usd",
-      icon: <CreditCard size={22} />,
+      icon: <DollarSign size={15} />,
       label: "Convert USD",
       isActive: location.pathname === "/add-funds/usd",
     },
   ];
 
-  const navItems = [
+  const navItems: SidebarNavItem[] = [
     {
       path: "/dashboard",
       icon: <LayoutDashboard size={20} />,
       label: "Dashboard",
       isActive: location.pathname === "/dashboard",
     },
-
     {
       type: "dropdown",
       name: "addFunds",
       label: "Add Funds",
-      icon: <Wallet size={30} />,
+      icon: <Wallet size={20} />,
       isOpen: openDropdown === "addFunds",
       toggle: () => toggleDropdown("addFunds"),
-      items: addFundsItems,
+      subItems: addFundsItems,
     },
-
     {
-      path:
-        user?.isKYC === "verified" || user?.tier === "business"
-          ? "/transfer"
-          : "#",
+      path: "/transfer",
+      requiredKYC: "verified",
       icon: <SendHorizonal size={20} />,
       label: "Transfer",
-      onClick:
-        user?.isKYC === "verified" || user?.tier === "business"
-          ? () => {}
-          : () => setIsOpen(true),
       isActive: location.pathname === "/transfer",
+      tier: ["business", "merchant"],
     },
     {
       type: "dropdown",
@@ -112,21 +133,42 @@ const Sidebar: React.FC = () => {
       icon: <FolderKanban size={20} />,
       isOpen: openDropdown === "billPayment",
       toggle: () => toggleDropdown("billPayment"),
-      items: billPaymentItems,
+      subItems: billPaymentItems,
     },
     {
       type: "dropdown",
       name: "financialServices",
       label: "Financial Services",
-      icon: <BadgeDollarSign size={30} />,
-      isOpen:
-        user?.isKYC === "verified" ||
-        (user?.tier === "business" && openDropdown === "financialServices"),
-      toggle:
-        user?.isKYC === "verified" || user?.tier === "business"
-          ? () => toggleDropdown("financialServices")
-          : () => {},
-      items: financialServicesItems,
+      icon: <BadgeDollarSign size={20} />,
+      isOpen: openDropdown === "financialServices",
+      toggle: () => toggleDropdown("financialServices"),
+      subItems: financialServicesItems,
+      requiredKYC: "verified",
+      tier: ["business", "merchant"],
+    },
+    {
+      type: "dropdown",
+      name: "merchants",
+      label: "Merchants",
+      icon: <Users size={20} />,
+      isOpen: openDropdown === "merchants",
+      toggle: () => toggleDropdown("merchants"),
+      subItems: [
+        {
+          path: "/merchant/verification",
+          icon: <ShieldCheck size={15} />,
+          label: "Verification",
+          isActive: location.pathname === "/merchant/verification",
+        },
+        {
+          path: "/merchant/claim",
+          icon: <BaggageClaim size={15} />,
+          label: "Claim",
+          isActive: location.pathname === "/merchant/claim",
+        },
+      ],
+      tier: "merchant",
+      requiredKYC: "verified",
     },
     {
       path: "/profile",
@@ -136,56 +178,61 @@ const Sidebar: React.FC = () => {
     },
   ];
 
-  const renderDropdown = (item: any, isMobile: boolean = false) => (
-    <div key={item.name} className="space-y-1">
-      <button
-        onClick={item.toggle}
-        className={`flex items-center justify-between w-full ${
-          isMobile ? "px-3 py-2" : "px-3 py-2"
-        } rounded-lg transition-colors ${
-          item.items.some((subItem: any) => subItem.isActive)
-            ? "bg-primary-50 text-primary-700"
-            : "text-gray-700 hover:bg-gray-100"
-        }`}
-      >
-        <div className="flex items-center">
-          {item.icon}
-          <span
-            className={`${isMobile ? "ml-2" : "ml-3"} text-sm whitespace-nowrap`}
-          >
-            {item.label}
-          </span>
-        </div>
-        {item.isOpen ? <ChevronUp size={22} /> : <ChevronDown size={22} />}
-      </button>
+  const renderDropdown = (item: SidebarNavItem, isMobile: boolean = false) => {
+    if (!item.subItems) return null;
 
-      {item.isOpen && (
-        <div className={isMobile ? "ml-8 space-y-1" : "ml-8 space-y-1"}>
-          {item.items.map((subItem: any, j: number) => (
-            <NavLink
-              key={j}
-              to={subItem.path}
-              onClick={isMobile ? closeMobileMenu : undefined}
-              className={`flex items-center ${
-                isMobile ? "p-2" : "px-3 py-1"
-              } rounded-lg transition-colors ${
-                subItem.isActive
-                  ? "bg-primary-50 text-primary-700"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+    return (
+      <div key={item.name} className="space-y-1">
+        <button
+          onClick={item.toggle}
+          className={`flex items-center justify-between w-full ${
+            isMobile ? "px-3 py-2" : "px-3 py-2"
+          } rounded-lg transition-colors ${
+            item.subItems.some((subItem: any) => subItem.isActive)
+              ? "bg-primary-50 text-primary-700"
+              : "text-gray-700 hover:bg-gray-100"
+          }`}
+        >
+          <div className="flex items-center">
+            {item.icon}
+
+            <span
+              className={`${isMobile ? "ml-2" : "ml-1"} text-sm whitespace-nowrap`}
             >
-              {subItem.icon}
-              <span
-                className={`${isMobile ? "ml-2" : "ml-3"} text-sm whitespace-nowrap`}
+              {item.label}
+            </span>
+          </div>
+          {item.isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+        </button>
+
+        {item.isOpen && (
+          <div className="ml-8 space-y-1">
+            {item.subItems.map((subItem: NavSubItem, j: number) => (
+              <NavLink
+                key={j}
+                to={subItem.path}
+                onClick={isMobile ? closeMobileMenu : undefined}
+                className={`flex items-center ${
+                  isMobile ? "p-2" : "px-3 py-1"
+                } rounded-lg transition-colors ${
+                  subItem.isActive
+                    ? "bg-primary-50 text-primary-700"
+                    : "text-gray-700 hover:bg-gray-100"
+                }`}
               >
-                {subItem.label}
-              </span>
-            </NavLink>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+                {subItem.icon}
+                <span
+                  className={`${isMobile ? "ml-2" : "ml-1"} text-sm whitespace-nowrap`}
+                >
+                  {subItem.label}
+                </span>
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -218,6 +265,14 @@ const Sidebar: React.FC = () => {
           <div className="p-4">
             <nav className="mt-5">
               {navItems.map((item, i) => {
+                if (item.tier && !item.tier.includes(user?.tier!)) {
+                  return null;
+                }
+
+                if (item.requiredKYC && user?.isKYC !== item.requiredKYC) {
+                  return null;
+                }
+
                 if (item.type === "dropdown") {
                   return renderDropdown(item, true);
                 }
@@ -239,7 +294,7 @@ const Sidebar: React.FC = () => {
                     }
                   >
                     {item.icon}
-                    <span className="ml-3 text-sm whitespace-nowrap">
+                    <span className="ml-2 text-sm whitespace-nowrap">
                       {item.label}
                     </span>
                   </NavLink>
@@ -265,16 +320,24 @@ const Sidebar: React.FC = () => {
       <div className="hidden lg:flex lg:flex-shrink-0">
         <div className="flex flex-col w-64">
           <div className="flex flex-col h-0 flex-1 bg-white border-r border-gray-200">
-            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-5">
+            <div className="flex-1 flex flex-col pt-3 pb-4 overflow-y-auto">
+              <div className="flex items-center flex-shrink-0 px-4 mb-3">
                 <Wallet className="h-8 w-8 text-primary-600" />
                 <span className="ml-2 text-xl font-bold text-gray-900">
                   Rulsar
                 </span>
               </div>
 
-              <nav className="flex-1 px-4 space-y-1">
+              <nav className="flex-1 px-1 space-y-1">
                 {navItems.map((item, i) => {
+                  if (item.tier && !item.tier.includes(user?.tier!)) {
+                    return null;
+                  }
+
+                  if (item.requiredKYC && user?.isKYC !== item.requiredKYC) {
+                    return null;
+                  }
+
                   if (item.type === "dropdown") {
                     return renderDropdown(item);
                   }
@@ -293,7 +356,7 @@ const Sidebar: React.FC = () => {
                       }
                     >
                       {item.icon}
-                      <span className="ml-3 text-sm whitespace-nowrap">
+                      <span className="ml-1 text-sm whitespace-nowrap">
                         {item.label}
                       </span>
                     </NavLink>

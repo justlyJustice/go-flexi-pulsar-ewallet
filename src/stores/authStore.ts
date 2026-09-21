@@ -18,6 +18,10 @@ type CorporateBiz = {
   bankName: string;
 };
 
+export type UserTier = "individual" | "merchant" | "business";
+
+export type KYCStatus = "pending" | "verified" | "unverified";
+
 export interface User {
   id: string;
   idCardType?: string;
@@ -44,10 +48,10 @@ export interface User {
   bvnVerified: boolean;
   ninVerified: boolean;
   isBlocked: boolean;
-  isKYC: "pending" | "verified" | "unverified";
+  isKYC: KYCStatus;
   vusd_card?: string;
   beneficiaries: Beneficiary[] | [];
-  tier: "individual" | "merchant" | "business";
+  tier: UserTier;
   dailyTransferAmount: number;
   dailyTransferLimit: number;
   monthlyTransferAmount: number;

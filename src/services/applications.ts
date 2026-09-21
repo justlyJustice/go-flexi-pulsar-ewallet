@@ -1,5 +1,6 @@
-import { Document } from "../components/MerchantVerification";
 import client from "./client";
+
+import { Document } from "../pages/MerchantVerification";
 
 // Map frontend document IDs to backend field names
 const FIELD_MAP: Record<string, string> = {
@@ -24,7 +25,7 @@ export const uploadDWCApplication = (documents: Document[]) => {
     }
   });
 
-  return client.post<{ data: any; message: string; errro: string }>(
+  return client.post<{ data: any; message: string; errror: string }>(
     "/applications",
     formData,
     {
