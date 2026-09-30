@@ -19,6 +19,7 @@ export const uploadDWCApplication = (documents: Document[]) => {
   documents.forEach((doc) => {
     if (doc.file) {
       const fieldName = FIELD_MAP[doc.id];
+
       if (fieldName) {
         formData.append(fieldName, doc.file);
       }

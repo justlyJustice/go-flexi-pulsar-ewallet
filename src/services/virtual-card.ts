@@ -21,7 +21,7 @@ type FundCardDetails = {
 
 export const createVirtualCard = (
   type: string,
-  { amount, card_type, customerEmail, name_on_card }: CardDetails
+  { amount, card_type, customerEmail, name_on_card }: CardDetails,
 ) => {
   return type === "usd"
     ? client.post<{ data: any; success: boolean; error: string }>(
@@ -32,7 +32,7 @@ export const createVirtualCard = (
           customerEmail,
           name_on_card,
           // mode,
-        }
+        },
       )
     : client.post<{ data: any; success: boolean; error: string }>("/");
 };
@@ -40,12 +40,12 @@ export const createVirtualCard = (
 export const getVirtualCardDetails = () =>
   client.post<{ data: { success: boolean; response: any }; error: string }>(
     `${ROUTE}/card-details`,
-    { card_id: user?.vusd_card, mode }
+    { card_id: user?.vusd_card, mode },
   );
 
 export const fundVirtualCard = (
   cardType: string,
-  { amount }: FundCardDetails
+  { amount }: FundCardDetails,
 ) =>
   client.post(
     `/virtual-card/${cardType === "usd" ? "fund-usd" : "fund-naira"}`,
@@ -53,12 +53,12 @@ export const fundVirtualCard = (
       amount,
       card_id: user?.vusd_card,
       mode,
-    }
+    },
   );
 
 export const getExchangeRates = () =>
   client.get<{ success: boolean; data: { rate: string } }>(
-    "/virtual-card/exchange-rate"
+    "/virtual-card/exchange-rate",
   );
 
 type Customer = {
@@ -99,7 +99,7 @@ function formatDate(dateString: string) {
 
 export const createCardCustomer = (
   data: Customer,
-  { idImage, userPhoto }: { idImage: string; userPhoto: string }
+  { idImage, userPhoto }: { idImage: string; userPhoto: string },
 ) => {
   const {
     houseNumber,
@@ -122,8 +122,8 @@ export const createCardCustomer = (
     success: boolean;
   }>(
     `${ROUTE}/create-card-customer?firstName=${firstName}&lastName=${lastName}&userPhoto=${userPhoto}&idImage=${idImage}&country=${country}&zipCode=${zipCode}&line1=${line1}&state=${state}&city=${city}&dateOfBirth=${formatDate(
-      dateOfBirth
-    )}&houseNumber=${houseNumber}&idNumber=${idNumber}&idType=${idType}`
+      dateOfBirth,
+    )}&houseNumber=${houseNumber}&idNumber=${idNumber}&idType=${idType}`,
   );
 };
 

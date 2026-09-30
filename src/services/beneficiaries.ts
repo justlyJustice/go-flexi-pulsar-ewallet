@@ -1,6 +1,6 @@
 import client from "./client";
 
-import { Beneficiary } from "../stores/authStore";
+import { Beneficiary } from "../types/user";
 
 type BeneficiaryData = {
   bank_code: string;

@@ -1,56 +1,9 @@
-interface DataPlan {
-  planTypes: { value: string; label: string }[];
-}
-
-interface MtnDataPlan extends DataPlan {
-  dataPlans: {
-    variation_code: string;
-    name: string;
-    variation_amount: string;
-    fixedPrice: string;
-    planType: "daily" | "weekly" | "monthly" | "xtra-data";
-  }[];
-}
-
-interface AirtelDataPlan extends DataPlan {
-  dataPlans: {
-    variation_code: string;
-    name: string;
-    variation_amount: string;
-    fixedPrice: string;
-    planType: "daily" | "weekly" | "monthly" | "mifi-plan" | "yearly";
-  }[];
-}
-
-interface GloDataPlan extends DataPlan {
-  dataPlans: {
-    variation_code: string;
-    name: string;
-    variation_amount: string;
-    fixedPrice: string;
-    planType:
-      | "daily"
-      | "weekly"
-      | "monthly"
-      | "weekend"
-      | "special"
-      | "sunday"
-      | "mega"
-      | "tv"
-      | "social"
-      | "campus-booster"
-      | "sme";
-  }[];
-}
-interface NineMobileDataPlan extends DataPlan {
-  dataPlans: {
-    variation_code: string;
-    name: string;
-    variation_amount: string;
-    fixedPrice: string;
-    planType: "daily" | "monthly" | "social";
-  }[];
-}
+import {
+  AirtelDataPlan,
+  GloDataPlan,
+  MtnDataPlan,
+  NineMobileDataPlan,
+} from "../types/constants";
 
 export const MTN: MtnDataPlan = {
   planTypes: [

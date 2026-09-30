@@ -14,11 +14,12 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+import LoadingOverlay from "../components/LoadingOverlay";
+
 import { useAuthStore } from "../stores/authStore";
 import { formatCurrency } from "../utils/formatters";
 import { fundUsdAccount } from "../services/add-funds";
 import { getExchangeRates } from "../services/virtual-card";
-import LoadingOverlay from "../components/LoadingOverlay";
 
 type ConversionDirection = "NGN_TO_USD" | "USD_TO_NGN";
 type FundingStatus = "pending" | "successful" | "failed" | "idle";

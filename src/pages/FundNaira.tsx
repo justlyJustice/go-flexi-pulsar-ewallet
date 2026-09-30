@@ -11,7 +11,7 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import { formatCurrency } from "../utils/formatters";
 import { getUpdatedUser } from "../services/add-funds";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 const FundNaira: React.FC = () => {
   const navigate = useNavigate();
@@ -71,6 +71,7 @@ const FundNaira: React.FC = () => {
     const verifyExtended = async () => {
       try {
         const amountValue = parseFloat(nairaAmount);
+
         let verified = false;
         const startTime = Date.now();
         const extendedTimeout = 40000;
@@ -93,7 +94,7 @@ const FundNaira: React.FC = () => {
         setTransactionStatus("failed");
         setError(
           "We couldn't verify your payment. Please check your bank account. " +
-            "If the payment was made, it may still process shortly."
+            "If the payment was made, it may still process shortly.",
         );
       } catch (error) {
         setShowExtendedWait(false);

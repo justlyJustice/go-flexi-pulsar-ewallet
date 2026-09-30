@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 
 import { loginUser } from "../../services/auth";
 import { useAuthStore } from "../../stores/authStore";
+
 import useSubmit from "../../hooks/useSubmit";
 
 const Login: React.FC = () => {
@@ -56,7 +57,7 @@ const Login: React.FC = () => {
       login(
         {
           applicationStatus: user.applicationStatus,
-          rejectionReason: user.rejectionReason,
+          rejectionReason: user.rejectionReason ?? undefined,
           usdAccountNumber: user.usdAccountNumber,
           isOnApprovedList: user.isOnApprovedList,
           approvedAt: user.approvedAt,

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Repeat, ArrowRight, Loader } from "lucide-react";
+import { Repeat, Loader } from "lucide-react";
 import { formatCurrency } from "../../utils/formatters";
 
 const CurrencyExchange: React.FC = () => {
@@ -34,7 +34,7 @@ const CurrencyExchange: React.FC = () => {
       const rateKey = `${fromCurrency}-${toCurrency}`;
       setExchangeRate(rates[rateKey] || 0);
       setIsLoading(false);
-    }, 1000);
+    }, 800);
   };
 
   const calculateConvertedAmount = () => {

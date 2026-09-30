@@ -1,13 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+
 import { getTransactions as getUserTransactions } from "./authStore";
 
-export type TransactionType =
-  | "transfer"
-  | "deposit"
-  | "credit"
-  | "usd_transaction"
-  | "debit";
+import { Transaction, Transactions } from "../types/transaction";
+
 // "deposit" | "transfer-in" | "transfer-out";
 
 // interface Transaction {
@@ -21,23 +18,11 @@ export type TransactionType =
 //   status: "completed" | "pending" | "failed";
 // }
 
-export type Transaction = {
-  id: string;
-  currency?: "USD" | "NGN";
-  description?: string;
-  createdAt: string;
-  type: TransactionType;
-  amount: string;
-  netAmount?: string;
-};
-
-export type Transactions = Transaction[];
-
 interface TransactionState {
-  transactions: Transaction[];
+  transactions: Transactions;
   addTransaction: (transaction: Omit<Transaction, "_id" | "createdAt">) => void;
   getTransactions: () => Transaction[];
-  setTransactions: (transactions: Transaction[]) => void;
+  setTransactions: (transactions: Transactions) => void;
 }
 
 export const useTransactionStore = create<TransactionState>()(

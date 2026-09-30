@@ -22,13 +22,17 @@ export interface Document {
   name: string;
   required: boolean;
   description: string;
+  /** Single file for single-upload slots */
   file: File | null;
+  /** Multiple files for multi-upload slots */
+  files?: File[];
   uploaded: boolean;
   status: "pending" | "uploading" | "uploaded" | "error";
   /** Backend field name for multipart upload */
   fieldName: string;
   /** Whether multiple files are allowed */
   multiple?: boolean;
+  /** Max number of files (only relevant when multiple is true) */
   maxCount?: number;
 }
 
@@ -106,10 +110,13 @@ const createInitialDocuments = (): Document[] => [
     fieldName: "businessRegistrationDocuments",
     name: "Business Registration Documents",
     required: false,
-    description: "CAC registration or equivalent (optional, single file)",
+    description: "CAC registration documents or equivalent (up to 5 files)",
     file: null,
+    files: [],
     uploaded: false,
     status: "pending",
+    multiple: true,
+    maxCount: 5,
   },
 ];
 
@@ -123,10 +130,10 @@ const MerchantVerification = () => {
   const [isComplete, setIsComplete] = useState(false);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
-  // Default to "not_submitted" so new users see the upload form
   const applicationStatus: ApplicationStatus =
     (user?.applicationStatus as ApplicationStatus) ?? "not_submitted";
 
+  // ================= SINGLE FILE HANDLER =================
   const handleFileChange = (documentId: string, file: File | null) => {
     if (!file) return;
 
@@ -136,11 +143,12 @@ const MerchantVerification = () => {
     }
 
     const allowedTypes = [
-      "application/pdf",
       "image/jpeg",
       "image/png",
       "image/jpg",
+      // "application/pdf",
     ];
+
     if (!allowedTypes.includes(file.type)) {
       toast.error("Please upload PDF, JPG, or PNG files only");
       return;
@@ -154,7 +162,6 @@ const MerchantVerification = () => {
       ),
     );
 
-    // Simulated upload delay for UI feedback
     setTimeout(() => {
       setDocuments((prev) =>
         prev.map((doc) =>
@@ -164,9 +171,100 @@ const MerchantVerification = () => {
         ),
       );
       toast.success(`${docName} added successfully`);
-    }, 800);
+    }, 500);
   };
 
+  // ================= MULTI FILE HANDLER =================
+  const handleMultipleFileChange = (
+    documentId: string,
+    newFiles: FileList | null,
+  ) => {
+    if (!newFiles || newFiles.length === 0) return;
+
+    const doc = documents.find((d) => d.id === documentId);
+    if (!doc) return;
+
+    const maxCount = doc.maxCount ?? 5;
+    const currentFiles = doc.files || [];
+
+    const allowedTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      // "application/pdf",
+    ];
+
+    const validNewFiles: File[] = [];
+
+    for (let i = 0; i < newFiles.length; i++) {
+      const file = newFiles[i];
+
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} exceeds the 10MB limit`);
+        continue;
+      }
+
+      if (!allowedTypes.includes(file.type)) {
+        toast.error(`${file.name} is not a supported file type`);
+        continue;
+      }
+
+      validNewFiles.push(file);
+    }
+
+    if (validNewFiles.length === 0) return;
+
+    const combined = [...currentFiles, ...validNewFiles];
+
+    if (combined.length > maxCount) {
+      toast.error(`You can only upload up to ${maxCount} files`);
+      return;
+    }
+
+    setDocuments((prev) =>
+      prev.map((d) =>
+        d.id === documentId
+          ? {
+              ...d,
+              files: combined,
+              uploaded: combined.length > 0,
+              status: "uploaded",
+            }
+          : d,
+      ),
+    );
+
+    toast.success(
+      `${validNewFiles.length} file(s) added (${combined.length}/${maxCount})`,
+    );
+
+    // Reset input so the same file can be selected again if removed
+    if (fileInputRefs.current[documentId]) {
+      fileInputRefs.current[documentId]!.value = "";
+    }
+  };
+
+  // ================= REMOVE MULTIPLE FILE =================
+  const handleRemoveMultipleFile = (documentId: string, fileIndex: number) => {
+    setDocuments((prev) =>
+      prev.map((doc) => {
+        if (doc.id !== documentId) return doc;
+
+        const updatedFiles = (doc.files || []).filter(
+          (_, idx) => idx !== fileIndex,
+        );
+
+        return {
+          ...doc,
+          files: updatedFiles,
+          uploaded: updatedFiles.length > 0,
+          status: updatedFiles.length > 0 ? "uploaded" : "pending",
+        };
+      }),
+    );
+  };
+
+  // ================= REMOVE SINGLE FILE =================
   const handleRemoveFile = (documentId: string) => {
     setDocuments((prev) =>
       prev.map((doc) =>
@@ -175,11 +273,13 @@ const MerchantVerification = () => {
           : doc,
       ),
     );
+
     if (fileInputRefs.current[documentId]) {
       fileInputRefs.current[documentId]!.value = "";
     }
   };
 
+  // ================= SUBMIT =================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -200,11 +300,10 @@ const MerchantVerification = () => {
     try {
       const res = await uploadDWCApplication(documents);
 
-      if (res.status !== 200 && res.status !== 201) {
-        toast.error(
+      if (!res.ok) {
+        return toast.error(
           res.data?.message || "Something went wrong. Please try again.",
         );
-        return;
       }
 
       setIsComplete(true);
@@ -267,7 +366,6 @@ const MerchantVerification = () => {
     },
   };
 
-  // Treat isComplete as an optimistic pending state
   const showPending = applicationStatus === "pending" || isComplete;
   const showApproved =
     applicationStatus === "approved" || applicationStatus === "completed";
@@ -415,90 +513,159 @@ const MerchantVerification = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-4">
-                {documents.map((doc) => (
-                  <motion.div
-                    key={doc.id}
-                    variants={itemVariants}
-                    className={`border rounded-lg p-4 transition-all duration-200 ${
-                      doc.uploaded
-                        ? "border-green-200 bg-green-50"
-                        : "border-gray-200 hover:border-primary-300"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center">
-                          <FileText className="h-5 w-5 text-gray-400 mr-2" />
-                          <h3 className="text-sm font-medium text-gray-900">
-                            {doc.name}
-                            {doc.required && (
-                              <span className="text-red-500 ml-1">*</span>
-                            )}
-                          </h3>
-                        </div>
-                        <p className="mt-1 text-sm text-gray-500">
-                          {doc.description}
-                        </p>
-                        {doc.file && (
-                          <p className="mt-1 text-xs text-gray-400">
-                            {doc.file.name} ({(doc.file.size / 1024).toFixed(2)}{" "}
-                            KB)
+                {documents.map((doc) => {
+                  const isMultiple = doc.multiple === true;
+                  const currentCount = isMultiple
+                    ? (doc.files || []).length
+                    : doc.file
+                      ? 1
+                      : 0;
+                  const maxCount = doc.maxCount ?? 5;
+
+                  return (
+                    <motion.div
+                      key={doc.id}
+                      variants={itemVariants}
+                      className={`border rounded-lg p-4 transition-all duration-200 ${
+                        doc.uploaded
+                          ? "border-green-200 bg-green-50"
+                          : "border-gray-200 hover:border-primary-300"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center">
+                            <FileText className="h-5 w-5 text-gray-400 mr-2" />
+                            <h3 className="text-sm font-medium text-gray-900">
+                              {doc.name}
+                              {doc.required && (
+                                <span className="text-red-500 ml-1">*</span>
+                              )}
+                            </h3>
+                          </div>
+                          <p className="mt-1 text-sm text-gray-500">
+                            {doc.description}
                           </p>
-                        )}
+                        </div>
+
+                        <div className="flex items-center space-x-2 ml-4">
+                          {doc.uploaded && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              Uploaded
+                            </span>
+                          )}
+                          {getStatusIcon(doc.status)}
+                        </div>
                       </div>
 
-                      <div className="flex items-center space-x-2 ml-4">
-                        {doc.uploaded && (
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            Uploaded
-                          </span>
-                        )}
-                        {getStatusIcon(doc.status)}
-                      </div>
-                    </div>
+                      {/* ---- MULTIPLE FILES LIST ---- */}
+                      {isMultiple && (
+                        <div className="mt-3 space-y-2">
+                          {(doc.files || []).map((file, idx) => (
+                            <div
+                              key={`${doc.id}-${idx}`}
+                              className="flex items-center justify-between bg-white border border-gray-200 rounded-md px-3 py-2"
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <FileText className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                                <span className="text-xs text-gray-700 truncate">
+                                  {file.name}
+                                </span>
+                                <span className="text-xs text-gray-400 flex-shrink-0">
+                                  ({(file.size / 1024).toFixed(2)} KB)
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRemoveMultipleFile(doc.id, idx)
+                                }
+                                className="text-red-600 hover:text-red-700 text-xs font-medium flex items-center flex-shrink-0"
+                              >
+                                <X className="h-3 w-3 mr-1" />
+                                Remove
+                              </button>
+                            </div>
+                          ))}
 
-                    <div className="mt-3 flex items-center space-x-3">
-                      <input
-                        type="file"
-                        id={doc.id}
-                        ref={(el) => {
-                          fileInputRefs.current[doc.id] = el;
-                        }}
-                        className="hidden"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] || null;
-                          handleFileChange(doc.id, file);
-                        }}
-                      />
+                          <p className="text-xs text-gray-500">
+                            {currentCount}/{maxCount} files uploaded
+                          </p>
+                        </div>
+                      )}
 
-                      <button
-                        type="button"
-                        onClick={() => fileInputRefs.current[doc.id]?.click()}
-                        disabled={doc.status === "uploading"}
-                        className={`btn-outline text-sm px-3 py-1.5 flex items-center ${
-                          doc.status === "uploading"
-                            ? "opacity-70 cursor-not-allowed"
-                            : ""
-                        }`}
-                      >
-                        <Upload className="h-3 w-3 mr-1" />
-                        {doc.uploaded ? "Replace" : "Upload"}
-                      </button>
+                      {/* ---- SINGLE FILE INFO ---- */}
+                      {!isMultiple && doc.file && (
+                        <p className="mt-1 text-xs text-gray-400">
+                          {doc.file.name} ({(doc.file.size / 1024).toFixed(2)}{" "}
+                          KB)
+                        </p>
+                      )}
 
-                      {doc.uploaded && (
+                      <div className="mt-3 flex items-center space-x-3">
+                        <input
+                          type="file"
+                          id={doc.id}
+                          ref={(el) => {
+                            fileInputRefs.current[doc.id] = el;
+                          }}
+                          className="hidden"
+                          accept=".jpg,.jpeg,.png"
+                          multiple={isMultiple}
+                          onChange={(e) => {
+                            if (isMultiple) {
+                              handleMultipleFileChange(doc.id, e.target.files);
+                            } else {
+                              const file = e.target.files?.[0] || null;
+                              handleFileChange(doc.id, file);
+                            }
+                          }}
+                        />
+
                         <button
                           type="button"
-                          onClick={() => handleRemoveFile(doc.id)}
-                          className="text-red-600 hover:text-red-700 text-sm font-medium flex items-center"
+                          onClick={() => fileInputRefs.current[doc.id]?.click()}
+                          disabled={
+                            doc.status === "uploading" ||
+                            (isMultiple && currentCount >= maxCount)
+                          }
+                          className={`btn-outline text-sm px-3 py-1.5 flex items-center ${
+                            doc.status === "uploading" ||
+                            (isMultiple && currentCount >= maxCount)
+                              ? "opacity-70 cursor-not-allowed"
+                              : ""
+                          }`}
                         >
-                          <X className="h-4 w-4 mr-1" />
-                          Remove
+                          <Upload className="h-3 w-3 mr-1" />
+                          {isMultiple
+                            ? currentCount > 0
+                              ? "Add More"
+                              : "Upload"
+                            : doc.uploaded
+                              ? "Replace"
+                              : "Upload"}
                         </button>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
+
+                        {!isMultiple && doc.uploaded && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFile(doc.id)}
+                            className="text-red-600 hover:text-red-700 text-sm font-medium flex items-center"
+                          >
+                            <X className="h-4 w-4 mr-1" />
+                            Remove
+                          </button>
+                        )}
+
+                        {isMultiple && currentCount >= maxCount && (
+                          <span className="text-xs text-gray-500">
+                            Maximum of {maxCount} files reached
+                          </span>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
               {/* Status summary */}
