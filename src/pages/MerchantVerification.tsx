@@ -366,11 +366,11 @@ const MerchantVerification = () => {
     },
   };
 
-  const showPending = applicationStatus === "pending" || isComplete;
+  const showPending = applicationStatus !== "pending" || isComplete;
   const showApproved =
     applicationStatus === "approved" || applicationStatus === "completed";
   const showRejected = applicationStatus === "rejected" && !isComplete;
-  const showForm = !isComplete && applicationStatus === "not_submitted";
+  const showForm = !isComplete && applicationStatus === "pending";
 
   return (
     <>
@@ -532,7 +532,7 @@ const MerchantVerification = () => {
                           : "border-gray-200 hover:border-primary-300"
                       }`}
                     >
-                      <div className="flex items-start justify-between">
+                      <div className="flex items-start justify-between max-sm:flex-col">
                         <div className="flex-1">
                           <div className="flex items-center">
                             <FileText className="h-5 w-5 text-gray-400 mr-2" />
@@ -548,7 +548,7 @@ const MerchantVerification = () => {
                           </p>
                         </div>
 
-                        <div className="flex items-center space-x-2 ml-4">
+                        <div className="flex items-center space-x-1 ml-4 max-sm:items-start max-sm:space-x-0 max-sm:ml-0">
                           {doc.uploaded && (
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                               Uploaded
@@ -575,6 +575,7 @@ const MerchantVerification = () => {
                                   ({(file.size / 1024).toFixed(2)} KB)
                                 </span>
                               </div>
+
                               <button
                                 type="button"
                                 onClick={() =>
@@ -602,7 +603,7 @@ const MerchantVerification = () => {
                         </p>
                       )}
 
-                      <div className="mt-3 flex items-center space-x-3">
+                      <div className="mt-3  items-center space-x-3 max-sm:flex-col max-sm:items-start max-sm:space-x-0 max-sm:space-y-1">
                         <input
                           type="file"
                           id={doc.id}
@@ -670,19 +671,21 @@ const MerchantVerification = () => {
 
               {/* Status summary */}
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
+                <div className="flex items-center justify-between max-sm:flex-col">
+                  <div className="flex items-center max-sm:flex-col">
                     <div
                       className={`h-3 w-3 rounded-full mr-2 ${
                         allRequiredUploaded ? "bg-green-500" : "bg-yellow-500"
                       }`}
                     />
+
                     <span className="text-sm text-gray-700">
                       Required Documents:{" "}
                       {documents.filter((d) => d.required && d.uploaded).length}{" "}
                       of {documents.filter((d) => d.required).length} uploaded
                     </span>
                   </div>
+
                   <span className="text-sm text-gray-500">
                     {documents.filter((d) => d.uploaded).length} total documents
                     uploaded
