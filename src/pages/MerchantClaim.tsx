@@ -680,8 +680,10 @@ const MerchantClaim = () => {
   };
 
   useEffect(() => {
-    fetchClaim();
-  }, []);
+    if (user?.claimEnabled && user.isOnApprovedList) {
+      fetchClaim();
+    }
+  }, [user]);
 
   const handleCreateClaim = async () => {
     if (!user?.claimEnabled && !user?.isOnApprovedList) {

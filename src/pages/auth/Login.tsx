@@ -54,6 +54,10 @@ const Login: React.FC = () => {
         );
       }
 
+      if (user.role === "admin") {
+        return toast.error("You are not authorized to access this page.");
+      }
+
       login(
         {
           applicationStatus: user.applicationStatus,
