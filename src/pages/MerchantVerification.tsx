@@ -366,11 +366,11 @@ const MerchantVerification = () => {
     },
   };
 
-  const showPending = applicationStatus !== "pending" || isComplete;
+  const showPending = applicationStatus !== "approved" || isComplete;
   const showApproved =
     applicationStatus === "approved" || applicationStatus === "completed";
   const showRejected = applicationStatus === "rejected" && !isComplete;
-  const showForm = !isComplete && applicationStatus === "pending";
+  const showForm = !isComplete && applicationStatus === "not_submitted";
 
   return (
     <>

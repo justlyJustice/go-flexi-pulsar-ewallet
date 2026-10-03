@@ -667,6 +667,10 @@ const MerchantClaim = () => {
       const res = await getClaim();
 
       if (!res.ok) {
+        if (res.status === 404) {
+          return toast("No claim available.");
+        }
+
         return toast.error(res.data?.error!);
       }
 
