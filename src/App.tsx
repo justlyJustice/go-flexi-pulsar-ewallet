@@ -29,6 +29,7 @@ import ConvertUSD from "./pages/ConvertUSD";
 import FundNaira from "./pages/FundNaira";
 import MerchantVerification from "./pages/MerchantVerification";
 import MerchantClaim from "./pages/MerchantClaim";
+import PDFList from "./pages/PDFList";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -151,6 +152,15 @@ function App() {
             element={
               <ProtectedRoute tier="merchant">
                 <MerchantClaim />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/pdf-list"
+            element={
+              <ProtectedRoute tier="merchant">
+                <PDFList />
               </ProtectedRoute>
             }
           />

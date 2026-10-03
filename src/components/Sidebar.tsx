@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   BaggageClaim,
+  File,
   DollarSign,
   Currency,
   LayoutDashboard,
@@ -19,11 +20,11 @@ import {
   FolderKanban,
   BadgeDollarSign,
   Users,
-  Shield,
   ShieldCheck,
 } from "lucide-react";
-import { KYCStatus, useAuthStore, UserTier } from "../stores/authStore";
+import { useAuthStore } from "../stores/authStore";
 import { KycModal } from "./KycModal";
+import { KYCStatus, UserTier } from "../types/user";
 
 type NavSubItem = {
   path: string;
@@ -169,6 +170,14 @@ const Sidebar: React.FC = () => {
       ],
       tier: "merchant",
       requiredKYC: "verified",
+    },
+    {
+      path: "/pdf-list",
+      requiredKYC: "verified",
+      icon: <File size={20} />,
+      label: "PDF Lists",
+      isActive: location.pathname === "/pdf-list",
+      tier: ["merchant"],
     },
     {
       path: "/profile",

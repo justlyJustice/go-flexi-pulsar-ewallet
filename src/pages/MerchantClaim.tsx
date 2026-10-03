@@ -1134,11 +1134,23 @@ const MerchantClaim = () => {
                 <div className="flex-shrink-0 flex flex-col items-end gap-2">
                   {claim.status === "awaiting_submission" && (
                     <button
-                      onClick={openSubmitModal}
-                      className="btn-primary text-sm px-4 py-2 flex items-center gap-2"
+                      disabled={submitting}
+                      onClick={handleSubmitClaim}
+                      className={`btn-primary px-4 py-2 flex items-center gap-2 ${
+                        submitting ? "opacity-70 cursor-not-allowed" : ""
+                      }`}
                     >
-                      <Send className="h-3 w-3" />
-                      Submit Claim
+                      {submitting ? (
+                        <>
+                          <Loader2 className="h-2 w-2 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="h-3 w-3" />
+                          Submit Claim
+                        </>
+                      )}
                     </button>
                   )}
 
