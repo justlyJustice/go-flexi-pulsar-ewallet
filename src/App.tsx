@@ -157,7 +157,7 @@ function App() {
           />
 
           <Route
-            path="/pdf-list"
+            path="/beneficiaries/"
             element={
               <ProtectedRoute tier="merchant">
                 <PDFList />

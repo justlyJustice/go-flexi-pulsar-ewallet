@@ -172,11 +172,11 @@ const Sidebar: React.FC = () => {
       requiredKYC: "verified",
     },
     {
-      path: "/pdf-list",
+      path: "/beneficiaries",
       requiredKYC: "verified",
       icon: <File size={20} />,
-      label: "PDF Lists",
-      isActive: location.pathname === "/pdf-list",
+      label: "Beneficiaries",
+      isActive: location.pathname === "/beneficiaries",
       tier: ["merchant"],
     },
     {

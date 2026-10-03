@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Hash,
@@ -14,6 +14,8 @@ import {
   Send,
   Mail,
   Wallet,
+  Search,
+  ChevronDown,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -319,6 +321,7 @@ const SubmitClaimModal = ({
                   <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
                     $
                   </span>
+
                   <input
                     type="number"
                     value={claimDetails.withdrawalAmount}
@@ -389,6 +392,22 @@ const SubmitClaimModal = ({
 };
 
 // ================= WITHDRAWAL MODAL =================
+// type WithdrawModalProps = {
+//   show: boolean;
+//   claim: Claim | null;
+//   withdrawalDetails: WithdrawalDetails;
+//   setWithdrawalDetails: React.Dispatch<React.SetStateAction<WithdrawalDetails>>;
+//   withdrawing: boolean;
+//   withdrawError: string;
+//   verifying: boolean;
+//   verified: boolean;
+//   onClose: () => void;
+//   onBankSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+//   onAccountNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+//   onSubmit: (e: React.FormEvent) => void;
+// };
+
+// ================= WITHDRAWAL MODAL =================
 type WithdrawModalProps = {
   show: boolean;
   claim: Claim | null;
@@ -418,6 +437,33 @@ const WithdrawModal = ({
   onAccountNumberChange,
   onSubmit,
 }: WithdrawModalProps) => {
+  const [bankSearch, setBankSearch] = useState("");
+  const [bankDropdownOpen, setBankDropdownOpen] = useState(false);
+  const bankDropdownRef = useRef<HTMLDivElement | null>(null);
+
+  // Close the dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        bankDropdownRef.current &&
+        !bankDropdownRef.current.contains(e.target as Node)
+      ) {
+        setBankDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Reset search + close dropdown when modal closes
+  useEffect(() => {
+    if (!show) {
+      setBankSearch("");
+      setBankDropdownOpen(false);
+    }
+  }, [show]);
+
   if (!show) return null;
 
   const amountUSD = parseFloat(withdrawalDetails.amountUSD) || 0;
@@ -425,19 +471,34 @@ const WithdrawModal = ({
   const isValidAmount =
     amountUSD >= MIN_WITHDRAWAL_USD && amountUSD <= MAX_WITHDRAWAL_USD;
 
+  const filteredBanks = banks.filter((bank) =>
+    bank.bankName.toLowerCase().includes(bankSearch.toLowerCase()),
+  );
+
+  const handleSelectBank = (bankName: string) => {
+    // Simulate the change event so the parent handler still works
+    onBankSelect({
+      target: { value: bankName },
+    } as React.ChangeEvent<HTMLSelectElement>);
+
+    setBankDropdownOpen(false);
+    setBankSearch("");
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg max-w-2xl w-full my-8 max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-lg w-full max-w-2xl my-4 sm:my-8 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-3 sm:p-4 flex justify-between items-center z-10">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
               <Wallet className="h-4 w-4 text-green-600" />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">
+            <div className="min-w-0">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">
                 Request Withdrawal
               </h3>
-              <p className="text-xs text-gray-500 font-mono">
+              <p className="text-xs text-gray-500 font-mono truncate">
                 {claim?.claimNumber}
               </p>
             </div>
@@ -445,17 +506,18 @@ const WithdrawModal = ({
           <button
             onClick={onClose}
             disabled={withdrawing}
-            className="text-gray-500 hover:text-gray-700 disabled:opacity-50"
+            className="text-gray-500 hover:text-gray-700 disabled:opacity-50 flex-shrink-0 p-1"
+            aria-label="Close"
           >
-            <X className="h-3 w-3" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-4 space-y-6">
+        <form onSubmit={onSubmit} className="p-3 sm:p-4 space-y-5 sm:space-y-6">
           {withdrawError && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex items-start gap-2">
-              <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
-              {withdrawError}
+              <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+              <span className="break-words">{withdrawError}</span>
             </div>
           )}
 
@@ -469,11 +531,13 @@ const WithdrawModal = ({
             </p>
 
             <div className="relative">
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+              <span className="absolute left-1 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
                 $
               </span>
+
               <input
                 type="number"
+                inputMode="decimal"
                 value={withdrawalDetails.amountUSD}
                 onChange={(e) =>
                   setWithdrawalDetails((prev) => ({
@@ -485,7 +549,7 @@ const WithdrawModal = ({
                 min={MIN_WITHDRAWAL_USD}
                 max={MAX_WITHDRAWAL_USD}
                 step="0.01"
-                className="input-field w-full text-sm pl-6"
+                className="input-field w-full text-sm sm:text-base pl-7 p-1"
               />
             </div>
 
@@ -518,24 +582,82 @@ const WithdrawModal = ({
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {/* Bank Dropdown */}
+              {/* Bank Dropdown (searchable) */}
               <div className="md:col-span-2">
                 <label className="block text-xs font-medium text-gray-700 mb-1">
                   Bank <span className="text-red-500">*</span>
                 </label>
-                <select
-                  value={withdrawalDetails.bankName}
-                  onChange={onBankSelect}
-                  className="input-field w-full text-sm"
-                  disabled={verifying}
-                >
-                  <option value="">Select your bank</option>
-                  {banks.map((bank) => (
-                    <option key={bank.bankCode} value={bank.bankName}>
-                      {bank.bankName}
-                    </option>
-                  ))}
-                </select>
+
+                <div ref={bankDropdownRef} className="relative">
+                  {/* Trigger button — looks like an input */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      !verifying && setBankDropdownOpen((prev) => !prev)
+                    }
+                    disabled={verifying}
+                    className={`input-field w-full text-sm text-left flex items-center justify-between gap-2 ${
+                      verifying ? "opacity-60 cursor-not-allowed" : ""
+                    }`}
+                  >
+                    <span
+                      className={`truncate ${
+                        withdrawalDetails.bankName
+                          ? "text-gray-900"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {withdrawalDetails.bankName || "Select your bank"}
+                    </span>
+                    <ChevronDown
+                      className={`h-2 w-2 text-gray-500 flex-shrink-0 transition-transform duration-150 ${
+                        bankDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {bankDropdownOpen && (
+                    <div className="absolute z-30 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+                      {/* Search input */}
+                      <div className="relative border-b border-gray-100">
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-gray-400" />
+                        <input
+                          type="text"
+                          autoFocus
+                          value={bankSearch}
+                          onChange={(e) => setBankSearch(e.target.value)}
+                          placeholder="Search banks..."
+                          className="w-full pl-10 pr-3 py-2 text-sm focus:outline-none"
+                        />
+                      </div>
+
+                      {/* Bank options */}
+                      <ul className="max-h-56 overflow-y-auto py-1">
+                        {filteredBanks.length === 0 ? (
+                          <li className="px-3 py-2 text-xs text-gray-500">
+                            No banks found
+                          </li>
+                        ) : (
+                          filteredBanks.map((bank) => (
+                            <li key={bank.bankCode}>
+                              <button
+                                type="button"
+                                onClick={() => handleSelectBank(bank.bankName)}
+                                className={`w-full text-left px-3 py-2 text-sm hover:bg-primary-50 transition-colors ${
+                                  withdrawalDetails.bankName === bank.bankName
+                                    ? "bg-primary-50 text-primary-700 font-medium"
+                                    : "text-gray-700"
+                                }`}
+                              >
+                                {bank.bankName}
+                              </button>
+                            </li>
+                          ))
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Account Number */}
@@ -544,18 +666,17 @@ const WithdrawModal = ({
                   Account Number <span className="text-red-500">*</span>
                 </label>
 
-                <div className="flex items-stretch">
-                  <input
-                    type="text"
-                    value={withdrawalDetails.accountNumber}
-                    onChange={onAccountNumberChange}
-                    placeholder="0123456789"
-                    maxLength={10}
-                    inputMode="numeric"
-                    className="input-field flex-1 text-sm font-mono"
-                    disabled={verifying}
-                  />
-                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={withdrawalDetails.accountNumber}
+                  onChange={onAccountNumberChange}
+                  placeholder="0123456789"
+                  maxLength={10}
+                  className="input-field w-full text-sm font-mono p-1"
+                  disabled={verifying}
+                />
 
                 <p className="mt-1 text-xs text-gray-500">
                   Account number must be 10 digits
@@ -577,7 +698,7 @@ const WithdrawModal = ({
                     }))
                   }
                   placeholder="Account Name"
-                  className={`input-field w-full text-sm ${
+                  className={`input-field w-full text-sm p-1 ${
                     verified
                       ? "bg-green-50 border-green-200 text-green-800"
                       : "bg-gray-50"
@@ -587,12 +708,13 @@ const WithdrawModal = ({
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+          {/* Actions */}
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 sm:gap-3 pt-4 border-t border-gray-200">
             <button
               type="button"
               onClick={onClose}
               disabled={withdrawing}
-              className="btn-outline px-3 py-1 disabled:opacity-50"
+              className="btn-outline p-1 w-full sm:w-auto disabled:opacity-50"
             >
               Cancel
             </button>
@@ -600,7 +722,7 @@ const WithdrawModal = ({
             <button
               type="submit"
               disabled={withdrawing || !isValidAmount}
-              className={`btn-primary px-3 py-1 flex items-center gap-2 ${
+              className={`btn-primary p-1 flex items-center justify-center gap-1 w-full sm:w-auto ${
                 withdrawing || !isValidAmount
                   ? "opacity-70 cursor-not-allowed"
                   : ""
@@ -608,7 +730,7 @@ const WithdrawModal = ({
             >
               {withdrawing ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-2 w-2 animate-spin" />
                   Processing...
                 </>
               ) : (
