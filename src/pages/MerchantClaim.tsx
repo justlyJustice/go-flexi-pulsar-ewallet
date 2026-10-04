@@ -417,6 +417,7 @@ type WithdrawModalProps = {
   withdrawError: string;
   verifying: boolean;
   verified: boolean;
+  usdAccountNumber?: string;
   onClose: () => void;
   onBankSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onAccountNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -426,6 +427,7 @@ type WithdrawModalProps = {
 const WithdrawModal = ({
   show,
   claim,
+  usdAccountNumber,
   withdrawalDetails,
   setWithdrawalDetails,
   withdrawing,
@@ -518,6 +520,22 @@ const WithdrawModal = ({
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm flex items-start gap-2">
               <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
               <span className="break-words">{withdrawError}</span>
+            </div>
+          )}
+
+          {/* ⬇️ NEW: USD Account Number banner */}
+          {usdAccountNumber && (
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
+              <Wallet className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
+              <div className="text-xs text-blue-800 min-w-0">
+                <p className="font-medium">Your USD Account Number</p>
+                <p className="mt-0.5 font-mono text-sm tracking-wider truncate">
+                  {usdAccountNumber}
+                </p>
+                <p className="mt-1 text-blue-700">
+                  The withdrawal amount will be credited to this USD account.
+                </p>
+              </div>
             </div>
           )}
 
@@ -1110,6 +1128,7 @@ const MerchantClaim = () => {
       <WithdrawModal
         show={showWithdrawModal}
         claim={claim}
+        usdAccountNumber={user?.usdAccountNumber}
         withdrawalDetails={withdrawalDetails}
         setWithdrawalDetails={setWithdrawalDetails}
         withdrawing={withdrawing}
