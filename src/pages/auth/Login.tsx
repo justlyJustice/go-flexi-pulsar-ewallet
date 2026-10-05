@@ -102,6 +102,7 @@ const Login: React.FC = () => {
           lastMonthlyReset: user.lastMonthlyReset,
           lastTransferTime: user.lastTransferTime,
           usdtBalance: user.usdtBalance,
+          usdAccountBalance: user.usdAccountBalance,
           upgradeType: user.upgradeType,
           corporateBiz: user.corporateBiz,
         },

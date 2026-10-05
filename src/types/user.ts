@@ -69,6 +69,7 @@ export interface User {
   rejectionReason?: string;
   usdAccountNumber?: string;
   isOnApprovedList?: boolean;
+  usdAccountBalance?: number;
   approvedAt?: string;
   claimEnabled?: boolean;
 }

@@ -418,6 +418,7 @@ type WithdrawModalProps = {
   verifying: boolean;
   verified: boolean;
   usdAccountNumber?: string;
+  usdAccountBalance?: number;
   onClose: () => void;
   onBankSelect: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   onAccountNumberChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -428,6 +429,7 @@ const WithdrawModal = ({
   show,
   claim,
   usdAccountNumber,
+  usdAccountBalance = 0,
   withdrawalDetails,
   setWithdrawalDetails,
   withdrawing,
@@ -523,18 +525,29 @@ const WithdrawModal = ({
             </div>
           )}
 
-          {/* ⬇️ NEW: USD Account Number banner */}
-          {usdAccountNumber && (
+          {/* USD Account Info */}
+          {(usdAccountNumber || usdAccountBalance !== undefined) && (
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
               <Wallet className="h-4 w-4 text-blue-500 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-blue-800 min-w-0">
-                <p className="font-medium">Your USD Account Number</p>
-                <p className="mt-0.5 font-mono text-sm tracking-wider truncate">
-                  {usdAccountNumber}
-                </p>
-                <p className="mt-1 text-blue-700">
-                  The withdrawal amount will be credited to this USD account.
-                </p>
+              <div className="text-xs text-blue-800 min-w-0 flex-1">
+                <p className="font-medium">Your USD Account</p>
+
+                {usdAccountNumber && (
+                  <p className="mt-0.5 font-mono text-sm tracking-wider truncate">
+                    {usdAccountNumber}
+                  </p>
+                )}
+
+                <div className="mt-1 flex items-center justify-between gap-2">
+                  <span className="text-blue-700">Available Balance</span>
+                  <span className="font-semibold text-blue-900">
+                    $
+                    {usdAccountBalance.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -998,6 +1011,18 @@ const MerchantClaim = () => {
       return;
     }
 
+    const balance = user?.usdAccountBalance ?? 0;
+
+    if (amountUSD > balance) {
+      setWithdrawError(
+        `Amount exceeds your available balance of $${balance.toLocaleString(
+          undefined,
+          { minimumFractionDigits: 2, maximumFractionDigits: 2 },
+        )}`,
+      );
+      return;
+    }
+
     if (amountUSD < MIN_WITHDRAWAL_USD) {
       setWithdrawError(`Minimum withdrawal is $${MIN_WITHDRAWAL_USD}`);
       return;
@@ -1129,6 +1154,7 @@ const MerchantClaim = () => {
         show={showWithdrawModal}
         claim={claim}
         usdAccountNumber={user?.usdAccountNumber}
+        usdAccountBalance={user?.usdAccountBalance}
         withdrawalDetails={withdrawalDetails}
         setWithdrawalDetails={setWithdrawalDetails}
         withdrawing={withdrawing}
