@@ -6,40 +6,37 @@ import {
   Loader2,
   AlertCircle,
   ExternalLink,
+  Users,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { getPDFList } from "../services/pdf-lists";
-import { useAuthStore } from "../stores/authStore";
+import { getPDFList } from "../../services/pdf-lists";
 
 type UpgradeType = "SMEDAN_CAC" | "BUSINESS_COOPERATIVE";
 
-const upgradeTypeMeta: Record<
-  UpgradeType,
-  { label: string; description: string; badgeClasses: string }
-> = {
-  SMEDAN_CAC: {
-    label: "SMEDAN & CAC",
-    description:
-      "This list contains all users who upgraded with SMEDAN & CAC documentation.",
-    badgeClasses: "bg-purple-100 text-purple-800",
-  },
-  BUSINESS_COOPERATIVE: {
-    label: "Business/Cooperative",
-    description:
-      "This list contains all users who upgraded with Business/Cooperative documentation.",
-    badgeClasses: "bg-orange-100 text-orange-800",
-  },
+type TabType = {
+  id: UpgradeType;
+  label: string;
+  description: string;
 };
 
-const PDFList = () => {
-  const { user } = useAuthStore();
+const tabs: TabType[] = [
+  {
+    id: "SMEDAN_CAC",
+    label: "SMEDAN & CAC",
+    description:
+      "PDF list of users who upgraded with SMEDAN & CAC documentation",
+  },
+  {
+    id: "BUSINESS_COOPERATIVE",
+    label: "Business/Cooperative",
+    description:
+      "PDF list of users who upgraded with Business/Cooperative documentation",
+  },
+];
 
-  // Derive the user's upgrade type (falls back to SMEDAN_CAC if unset)
-  const upgradeType: UpgradeType =
-    (user?.upgradeType as UpgradeType) || "SMEDAN_CAC";
-
-  const activeTabData = upgradeTypeMeta[upgradeType];
+const Beneficiaries = () => {
+  const [activeTab, setActiveTab] = useState<UpgradeType>("SMEDAN_CAC");
 
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,6 +44,8 @@ const PDFList = () => {
   const [iframeLoading, setIframeLoading] = useState(false);
 
   const blobUrlRef = useRef<string | null>(null);
+
+  const activeTabData = tabs.find((tab) => tab.id === activeTab);
 
   /**
    * Revoke the previous Blob URL to prevent memory leaks.
@@ -59,12 +58,12 @@ const PDFList = () => {
   };
 
   useEffect(() => {
-    fetchPDFList(upgradeType);
+    fetchPDFList(activeTab);
 
     return () => {
       revokeCurrentBlob();
     };
-  }, [upgradeType]);
+  }, [activeTab]);
 
   const fetchPDFList = async (type: UpgradeType) => {
     setLoading(true);
@@ -136,7 +135,7 @@ const PDFList = () => {
   };
 
   const handleRetry = () => {
-    fetchPDFList(upgradeType);
+    fetchPDFList(activeTab);
   };
 
   const containerVariants = {
@@ -173,17 +172,24 @@ const PDFList = () => {
       >
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            Approved Users List
+            Approved Beneficiaries
           </h1>
 
           <p className="mt-1 text-sm text-gray-500">
-            View and download the list of approved merchants in your upgrade
-            category
+            View and download the list of approved merchants with a DWC code.
           </p>
         </div>
 
         {pdfUrl && !loading && !error && (
           <div className="flex gap-2 max-sm:flex-col">
+            <button
+              onClick={handleOpenInNewTab}
+              className="btn-outline p-1 flex items-center gap-2 rounded-md"
+            >
+              <ExternalLink className="h-2 w-2" />
+              Open
+            </button>
+
             <button
               onClick={handleDownload}
               className="btn-primary p-1 flex items-center gap-2 rounded-md"
@@ -195,6 +201,30 @@ const PDFList = () => {
         )}
       </motion.div>
 
+      {/* Tabs */}
+      <motion.div variants={itemVariants} className="border-b border-gray-200">
+        <nav
+          className="flex space-x-4 max-sm:space-x-0 max-sm:flex-col"
+          aria-label="Tabs"
+        >
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              disabled={loading}
+              className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200 flex items-center gap-2 ${
+                activeTab === tab.id
+                  ? "border-primary-500 text-primary-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              } ${loading ? "cursor-not-allowed opacity-60" : ""}`}
+            >
+              <Users className="h-2 w-2" />
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </motion.div>
+
       {/* Info banner */}
       <motion.div
         variants={itemVariants}
@@ -203,7 +233,9 @@ const PDFList = () => {
         <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
 
         <div className="text-sm text-blue-800">
-          <p className="font-medium">Your Upgrade Type</p>
+          <p className="font-medium">
+            Business/Cooperative & SMEDAN/CAC Beneficiaries
+          </p>
           <p className="mt-1 text-blue-700">{activeTabData?.description}</p>
         </div>
       </motion.div>
@@ -295,7 +327,7 @@ const PDFList = () => {
           {/* Empty State */}
           {!loading && !error && !pdfUrl && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 z-10">
-              <FileText className="h-12 w-12 text-gray-300" />
+              <FileText className="h-8 w-8 text-gray-300" />
 
               <p className="mt-3 text-sm text-gray-500">
                 No PDF available for this list yet
@@ -312,7 +344,9 @@ const PDFList = () => {
             <iframe
               key={pdfUrl}
               src={pdfUrl}
-              className={`w-full transition-opacity duration-300 ${iframeLoading ? "opacity-0" : "opacity-100"}`}
+              className={`w-full transition-opacity duration-300 ${
+                iframeLoading ? "opacity-0" : "opacity-100"
+              }`}
               style={{
                 height: "75vh",
                 minHeight: "600px",
@@ -353,4 +387,4 @@ const PDFList = () => {
   );
 };
 
-export default PDFList;
+export default Beneficiaries;

@@ -19,12 +19,15 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-import { useAuthStore } from "../stores/authStore";
+import { useAuthStore } from "../../stores/authStore";
 
-import { Claim, ClaimStatus } from "../types/claim";
-import { createClaim, getClaim, submitClaim } from "../services/claim";
-import { confirmWithdrawal, requestWithdrawal } from "../services/withdrawal";
-import { banks } from "../banksList";
+import { Claim, ClaimStatus } from "../../types/claim";
+import { createClaim, getClaim, submitClaim } from "../../services/claim";
+import {
+  confirmWithdrawal,
+  requestWithdrawal,
+} from "../../services/withdrawal";
+import { banks } from "../../banksList";
 
 // ================= TYPES =================
 export type DocumentSlot = {

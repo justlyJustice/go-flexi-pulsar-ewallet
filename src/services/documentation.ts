@@ -1,6 +1,6 @@
 import client from "./client";
 
-import { Document } from "../pages/MerchantVerification";
+import { Document } from "../pages/merchants/MerchantDocumentation";
 
 // Map frontend document IDs to backend field names
 const FIELD_MAP: Record<string, string> = {

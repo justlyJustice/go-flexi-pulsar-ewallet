@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
 
           {user?.tier === "merchant" && user?.merchantVerificationCode && (
             <Link
-              to="/merchant/verification"
+              to="/documentation/verify"
               className="flex items-center p-3 transition-colors bg-white rounded-card shadow-card h-40"
             >
               <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
@@ -119,7 +119,9 @@ const Dashboard: React.FC = () => {
               </div>
 
               <div className="ml-2">
-                <h1 className="text-xl text-gray-900">Merchant Verification</h1>
+                <h1 className="text-xl text-gray-900">
+                  Merchant Documentation
+                </h1>
 
                 <p className="text-sm text-gray-500">
                   Verify your merchant details

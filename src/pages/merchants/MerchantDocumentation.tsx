@@ -14,8 +14,8 @@ import {
   ShieldX,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { uploadDWCApplication } from "../services/applications";
-import { useAuthStore } from "../stores/authStore";
+import { uploadDWCApplication } from "../../services/documentation";
+import { useAuthStore } from "../../stores/authStore";
 
 export interface Document {
   id: string;
@@ -120,14 +120,14 @@ const createInitialDocuments = (): Document[] => [
   },
 ];
 
-const MerchantVerification = () => {
+const MerchantDocumentation = () => {
   const [documents, setDocuments] = useState<Document[]>(
     createInitialDocuments,
   );
   const { user, updateUser } = useAuthStore((store) => store);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
+  // const [isComplete, setIsComplete] = useState(false);
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const applicationStatus: ApplicationStatus =
@@ -306,7 +306,7 @@ const MerchantVerification = () => {
         );
       }
 
-      setIsComplete(true);
+      // setIsComplete(true);
       updateUser({
         applicationStatus: "pending",
         rejectionReason: undefined,
@@ -329,7 +329,7 @@ const MerchantVerification = () => {
       rejectionReason: undefined,
     });
     setDocuments(createInitialDocuments());
-    setIsComplete(false);
+    // setIsComplete(false);
   };
 
   const getStatusIcon = (status: Document["status"]) => {
@@ -366,11 +366,11 @@ const MerchantVerification = () => {
     },
   };
 
-  const showPending = applicationStatus !== "approved" || isComplete;
+  const showPending = applicationStatus !== "approved";
   const showApproved =
     applicationStatus === "approved" || applicationStatus === "completed";
-  const showRejected = applicationStatus === "rejected" && !isComplete;
-  const showForm = !isComplete && applicationStatus === "not_submitted";
+  const showRejected = applicationStatus === "rejected";
+  const showForm = applicationStatus === "not_submitted";
 
   return (
     <>
@@ -728,4 +728,4 @@ const MerchantVerification = () => {
   );
 };
 
-export default MerchantVerification;
+export default MerchantDocumentation;

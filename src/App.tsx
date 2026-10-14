@@ -27,9 +27,9 @@ import VirtualCard from "./pages/services/VirtualCard";
 import useTransactions from "./hooks/useTransactions";
 import ConvertUSD from "./pages/ConvertUSD";
 import FundNaira from "./pages/FundNaira";
-import MerchantVerification from "./pages/MerchantVerification";
-import MerchantClaim from "./pages/MerchantClaim";
-import PDFList from "./pages/PDFList";
+import MerchantDocumentation from "./pages/merchants/MerchantDocumentation";
+import MerchantClaim from "./pages/merchants/MerchantClaim";
+import Beneficiaries from "./pages/merchants/Beneficiaries";
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -139,16 +139,16 @@ function App() {
           />
 
           <Route
-            path="/merchant/verification"
+            path="/documentation/verify"
             element={
               <ProtectedRoute tier="merchant">
-                <MerchantVerification />
+                <MerchantDocumentation />
               </ProtectedRoute>
             }
           />
 
           <Route
-            path="/merchant/claim"
+            path="/documentation/claim"
             element={
               <ProtectedRoute tier="merchant">
                 <MerchantClaim />
@@ -160,7 +160,7 @@ function App() {
             path="/beneficiaries/"
             element={
               <ProtectedRoute tier="merchant">
-                <PDFList />
+                <Beneficiaries />
               </ProtectedRoute>
             }
           />
